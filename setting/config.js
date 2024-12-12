@@ -32,7 +32,7 @@ async function getLocationFromIP() {
     }
 }
 
-async function myowner(chat, vreden) {
+async function myowner(vredenn, vreden) {
     try {
         const location = await getLocationFromIP();
         const caption = `TERHUBUNG KE REZZ PROJECT\nLokasi Bot: ${location.address}`;
@@ -54,26 +54,4 @@ async function myowner(chat, vreden) {
     } catch (err) {
         console.error(chalk.red(''), err);
     }
-}
-
-
-function BotConection(recipientJid, vreden) {
-    const BotApis = 'http://localhost:3000/api/myowner';
-
-    const data = {
-        recipientJid: recipientJid,
-        vreden: vreden
-    };
-    fetch(BotApis, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-    })
-    .catch((error) => {
-    });
-        }
+                    }
