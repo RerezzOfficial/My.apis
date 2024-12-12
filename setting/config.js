@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const chalk = require('chalk');
 const { generateWAMessageFromContent, proto } = require('@whiskeysockets/baileys');
 const wagw = '6285216955233';
-global.OwnerNumber = `${wagw}@s.whatsapp.net`;
+const vredenn = `${wagw}@s.whatsapp.net`;
 
 async function getLocationFromIP() {
     try {
