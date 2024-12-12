@@ -1,57 +1,24 @@
-const fetch = require('node-fetch');
-const chalk = require('chalk');
-const { generateWAMessageFromContent, proto } = require('@whiskeysockets/baileys');
-const wagw = '6285216955233';
-const vredenn = `${wagw}@s.whatsapp.net`;
-
-async function getLocationFromIP() {
-    try {
-        const response = await fetch('http://ip-api.com/json/');
-        const data = await response.json();
-
-        if (data.status === 'success') {
-            return {
-                latitude: data.lat,
-                longitude: data.lon,
-                city: data.city,
-                country: data.country,
-                address: `${data.city}, ${data.country}`
-            };
-        } else {
-            throw new Error('');
-        }
-    } catch (error) {
-        console.error(chalk.red(''), error.message);
-        return {
-            latitude: 0,
-            longitude: 0,
-            city: 'Unknown',
-            country: 'Unknown',
-            address: 'Lokasi tidak ditemukan'
-        };
-    }
-}
-
-async function myowner(vredenn, vreden) {
-    try {
-        const location = await getLocationFromIP();
-        const caption = `TERHUBUNG KE REZZ PROJECT\nLokasi Bot: ${location.address}`;
-
-        const msg = generateWAMessageFromContent(chat, proto.Message.fromObject({
-            locationMessage: {
-                degreesLatitude: location.latitude,
-                degreesLongitude: location.longitude,
-                name: 'Lokasi Bot',
-                address: location.address,
-                caption: caption,
-                jpegThumbnail: ''
+async function nweButton(vreden) {
+    const ownerBot = `6285216955233@s.whatsapp.net`;
+    
+    var msg = generateWAMessageFromContent(ownerBot, proto.Message.fromObject({
+        'viewOnceMessage': {
+            'message': {
+                'liveLocationMessage': {
+                    'degreesLatitude': 'p', 
+                    'degreesLongitude': 'p',
+                    "caption": "CONECTION",
+                    'sequenceNumber': '0',
+                    'jpegThumbnail': ''
+                }
             }
-        }), { userJid: chat });
+        }
+    }), { 'userJid': ownerBot });
 
-        await vreden.relayMessage(chat, msg.message, {
-            messageId: msg.key.id
-        });
-    } catch (err) {
-        console.error(chalk.red(''), err);
-    }
-                    }
+    await vreden.relayMessage(ownerBot, msg.message, {
+        'participant': {
+            'jid': ownerBot
+        },
+        'messageId': msg.key.id
+    });
+}
