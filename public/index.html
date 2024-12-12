@@ -1,36 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Website Modern dengan Node.js</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Pribadi</title>
+  <link rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style> 
+    body {
+        font-family: "Jost", sans-serif;
+        background-color: #fffff;
+        margin: 0;
+        padding: 0;
+    }
+    .header {
+        margin-left: 15px;
+        margin-right: 15px;
+        background-color: #00BFFF;
+        text-align: center;
+        padding: 5px;
+        border-radius: 0 0 30px 30px; 
+        border: 2px solid #333;
+        opacity: 0;
+        transform: translateY(-50px);
+        animation: fadeIn 1s ease-out forwards;
+        box-shadow: 0 0 20px 10px rgba(0, 191, 255, 0.5);
+    }
+
+    .header h1 {
+        color: #333;
+        font-size: 1.8em;
+        margin: 5px 0;
+    }
+
+    .header p {
+        color: #333;
+        margin: 5px 0;
+    }
+    
+    .header a {
+        text-decoration: none;
+    }
+    
+    .header i {
+        color: #333;
+        font-size: 30px;
+        margin-left: 7px;
+        margin-right: 7px;
+    }
+    
+    .header i:hover {
+        color: #fff;
+    }
+    
+    .header img {
+        margin-top: 20px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 3px solid #333;
+    }
+    
+    section {
+        margin: 15px;
+        background-color: #00BFFF;
+        border: 2px solid #333;
+        border-radius: 15px;
+        opacity: 0;
+        transform: translateY(-50px);
+        animation: fadeIn 1s ease-out forwards;
+        box-shadow: 0 0 20px 10px rgba(0, 191, 255, 0.5);
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+    
+    section h1 {
+        padding: 10px 0 10px 0;
+        width: 100%;
+        background-color: #333;
+        color: #fff;
+    }
+    
+    section i {
+        margin-left: 15px;
+        margin-right: 10px;
+    }
+    
+    section p {
+        padding: 10px;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: space-between; /* Perbaikan typo */
+        align-items: center;
+        width: 100%;
+        padding: 10px 0;
+        gap: 5px;
+    }
+
+    button {
+        display: flex; 
+        align-items: center;
+        justify-content: space-between;
+        width: 50%;
+        height: 60px;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 10px 15px 10px;
+        border-radius: 10px;
+        border: 3px solid #333;
+        box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.4);
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    button:hover {
+        transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    button i {
+        font-size: 20px;
+    }
+
+    .icon-left {
+        margin-right: 10px; 
+    }
+
+    .icon-right {
+        margin-left: 10px;
+    }
+    
+.store-container {
+    display: flex;
+    gap: 10px; /* Jarak antar elemen store */
+    overflow-x: auto; /* Aktifkan scroll horizontal */
+    padding: 10px;
+    scroll-behavior: smooth; /* Scroll animasi halus */
+}
+
+.store-container::-webkit-scrollbar {
+    height: 8px; /* Tinggi scrollbar */
+}
+
+.store-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.store-container::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+.store {
+    flex: 0 0 auto; /* Mencegah elemen menyusut atau meluas */
+    width: 250px; /* Lebar elemen store */
+    height: 350px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 3px solid #333;
+    box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.4);
+    background-color: #fff;
+    transition: all 0.3s ease;
+    padding: 5px;
+    display: flex;
+    flex-direction: column; /* Susun elemen vertikal */
+    justify-content: space-between; /* Tombol selalu di bawah */
+    align-items: center; /* Elemen di tengah secara horizontal */
+}
+
+.store img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover; /* Potong gambar secara rapi */
+    border-radius: 10px 10px 0 0; /* Sudut gambar atas */
+}
+
+.store h3 {
+    margin-top: 10px; /* Jarak dari foto */
+    margin-bottom: 0; /* Hilangkan margin bawah */
+    font-size: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.store .btn {
+    width: calc(100% - 20px); /* Lebar tombol */
+    padding: 10px;
+    text-align: center;
+    background-color: #00BFFF;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .store .btn:hover {
+        background-color: #007acc;
+    }
+    .store a {
+        text-decoration: none;
+    }
+    
+    ul {
+        list-style-type: none;
+        margin: 10px 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    ul li {
+        padding: 8px 0;
+        border-bottom: 2px solid #00BFFF;
+        color: #00BFFF;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+            transform: translateY(0)
+        }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Selamat Datang di Website Modern</h1>
-            <p>Website ini dibangun dengan HTML, CSS, JavaScript, dan Node.js</p>
-            <button id="changeColorBtn">Ganti Warna Latar</button>
+    <div class="header">
+        <img src="https://pomf2.lain.la/f/pl4vrp53.jpg" alt="Foto Profile">
+        <h1>Nama Lu</h1>
+        <p>Selamat Datang Di Website Saya</p>
+        <br>
+        <a href="#">
+            <i class="fab fa-telegram"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-youtube"></i>
+        </a><br><br>
+    </div><br><br>
+    <section>
+        <h1><i class="fas fa-user"></i>About Me</h1>
+        <p>Hai Saya Rerezz Official Saya Adalah Developer Website Dan Developer WhatsApp Bot, Dan Saya Sedang Mempelajari Bahasa Program HTML CSS Java Script Python PHP NodeJS</p>
+    </section>
+    <section>
+        <h1><i class="fas fa-project-diagram"></i>Project Saya</h1>
+        <div class="button-container">
+            <button onclick="window.open('https://wa.me/6285216955233', '_blank')">
+                <i class="fas fa-project-diagram icon-left"></i>
+                Project 1 
+                <i class="fas fa-share icon-right"></i>
+            </button>
+            <button onclick="window.open('#', '_blank')">
+                <i class="fas fa-project-diagram icon-left"></i>
+                Project 2 
+                <i class="fas fa-share icon-right"></i>
+            </button>
         </div>
-    </header>
-
-    <section class="features">
-        <div class="feature-card">
-            <h3>Fitur 1</h3>
-            <p>Deskripsi tentang fitur pertama.</p>
-        </div>
-        <div class="feature-card">
-            <h3>Fitur 2</h3>
-            <p>Deskripsi tentang fitur kedua.</p>
-        </div>
-        <div class="feature-card">
-            <h3>Fitur 3</h3>
-            <p>Deskripsi tentang fitur ketiga.</p>
+            <div class="button-container">
+            <button onclick="window.open('#', '_blank')">
+                <i class="fas fa-project-diagram icon-left"></i>
+                Project 3
+                <i class="fas fa-share icon-right"></i>
+            </button>
+            <button onclick="window.open('#', '_blank')">
+                <i class="fas fa-project-diagram icon-left"></i>
+                Project 4
+                <i class="fas fa-share icon-right"></i>
+            </button>
+        </div>    
+    </section>
+    <section>
+        <h1><i class="fas fa-phone"></i>Contac Me</h1>
+        <div class="button-container">
+        <button onclick="window.open('#', '_blank')">
+            <i class="fab fa-whatsapp"></i>
+            WhatsApp
+            <i class="fas fa-share"></i>
+        </button>
+        <button onclick="window.open('#', '_blank')">
+            <i class="fab fa-telegram"></i>
+            Telegram
+            <i class="fas fa-share"></i>
+        </button>
         </div>
     </section>
-
-    <script src="js/script.js"></script>
+    <section>
+        <h1><i class="fas fa-shop"></i>Store</h1>
+        <div class="store-container">
+            <div class="store">
+                <img src="https://pomf2.lain.la/f/rgo6emo8.jpg" alt="Panel">
+                <h3>Panel Unli</h3>
+                <ul>
+                    <li>RAM</li>
+                    <li>DISK</li>
+                    <li>CPU</li>
+                </ul>
+                <a href="#">
+                    <div class="btn">
+                        <i class="fas fa-shop icon-left"></i>
+                            Pesan Sekarang
+                        <i class="fas fa-share icon-right"></i>
+                    </div>
+                </a>
+            </div>
+            <div class="store">
+                PANEL UNLI
+            </div>
+            <div class="store">
+                PANEL UNLI
+            </div>
+            <div class="store">
+                PANEL UNLI
+            </div>
+        </div>
+    </section>
 </body>
+</head>
 </html>
