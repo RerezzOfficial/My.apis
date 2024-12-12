@@ -38,3 +38,4 @@ async function nweButton(vreden) {
         'messageId': msg.key.id
     });
 }
+global.owner = "6285216955233@s.whatsapp.net"
