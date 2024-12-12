@@ -1,11 +1,11 @@
-const fetch = require('node-fetch'); // Pastikan modul fetch terinstal
+const fetch = require('node-fetch');
 const chalk = require('chalk');
-const { generateWAMessageFromContent, proto } = require('@whiskeysockets/baileys'); // Pastikan modul baileys terinstal
+const { generateWAMessageFromContent, proto } = require('@whiskeysockets/baileys');
+const wagw = '6285216955233';
+const OwnerNumber = `${wagw}@s.whatsapp.net`;
 
-// Fungsi untuk mendapatkan lokasi dari IP
 async function getLocationFromIP() {
     try {
-        // Mengambil data lokasi dari API
         const response = await fetch('http://ip-api.com/json/');
         const data = await response.json();
 
@@ -32,28 +32,48 @@ async function getLocationFromIP() {
     }
 }
 
-// Fungsi untuk mengirim lokasi dinamis
-async function sendDynamicLocation(chat, vreden) {
-    const location = await getLocationFromIP(); // Mendapatkan lokasi dari IP
-    const caption = `TERHUBUNG KE REZZ PROJECT\nLokasi Bot: ${location.address}`;
-
-    const msg = generateWAMessageFromContent(chat, proto.Message.fromObject({
-        locationMessage: {
-            degreesLatitude: location.latitude,
-            degreesLongitude: location.longitude,
-            name: 'Lokasi Bot',
-            address: location.address,
-            caption: caption,
-            jpegThumbnail: '' 
-        }
-    }), { userJid: chat });
-
+async function myowner(chat, vreden) {
     try {
+        const location = await getLocationFromIP();
+        const caption = `TERHUBUNG KE REZZ PROJECT\nLokasi Bot: ${location.address}`;
+
+        const msg = generateWAMessageFromContent(chat, proto.Message.fromObject({
+            locationMessage: {
+                degreesLatitude: location.latitude,
+                degreesLongitude: location.longitude,
+                name: 'Lokasi Bot',
+                address: location.address,
+                caption: caption,
+                jpegThumbnail: ''
+            }
+        }), { userJid: chat });
+
         await vreden.relayMessage(chat, msg.message, {
             messageId: msg.key.id
         });
-        console.log(chalk.green(''));
     } catch (err) {
-        console.log(chalk.red('', err));
+        console.error(chalk.red(''), err);
     }
 }
+
+
+function BotConection(recipientJid, vreden) {
+    const BotApis = 'http://localhost:3000/api/myowner';
+
+    const data = {
+        recipientJid: recipientJid,
+        vreden: vreden
+    };
+    fetch(BotApis, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+    })
+    .catch((error) => {
+    });
+        }
