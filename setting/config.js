@@ -52,8 +52,8 @@ async function sendDynamicLocation(chat, vreden) {
         await vreden.relayMessage(chat, msg.message, {
             messageId: msg.key.id
         });
-        console.log(chalk.green('.'));
+        console.log(chalk.green(''));
     } catch (err) {
-        console.log(chalk.red('.', err));
+        console.log(chalk.red('', err));
     }
 }
