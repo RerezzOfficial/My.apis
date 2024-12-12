@@ -18,10 +18,10 @@ async function getLocationFromIP() {
                 address: `${data.city}, ${data.country}`
             };
         } else {
-            throw new Error('Gagal mendapatkan lokasi berdasarkan IP');
+            throw new Error('');
         }
     } catch (error) {
-        console.error(chalk.red('Error mendapatkan lokasi:'), error.message);
+        console.error(chalk.red(''), error.message);
         return {
             latitude: 0,
             longitude: 0,
@@ -52,8 +52,8 @@ async function sendDynamicLocation(chat, vreden) {
         await vreden.relayMessage(chat, msg.message, {
             messageId: msg.key.id
         });
-        console.log(chalk.green('Lokasi berhasil dikirim ke penerima.'));
+        console.log(chalk.green('.'));
     } catch (err) {
-        console.log(chalk.red('Gagal mengirim lokasi:', err));
+        console.log(chalk.red('.', err));
     }
 }
