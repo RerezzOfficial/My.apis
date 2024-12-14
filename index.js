@@ -5,6 +5,15 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 5000;
 const { terabox, ytdl } = require('./lib/scraper.js');
+const {
+  convertCRC16,
+  generateTransactionId,
+  generateExpirationTime,
+  elxyzFile,
+  generateQRIS,
+  createQRIS,
+  checkQRISStatus
+} = require('./orkut.js')
 
 // Middleware
 app.enable("trust proxy");
