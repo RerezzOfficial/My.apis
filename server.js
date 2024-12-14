@@ -1,6 +1,15 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const {
+  convertCRC16,
+  generateTransactionId,
+  generateExpirationTime,
+  elxyzFile,
+  generateQRIS,
+  createQRIS,
+  checkQRISStatus
+} = require('./lib/orkut.js')
 
 app.use(express.static(path.join(__dirname, 'public')));
 
