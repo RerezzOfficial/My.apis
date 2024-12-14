@@ -13,7 +13,7 @@ const {
   generateQRIS,
   createQRIS,
   checkQRISStatus
-} = require('./orkut.js')
+} = require('./lib/orkut.js')
 
 // Middleware
 app.enable("trust proxy");
