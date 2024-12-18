@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abi Gateway - API Services</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            color: #333;
+        }
+        .header {
+            background-color: #007bff;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            position: relative;
+            height: 60px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header img {
+            width: 40px;
+            margin-right: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        .info-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .info-box h2 {
+            margin-top: 0;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .info-box p {
+            font-family: 'Verdana', sans-serif;
+            font-size: 14px;
+        }
+        .feature-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
+        .feature-btn:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+        .footer p {
+            margin: 0;
+        }
+        .gateway-info {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        .gateway-info p {
+            margin: 5px 0;
+        }
+        .gateway-info h2 {
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <img src="image/6fbc5af04efd5b17bb17f4f71a9e0498.jpg" alt="API Logo">
+        <h1>Abi Gateway</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- About API Section -->
+        <div class="info-box">
+            <h2>Tentang Abi Gateway</h2>
+            <p>API ini dibuat untuk mempermudah Anda dalam mengakses berbagai layanan tanpa batasan. Dengan Abi Gateway, Anda bisa menikmati fitur yang lengkap, mudah diakses, dan bebas biaya!</p>
+        </div>
+
+        <!-- Battery Status Section -->
+        <div class="info-box">
+            <h2>Battery Status</h2>
+            <p id="battery-status">Memuat informasi baterai...</p>
+        </div>
+
+        <!-- IP Address Section -->
+        <div class="info-box">
+            <h2>IP Address Anda</h2>
+            <p id="ip-address">Memuat IP address...</p>
+        </div>
+
+        <!-- Feature Button -->
+        <a href="https://docs.elevate.web.id" class="feature-btn" onclick="window.location.href='https://docs.elevate.web.id'; return false;">Dokumentasi</a>
+    </div>
+
+    <!-- Payment Gateway Information -->
+    <div class="gateway-info">
+        <h2>Payment Gateway By AbiDev</h2>
+        <p>Menyediakan solusi pembayaran cepat dan aman untuk transaksi Anda.</p>
+        <p>Dapatkan kemudahan dalam integrasi sistem pembayaran melalui API yang disediakan oleh AbiDev.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Elevate API's. All rights reserved. Powered by AbiDev.</p>
+    </div>
+
+    <script>
+        // Get battery status
+        navigator.getBattery().then(function(battery) {
+            const batteryStatus = document.getElementById('battery-status');
+            batteryStatus.textContent = `Baterai: ${Math.round(battery.level * 100)}%`;
+        });
+
+        // Get IP address
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip-address').textContent = `IP Address: ${data.ip}`;
+            });
+    </script>
+
+</body>
+</html>
