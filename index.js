@@ -4,7 +4,9 @@ const path = require('path');
 const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 5000;
-const { terabox, ytdl } = require('./lib/scraper.js');
+app.enable("trust proxy");
+app.set("json spaces", 2);
+ 
 const {
   convertCRC16,
   generateTransactionId,
@@ -13,112 +15,89 @@ const {
   generateQRIS,
   createQRIS,
   checkQRISStatus
-} = require('./lib/orkut.js')
+} = require('./orkut.js') 
 
-// Middleware
-app.enable("trust proxy");
-app.set("json spaces", 2);
+// Log Info
+const messages = {
+  error: {
+    status: 404,
+    creator: "AbiDev",
+    result: "Error, Service Unavailable",
+  },
+  notRes: {
+    status: 404,
+    creator: "AbiDev",
+    result: "Error, Invalid JSON Result",
+  },
+  query: {
+    status: 400,
+    creator: "AbiDev",
+    result: "Please input parameter query!",
+  },
+  amount: {
+    status: 400,
+    creator: "AbiDev",
+    result: "Please input parameter amount!",
+  },
+  codeqr: {
+    status: 400,
+    creator: "AbiDev",
+    result: "Please input parameter codeqr!",
+  },
+  url: {
+    status: 400,
+    creator: "AbiDev",
+    result: "Please input parameter URL!",
+  },
+  notUrl: {
+    status: 404,
+    creator: "AbiDev",
+    result: "Error, Invalid URL",
+  },
+};
+function genreff() {
+  const characters = '0123456789';
+  const length = 5;
+  let reffidgen = '';
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    reffidgen += characters[randomIndex];
+  }
+  return reffidgen;
+}
+
+// Middleware untuk CORS
 app.use(cors());
-app.use(express.static(path.join(__dirname, 'public'))); // Middleware untuk file statis
 
-// Endpoint untuk halaman utama
+
+
+
+
+
+// Endpoint untuk servis dokumen HTML
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
-
-// Endpoint tambahan
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'feature.html'));
+  res.sendFile(path.join(__dirname, 'feature.html'));
 });
 
-// API TikTok Downloader
-app.get("/api/download/tiktok", async (req, res) => {
+app.get("/api/tiktok", async (req, res) => {
   const { url } = req.query;
-  if (!url) return res.status(400).json({ error: "Parameter URL tidak ditemukan." });
+  if (!url) return res.status(400).json(messages.url);
 
   try {
-    const { tiktokdl } = require("tiktokdl");
+  const { tiktokdl } = require("tiktokdl")
     const data = await tiktokdl(url);
-    if (!data) return res.status(404).json({ error: "Data tidak ditemukan." });
-
-    res.json({ status: true, creator: "Line", result: data });
+    if (!data) return res.status(404).json(messages.notRes);
+    res.json({ status: true, creator: "Rafael", result: data });
   } catch (e) {
-    res.status(500).json({ error: "Internal server error." });
+    res.status(500).json(messages.error);
   }
 });
 
-// API Terabox Downloader
-app.get('/api/download/terabox', async (req, res) => {
-  try {
-    const { url } = req.query;
-    if (!url) {
-      return res.status(400).json({ error: "Parameter URL tidak ditemukan." });
-    }
 
-    const results = await terabox(url);
-    if (!results || results.length === 0) {
-      return res.status(404).json({ error: "Tidak ada file yang ditemukan." });
-    }
-
-    res.status(200).json({
-      success: true,
-      creator: "Line",
-      results,
-      request_at: new Date(),
-    });
-  } catch (error) {
-    console.error("Error:", error.message);
-    res.status(500).json({ error: "Internal server error." });
-  }
-});
-
-// API Spotify Downloader
-app.get('/api/download/spotify', async (req, res) => {
-  try {
-    const { url } = req.query;
-    if (!url) return res.status(400).json({ error: "Parameter URL tidak ditemukan." });
-
-    const response = await axios.get(`https://api.siputzx.my.id/api/d/spotify?url=${encodeURIComponent(url)}`);
-    const metadata = response.data.metadata;
-    const downloadUrl = response.data.download;
-
-    res.status(200).json({
-      success: true,
-      creator: "Line",
-      metadata,
-      download: downloadUrl,
-    });
-  } catch (e) {
-    console.error("Error:", e.message);
-    res.status(500).json({ error: "Internal server error." });
-  }
-});
-
-// API YouTube Downloader
-app.get('/api/download/ytdl', async (req, res) => {
-  try {
-    const { url, videoQuality, audioQuality } = req.query;
-    if (!url || !videoQuality || !audioQuality) {
-      return res.status(400).json({ error: "Parameter tidak lengkap." });
-    }
-
-    const videoQualityIndex = parseInt(videoQuality, 10);
-    const audioQualityIndex = parseInt(audioQuality, 10);
-
-    const result = await ytdl.downloadVideoAndAudio(url, videoQualityIndex, audioQualityIndex);
-    res.status(200).json({ success: true, creator: "Line", result });
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: "Internal server error." });
-  }
-});
-
-// API ORKUT CREATE DEPOSIT
 app.get('/api/orkut/createpayment', async (req, res) => {
-    const { apikey } = req.query;    
-    if (apikey !== 'linebaik') {
-    return res.status(403).json({ error: "Isi Parameter Apikey" });
-    }
     const { amount } = req.query;
     if (!amount) {
     return res.json("Isi Parameter Amount.");
@@ -129,20 +108,16 @@ app.get('/api/orkut/createpayment', async (req, res) => {
     }
     try {
         const qrData = await createQRIS(amount, codeqr);
-        res.json({ status: true, creator: "Line", result: qrData });        
+        res.json({ status: true, creator: "AbiDev", result: qrData });        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// CEK STATUS 
+
+
 app.get('/api/orkut/cekstatus', async (req, res) => {
-    const { apikey, merchant, keyorkut } = req.query;
-    
-    if (apikey !== 'linebaik') {
-    return res.status(403).json({ error: "Isi Parameter Apikey" });
-    }
-    
+    const { merchant, keyorkut } = req.query;
         if (!merchant) {
         return res.json({ error: "Isi Parameter Merchant." });
     }
@@ -166,22 +141,19 @@ app.get('/api/orkut/cekstatus', async (req, res) => {
 });
 
 
-
-// Penanganan error untuk route yang tidak ditemukan
 app.use((req, res, next) => {
-  res.status(404).send("Halaman tidak ditemukan.");
+  res.status(404).send("Sorry can't find that!");
 });
 
-// Penanganan error server
+// Handle error
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Terjadi kesalahan pada server.");
+  res.status(500).send('Something broke!');
 });
 
 // Jalankan server
 app.listen(PORT, () => {
-  console.log(`Server berjalan pada port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
-
-module.exports = app;
+module.exports = app
