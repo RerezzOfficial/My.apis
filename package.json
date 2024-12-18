@@ -17,6 +17,8 @@
     "express": "^4.19.2",
     "node-fetch": "^2.7.0",
     "jimp": "^0.22.10",
+    "qrcode": "^1.5.4",
+    "qrcode-with-logos": "^1.0.3",
     "request": "^2.88.2",
     "tiktokdl": "^0.0.5"
   }
