@@ -1,0 +1,292 @@
+:root {
+  --bg-color: #1e1e1e;
+  --text-color: #d4d4d4;
+  --textarea-bg: #1e1e1e;
+  --textarea-text: #d4d4d4;
+  --icon-color: #1e90ff;
+  --bg-sidebar: rgba(51, 51, 51, 0.8); 
+}
+
+[data-theme="light"] {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --textarea-bg: #6ba6ff;
+  --textarea-text: #333333;
+  --icon-color: #007acc;
+  --bg-sidebar: rgba(119, 119, 119, 0.8);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.header, .proj, proj2 {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.header {
+  width: 90%;
+  margin: 250px;
+  text-align: center;
+  padding: 25px;
+  border: 3px solid var(--text-color);
+  margin: 20px 0 50px 0;
+  border-radius: 0 50px;
+  background-color: var(--textarea-bg);
+  color: #ffffff;
+  position: relative;
+}
+
+.header img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  padding: 0;
+  border: 3px solid var(--text-color);
+  margin: 20px 0;
+}
+
+.header h1  {
+  margin: 5px;
+  color: var(--text-color);
+  margin: 15px 0;
+}
+
+.header p {
+  color: var(--text-color);
+  margin: 5px;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: var(--text-color);
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.proj {
+  width: 94%;
+  margin: 10px 0 0 0;
+  border: 3px solid var(--text-color);
+  border-radius: 0 30px;
+  overflow: hidden;
+  background-color: var(--textarea-bg);
+  position: relative;
+  
+}
+
+.proj h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 30px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.proj h1 .copy-icon {
+  margin-left: auto; /* Menambahkan jarak ke sisi kanan judul */
+  cursor: pointer;
+  color: var(--icon-color);
+  font-size: 20px;
+  transition: color 0.3s;
+  padding: 15px;
+}
+
+.proj hr {
+  border-bottom: 3px solid var(--text-color);
+}
+
+.proj h2 {
+  padding: 5px 15px;
+  margin: 0;
+}
+
+.proj p {
+  padding: 5px 15px;
+  margin: 0;
+}
+
+.proj a {
+  padding: 5px 15px;
+  margin: 0;
+  text-decoration: none;
+  color: blue;
+}
+
+
+  .proj2 {
+  width: 94%;
+  margin: 10px 0 0 0;
+  border: 3px solid var(--text-color);
+  border-radius: 30px 0;
+  overflow: hidden;
+  background-color: var(--textarea-bg);
+  position: relative;
+  opacity: 0; /* Awalnya tidak terlihat */
+  transform: translateY(50px); /* Mulai dari posisi lebih rendah */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.proj2.visible {
+  opacity: 1; /* Muncul sepenuhnya */
+  transform: translateY(0); /* Kembali ke posisi normal */
+}
+
+.proj2 h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 30px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.proj2 h1 .copy-icon {
+  margin-left: auto; /* Menambahkan jarak ke sisi kanan judul */
+  cursor: pointer;
+  color: var(--icon-color);
+  font-size: 20px;
+  transition: color 0.3s;
+  padding: 15px;
+}
+
+.proj2 hr {
+  border-bottom: 3px solid var(--text-color);
+}
+
+.proj2 h2 {
+  padding: 5px 15px;
+  margin: 0;
+}
+
+.proj2 p {
+  padding: 5px 15px;
+  margin: 0;
+}
+
+
+textarea {
+  width: 100%;
+  margin: 0;
+  max-height: 300px;
+  padding: 15px;
+  border: none;
+  resize: none;
+  outline: none;
+  background: var(--textarea-bg);
+  color: var(--textarea-text);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 19px;
+  overflow-x: auto;
+  line-height: 1.5;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+textarea::selection {
+  background-color: var(--text-color);
+  color: var(--text-color);
+}
+
+.copy-icon:hover {
+  color: #00bfff; /* Warna biru lebih terang saat hover */
+}
+
+
+
+.sidebar {
+  margin: 35px 45px;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: -320px;
+  height: auto;
+  background-color: var(--bg-sidebar); 
+  color: var(--text-color);
+  padding-top: 20px;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  border-radius: 20px;
+  border: 3px solid var(--text-color);
+}
+
+.sidebar img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin: 0 auto; /* Menyusun gambar agar di tengah horizontal */
+  display: block; /* Pastikan gambar dianggap sebagai blok */
+  border: 2px solid var(--text-color);
+}
+
+.sidebar h3 {
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
+}
+
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 20px 0;
+}
+
+.sidebar ul li a {
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+  font-weight: bold;
+  transition: var(--textarea-bg);
+  border-radius: 20px;
+  margin: 0 10px;
+  border: 2px solid var(--text-color);
+}
+
+.sidebar ul li a:hover {
+  background-color: #575757;
+}
+
+.content {
+  margin-left: 20px;
+  padding: 20px;
+}
+
+.toggle-btn {
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.content h1 {
+  margin-top: 50px;
+}
