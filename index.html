@@ -1,78 +1,59 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <meta content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1" name="viewport" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-  <link href="/style.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OkeConnect</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
 </head>
-<body data-theme="dark">
 
+<body>
+    <header>
+        <nav>
+            <div class="logo">Kurumi Official</div>
+            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <ul>
+                <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#apis"><i class="fas fa-cogs"></i> APIs</a></li>
+                <li><a href="#pricing"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+            </ul>
+        </nav>
+        <!-- Mobile Menu -->
+        <ul class="mobile-nav" id="mobile-nav">
+            <li><a href="#home"><i class="fas fa-home">&nbsp;</i> Home</a></li>
+            <li><a href="#apis"><i class="fas fa-cogs">&nbsp;</i> APIs</a></li>
+            <li><a href="#pricing"><i class="fas fa-dollar-sign">&nbsp;</i> Pricing</a></li>
+        </ul>
+    </header>
 
+    <section id="#home">
+        <img src="https://rammpntxxx-up.hf.space/file/image-jlwyzj3ona.png" alt="Y">
+        <h2>I'M Rerezz Official</h2>
+    </section>
 
-  <div class="header" id="home">
-    <button id="toggle-btn" class="toggle-btn">&#9776;</button>
-    <img src="https://pomf2.lain.la/f/yn0n7c3l.jpg" alt=" ">
-    <h1><i class="fas fa-user"></i>&nbsp;I'M Rerezz</h1>
-    <p>Welcome To My Website</p>
-    <i id="theme-icon" class="fas fa-moon theme-toggle" onclick="toggleTheme()"></i>
-  </div>
-  
-  <div class="proj2">
-  <h1>&nbsp;&nbsp;
-    <i class="fas fa-clock project-icon">&nbsp;&nbsp;</i> INFO WAKTU
-    <i class="copy-icon" onclick="copyText()"></i>
-  </h1>
-  <hr>
-    <h2>Tanggal</h2>
-    <p id="date">Memuat tanggal...</p>
-    <h2>Jam</h2>
-    <p id="clock">Memuat jam...</p><br>
-  </div>
+    <section id="#apis">
+        <h1><i class="fas fa-cogs"></i> APIs</h1>
+        <a href="./anime/cosplay.json">APIs ANIME COSPLAY <i class="fas fa-share"></i></a>
+    </section>
 
-  
-  <div class="proj" id="user">
-    <h1>&nbsp;&nbsp;
-     <i class="fas fa-user project-icon">&nbsp;&nbsp;</i> USER INFO
-      <i class="copy-icon" onclick="copyText()"></i>
-    </h1><hr>
-    <h2>IP Address Anda</h2>
-    <p id="ip-address">Memuat IP address...</p>
-    <h2>Battery Status</h2>
-    <p id="battery-status">Memuat informasi baterai...</p>
-    <h2>Your Device</h2>
-    <p id="device">Memuat deteksi perangkat...</p>
-    <h2>Tipe Koneksi</h2>
-    <p id="connection">Memuat koneksi...</p>
-    <h2>Resolusi Layar</h2>
-    <p id="screen">Memuat resolusi layar...</p>
-    <h2>Lokasi Anda</h2>
-    <a id="location-link" href="#" target="_blank">Memuat lokasi...</a>
-    <br><br>
-  </div>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("mobile-nav");
+            menu.classList.toggle("show");
+        }
 
-  <div class="proj2">
-    <h1>&nbsp;&nbsp;
-      <i class="fas fa-project-diagram project-icon">&nbsp;&nbsp;</i> Kata Kata Hari Ini
-      <i class="fas fa-copy copy-icon" onclick="copyText()"></i>
-    </h1>
-    <hr>
-    <textarea readonly>
-Akan Ku Pastikan Jika Tidak Dengan Mu Maka Tidak Dengan Yang Lain :)
-    </textarea>
-  </div>
+        document.addEventListener("click", function (event) {
+            const menu = document.getElementById("mobile-nav");
+            const menuToggle = document.querySelector(".menu-toggle");
+            const isClickInside = menu.contains(event.target) || menuToggle.contains(event.target);
 
-  <div class="sidebar" id="sidebar">
-    <img src="https://pomf2.lain.la/f/yn0n7c3l.jpg" alt="">
-    <h3>I'M Rerezz</h3>
-    <ul>
-      <li><a href="#home"><i class="fas fa-home">&nbsp;&nbsp;</i>Home</a></li>
-      <li><a href="#user"><i class="fas fa-desktop"></i>&nbsp;&nbsp;</i>Device Info</a></li>
-      <li><a href="#code"><i class="fas fa-code">&nbsp;&nbsp;</i>Sourcode</a></li>
-      <li><a href="#"><i class="fas fa-server">&nbsp;&nbsp;</i>APIs</a></li>
-      <li><a href="#"><i class="fas fa-address-book"></i>&nbsp;&nbsp;</i>Contact</a></li>
-      <li><a href="#"><i class="fas fa-info-circle">&nbsp;&nbsp;</i>About</a></li>
-    </ul>
-  </div>
-
-  <script src="/script.js"></script>
+            if (!isClickInside) {
+                menu.classList.remove("show");
+            }
+        });
+    </script>
 </body>
+
 </html>
