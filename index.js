@@ -90,6 +90,10 @@ app.get('/anime/cosplay.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'anime', 'cosplay.json'));
 });
 
+app.get('/anime/akiyama.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'anime', 'akiyama.json'));
+});
+
 app.get('/quotes/galau.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
