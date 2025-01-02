@@ -86,19 +86,8 @@ app.get('/dashboard', (req, res) => {
 });
 
 // API untuk cosplay.json
-// Menyajikan file JSON cosplay di URL tanpa ekstensi .json
-app.get('/anime/cosplay', (req, res) => {
-  const cosplayJsonPath = path.join(__dirname, 'anime', 'cosplay.json');
-  
-  // Membaca file JSON dan mengirimkan isinya sebagai response
-  fs.readFile(cosplayJsonPath, 'utf8', (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error reading cosplay JSON' });
-    }
-    
-    res.header('Content-Type', 'application/json');
-    res.send(data);
-  });
+app.get('/anime/cosplay.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'anime', 'cosplay.json'));
 });
 
 
