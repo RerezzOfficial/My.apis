@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -75,14 +76,16 @@ app.use(cors());
 // Static files untuk folder anime
 app.use('/anime', express.static(path.join(__dirname, 'anime')));
 
-
+// Endpoint untuk servis dokumen HTML
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'feature.html'));
 });
 
 // API untuk cosplay.json
-
 // Menyajikan file JSON cosplay di URL tanpa ekstensi .json
 app.get('/anime/cosplay', (req, res) => {
   const cosplayJsonPath = path.join(__dirname, 'anime', 'cosplay.json');
