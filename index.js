@@ -72,6 +72,18 @@ app.use(cors());
 
 
 
+fetch('/anime/cosplay.json')
+    .then(response => response.json())
+    .then(data => {
+        const gallery = document.getElementById('cosplay-gallery');
+        data.cosplayImages.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Cosplay Image';
+            gallery.appendChild(img);
+        });
+    })
+    .catch(error => console.error('Error loading cosplay images:', error));
 
 
 // Endpoint untuk servis dokumen HTML
