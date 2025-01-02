@@ -75,12 +75,7 @@ app.use(cors());
 // Static files untuk folder anime
 app.use('/anime', express.static(path.join(__dirname, 'anime')));
 
-// Menyajikan file statis seperti CSS dan gambar
-app.use(express.static(path.join(__dirname, 'public')));
-// Endpoint untuk servis dokumen HTML
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+
 
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'feature.html'));
