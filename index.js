@@ -2,9 +2,9 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 app.enable("trust proxy");
 app.set("json spaces", 2);
  
@@ -73,24 +73,27 @@ app.use(cors());
 
 
 
-// Static files untuk folder anime
-app.use('/anime', express.static(path.join(__dirname, 'anime')));
+fetch('/anime/cosplay.json')
+    .then(response => response.json())
+    .then(data => {
+        const gallery = document.getElementById('cosplay-gallery');
+        data.cosplayImages.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = 'Cosplay Image';
+            gallery.appendChild(img);
+        });
+    })
+    .catch(error => console.error('Error loading cosplay images:', error));
+
 
 // Endpoint untuk servis dokumen HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
-
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'feature.html'));
 });
-
-// API untuk cosplay.json
-app.get('/anime/cosplay.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'anime', 'cosplay.json'));
-});
-
-
 
 app.get("/api/tiktok", async (req, res) => {
   const { url } = req.query;
