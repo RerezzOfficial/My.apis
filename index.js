@@ -75,8 +75,6 @@ app.use(cors());
 
 // Static files untuk folder anime
 app.use('/anime', express.static(path.join(__dirname, 'anime')));
-// Static files untuk folder quotes
-app.use('/quotes', express.static(path.join(__dirname, 'quotes')));
 
 // Endpoint untuk servis dokumen HTML
 app.get('/', (req, res) => {
@@ -92,12 +90,20 @@ app.get('/anime/cosplay.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'anime', 'cosplay.json'));
 });
 
-// API untuk Quotes
-app.get('/quotes/galau.json', (req, res) => {
-  res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
+
+app.get('/api/quotes/galalu', (req, res) => {
+    const quotesJsonPath = path.join(__dirname, 'quotes', 'galalu.json');
+    
+    // Membaca file JSON dan mengirimkan isinya sebagai respons
+    fs.readFile(quotesJsonPath, 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error reading galalu JSON' });
+        }
+
+        res.header('Content-Type', 'application/json');
+        res.send(data);
+    });
 });
-
-
 
 app.get("/api/tiktok", async (req, res) => {
   const { url } = req.query;
