@@ -102,7 +102,10 @@ app.get('/quotes/motivasi.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
 
-
+//=====[ OKECONNECT API ]=====//
+app.get('/okeconnect/dana.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
+});
 
 
 app.get("/api/tiktok", async (req, res) => {
