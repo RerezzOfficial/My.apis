@@ -111,6 +111,13 @@ app.get('/okeconnect/godrive.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'godrive.json'));
 });
 
+app.get('/okeconnect/ovo.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'okeconnect', 'ovo.json'));
+});
+
+
+
+
 app.get("/api/tiktok", async (req, res) => {
   const { url } = req.query;
   if (!url) return res.status(400).json(messages.url);
