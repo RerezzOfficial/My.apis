@@ -120,7 +120,7 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 app.get('/api/bocil', async (req, res) => {
 
-  let response = await fetch('https://raw.githubusercontent.com/Rianofc/apis/master/function/bocil.json');
+  let response = await fetch('https://github.com/RerezzOfficial/My.apis/blob/main/nsfw/bocil.json');
         var data = await response.json();
         var randomIndex = Math.floor(Math.random() * data.results.length);
         var randomResult = data.results[randomIndex];
