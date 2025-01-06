@@ -117,22 +117,24 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 
-
 app.get('/api/bocil', (req, res) => {
+  // Lokasi file bocil.json
   const filePath = path.join(__dirname, 'nsfw', 'bocil.json');
-  
+
+  // Membaca file bocil.json
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
-      console.error('Error membaca file:', err);
+      console.error('Error membaca file bocil.json:', err);
       return res.status(500).json({ error: 'Gagal membaca file bocil.json' });
     }
-    
+
     try {
+      // Parse JSON untuk mendapatkan array video
       const bocilData = JSON.parse(data);
-      const videos = bocilData.randomBocil;
+      const videos = bocilData.randomBocil; // Pastikan struktur data sesuai dengan bocil.json
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
-      // Kirimkan HTML untuk menampilkan video acak sebagai background
+      // Mengirimkan HTML dengan video acak sebagai background
       res.send(`
         <html>
           <head>
@@ -179,6 +181,7 @@ app.get('/api/bocil', (req, res) => {
     }
   });
 });
+
 
 
 
