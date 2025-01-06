@@ -116,9 +116,32 @@ app.get('/okeconnect/ovo', (req, res) => {
 });
 
 app.get('/api/bocil', (req, res) => {
-  res.sendFile(path.join(__dirname, 'nsfw', 'bocil.json'));
-});
+  // Path ke file bocil.json
+  const filePath = path.join(__dirname, 'nsfw', 'bocil.json');
+  
+  // Membaca file JSON
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.error('Error membaca file:', err);
+      return res.status(500).json({ error: 'Gagal membaca file bocil.json' });
+    }
+    
+    try {
+      // Parse data JSON
+      const bocilData = JSON.parse(data);
+      const videos = bocilData.randomBocil;
 
+      // Pilih URL video secara acak
+      const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+
+      // Kembalikan URL video sebagai respons
+      res.redirect(randomVideo);
+    } catch (parseError) {
+      console.error('Error parsing JSON:', parseError);
+      res.status(500).json({ error: 'Gagal memproses file bocil.json' });
+    }
+  });
+});
 
 
 app.get("/api/tiktok", async (req, res) => {
