@@ -88,15 +88,11 @@ app.get('/dashboard', (req, res) => {
 
 app.get('/api/cosplay', async (req, res) => {
   try {
-    const filePath = path.join(__dirname, 'anime', 'cosplay.json');
-
-    // Cek apakah file cosplay.json ada di path yang benar
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'File cosplay.json tidak ditemukan.' });
-    }
-
-    const data = await fs.promises.readFile(filePath, 'utf8');
-    const cosplayData = JSON.parse(data);
+    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/cosplay.json';
+    
+    // Ambil data dari URL repositori GitHub
+    const response = await axios.get(fileUrl);
+    const cosplayData = response.data;
 
     if (!cosplayData.results || cosplayData.results.length === 0) {
       return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
@@ -106,17 +102,17 @@ app.get('/api/cosplay', async (req, res) => {
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
     const randomCosplay = cosplayData.results[randomIndex];
     
-    // Kirim gambar secara langsung menggunakan axios
+    // Kirim gambar secara langsung
     const imageUrl = randomCosplay.url;
 
     // Mendapatkan gambar menggunakan axios dan pipe ke response
-    const response = await axios({
+    const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
       responseType: 'stream'
     });
 
-    response.data.pipe(res);  // Pipe gambar langsung ke response
+    imageResponse.data.pipe(res);  // Pipe gambar langsung ke response
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
