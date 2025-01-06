@@ -116,6 +116,7 @@ app.get('/okeconnect/ovo', (req, res) => {
 });
 
 
+
 app.get('/api/bocil', (req, res) => {
   // Path ke file bocil.json
   const filePath = path.join(__dirname, 'nsfw', 'bocil.json');
@@ -132,21 +133,47 @@ app.get('/api/bocil', (req, res) => {
       const bocilData = JSON.parse(data);
       const videos = bocilData.randomBocil;
 
-      // Pilih URL video secara acak
+      // Pilih video secara acak
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
-      // Kembalikan HTML dengan video yang dipilih
+      // Kembalikan HTML dengan video sebagai background
       res.send(`
         <html>
           <head>
             <title>Video Bocil</title>
+            <style>
+              body {
+                margin: 0;
+                height: 100vh;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-family: Arial, sans-serif;
+                position: relative;
+              }
+              video {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* Agar video memenuhi layar */
+                z-index: -1; /* Video berada di belakang konten */
+              }
+              h1 {
+                z-index: 1;
+                font-size: 3rem;
+              }
+            </style>
           </head>
           <body>
-            <h1>Video Acak</h1>
-            <video width="640" height="360" controls>
+            <video autoplay muted loop>
               <source src="${randomVideo}" type="video/mp4">
               Your browser does not support the video tag.
             </video>
+            <h1>Video Acak sebagai Background</h1>
           </body>
         </html>
       `);
@@ -156,6 +183,7 @@ app.get('/api/bocil', (req, res) => {
     }
   });
 });
+
 
 
 
