@@ -120,61 +120,26 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 app.get('/api/bocil', async (req, res) => {
-  try {
-    // URL tempat bocil.json disimpan di cloud atau di URL yang dapat diakses
-    const bocilJsonUrl = 'https://apis.xyrezz.online-server.biz.id/api/bocil.json';
-    const response = await axios.get(bocilJsonUrl);
-    const bocilData = response.data;
-
-    // Pastikan bocilData memiliki array video yang tepat
-    const videos = bocilData.randomBocil;
-    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-
-    // Mengirimkan HTML dengan video acak sebagai background
-    res.send(`
-      <html>
-        <head>
-          <title>Video Acak Sebagai Background</title>
-          <style>
-            body {
-              margin: 0;
-              height: 100vh;
-              overflow: hidden;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              color: white;
-              font-family: Arial, sans-serif;
-              position: relative;
-            }
-            video {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              z-index: -1; /* Agar video di belakang konten */
-            }
-            h1 {
-              z-index: 1;
-              font-size: 3rem;
-            }
-          </style>
-        </head>
-        <body>
-          <video autoplay muted loop>
-            <source src="${randomVideo}" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-          <h1>Video Acak sebagai Background</h1>
-        </body>
-      </html>
-    `);
-  } catch (error) {
-    console.error('Terjadi kesalahan:', error);
-    res.status(500).json({ error: 'Gagal memproses file bocil.json' });
-  }
+	try {
+		let response = await axios('https://github.com/RerezzOfficial/My.apis/blob/main/nsfw/bocil.json');
+		var data = await response.data
+		var randomIndex = Math.floor(Math.random() * data.results.length);
+		var randomResult = data.results[randomIndex];
+		var downloadLink = randomResult.url;
+		var requestSettings = {
+			url: downloadLink,
+			method: 'GET',
+			encoding: null
+		};
+		request(requestSettings, function(error, response, body) {
+			res.set('Content-Type', 'video/mp4');
+			res.send(body);
+		});
+	} catch (error) {
+		res.status(500).json({
+			error: error.message
+		});
+	}
 });
 
 
