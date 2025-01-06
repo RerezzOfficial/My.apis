@@ -86,11 +86,22 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'feature.html'));
 });
 
+
 app.get('/api/cosplay', async (req, res) => {
   try {
     const filePath = path.join(__dirname, 'anime', 'cosplay.json');
+
+    // Cek apakah file cosplay.json ada di path yang benar
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: 'File cosplay.json tidak ditemukan.' });
+    }
+
     const data = fs.readFileSync(filePath, 'utf8');
     const cosplayData = JSON.parse(data);
+
+    if (!cosplayData.results || cosplayData.results.length === 0) {
+      return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
+    }
 
     // Ambil data acak dari cosplayData
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
