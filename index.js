@@ -86,15 +86,15 @@ app.get('/dashboard', (req, res) => {
 });
 
 // API untuk cosplay.json
-app.get('/anime/cosplay.json', (req, res) => {
+app.get('/anime/cosplay', (req, res) => {
   res.sendFile(path.join(__dirname, 'anime', 'cosplay.json'));
 });
 
-app.get('/anime/akiyama.json', (req, res) => {
+app.get('/anime/akiyama', (req, res) => {
   res.sendFile(path.join(__dirname, 'anime', 'akiyama.json'));
 });
 
-app.get('/quotes/galau.json', (req, res) => {
+app.get('/quotes/galau', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
 
@@ -103,15 +103,15 @@ app.get('/quotes/motivasi', (req, res) => {
 });
 
 //=====[ OKECONNECT API ]=====//
-app.get('/okeconnect/dana.json', (req, res) => {
+app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
 
-app.get('/okeconnect/godrive.json', (req, res) => {
+app.get('/okeconnect/godrive', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'godrive.json'));
 });
 
-app.get('/okeconnect/ovo.json', (req, res) => {
+app.get('/okeconnect/ovo', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'ovo.json'));
 });
 
