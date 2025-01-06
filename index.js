@@ -19,41 +19,60 @@ const {
   checkQRISStatus
 } = require('./orkut.js') 
 
+async function fetchAllParameters(content, user, prompt, webSearchMode, imageBuffer) {
+    try {
+        const payload = {
+            content: content,
+            user: user,
+            prompt: prompt,
+            webSearchMode: webSearchMode,
+            imageBuffer: imageBuffer
+        };
+
+        const response = await axios.post('https://lumin-ai.xyz/', payload);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error; 
+    }
+}
+
 // Log Info
 const messages = {
   error: {
     status: 404,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Error, Service Unavailable",
   },
   notRes: {
     status: 404,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Error, Invalid JSON Result",
   },
   query: {
     status: 400,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Please input parameter query!",
   },
   amount: {
     status: 400,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Please input parameter amount!",
   },
   codeqr: {
     status: 400,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Please input parameter codeqr!",
   },
   url: {
     status: 400,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Please input parameter URL!",
   },
   notUrl: {
     status: 404,
-    creator: "AbiDev",
+    creator: "Rezz Devv",
     result: "Error, Invalid URL",
   },
 };
@@ -68,16 +87,12 @@ function genreff() {
   return reffidgen;
 }
 
-// Middleware untuk CORS
 app.use(cors());
 
 
-
-
-// Static files untuk folder anime
 app.use('/anime', express.static(path.join(__dirname, 'anime')));
 
-// Endpoint untuk servis dokumen HTML
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -90,7 +105,6 @@ app.get('/api/cosplay', async (req, res) => {
   try {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/cosplay.json';
     
-    // Ambil data dari URL repositori GitHub
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
 
@@ -98,21 +112,18 @@ app.get('/api/cosplay', async (req, res) => {
       return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
     }
 
-    // Ambil data acak dari cosplayData
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
     const randomCosplay = cosplayData.results[randomIndex];
     
-    // Kirim gambar secara langsung
     const imageUrl = randomCosplay.url;
 
-    // Mendapatkan gambar menggunakan axios dan pipe ke response
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
       responseType: 'stream'
     });
 
-    imageResponse.data.pipe(res);  // Pipe gambar langsung ke response
+    imageResponse.data.pipe(res); 
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
@@ -123,7 +134,6 @@ app.get('/api/akiyama', async (req, res) => {
   try {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/akiyama.json';
     
-    // Ambil data dari URL repositori GitHub
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
 
@@ -131,21 +141,18 @@ app.get('/api/akiyama', async (req, res) => {
       return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
     }
 
-    // Ambil data acak dari cosplayData
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
     const randomCosplay = cosplayData.results[randomIndex];
     
-    // Kirim gambar secara langsung
     const imageUrl = randomCosplay.url;
 
-    // Mendapatkan gambar menggunakan axios dan pipe ke response
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
       responseType: 'stream'
     });
 
-    imageResponse.data.pipe(res);  // Pipe gambar langsung ke response
+    imageResponse.data.pipe(res);  
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
@@ -154,25 +161,37 @@ app.get('/api/akiyama', async (req, res) => {
 
 app.get('/api/quotes/galau', async (req, res) => {
   try {
-    // Mengambil data dari URL GitHub
     const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/quotes/galau.json');
-    
-    // Mendapatkan array dari quotes yang ada di galau.json
     const quotes = response.data.quotes;
-
-    // Pilih quote secara acak
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-
-    // Kirim quote acak ke klien
     res.json({ quote: randomQuote });
   } catch (error) {
     console.error('Error fetching galau quotes:', error);
     res.status(500).json({ error: 'Terjadi kesalahan saat mengambil quotes galau.' });
   }
 });
-
 app.get('/quotes/motivasi', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
+});
+
+//=====[ API AI ]=====//
+app.get('/api/luminai', async (req, res) => {
+  try {
+    const message = req.query.message;
+    if (!message) {
+      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
+    }
+    fetchAllParameters(message)
+    .then((result) => {
+    res.status(200).json({
+      status: 200,
+      creatorai: "RezzDev",   
+      result 
+    });
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 //=====[ OKECONNECT API ]=====//
@@ -225,7 +244,7 @@ app.get("/api/tiktok", async (req, res) => {
   const { tiktokdl } = require("tiktokdl")
     const data = await tiktokdl(url);
     if (!data) return res.status(404).json(messages.notRes);
-    res.json({ status: true, creator: "Rafael", result: data });
+    res.json({ status: true, creator: "Rezz Devv", result: data });
   } catch (e) {
     res.status(500).json(messages.error);
   }
@@ -243,7 +262,7 @@ app.get('/api/orkut/createpayment', async (req, res) => {
     }
     try {
         const qrData = await createQRIS(amount, codeqr);
-        res.json({ status: true, creator: "AbiDev", result: qrData });        
+        res.json({ status: true, creator: "Rezz Devv", result: qrData });        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -263,7 +282,7 @@ app.get('/api/orkut/cekstatus', async (req, res) => {
         const apiUrl = `https://gateway.okeconnect.com/api/mutasi/qris/${merchant}/${keyorkut}`;
         const response = await axios.get(apiUrl);
         const result = response.data;
-                // Check if data exists and get the latest transaction
+
         const latestTransaction = result.data && result.data.length > 0 ? result.data[0] : null;
                 if (latestTransaction) {
             res.json(latestTransaction);
@@ -280,13 +299,11 @@ app.use((req, res, next) => {
   res.status(404).send("Sorry can't find that!");
 });
 
-// Handle error
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
 
-// Jalankan server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
