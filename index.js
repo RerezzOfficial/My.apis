@@ -19,22 +19,21 @@ const {
   checkQRISStatus
 } = require('./orkut.js') 
 
-async function fetchAllParameters(content, user, prompt, webSearchMode, imageBuffer) {
+async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
         const payload = {
             content: content,
             user: user,
             prompt: prompt,
             webSearchMode: webSearchMode,
-            imageBuffer: imageBuffer
         };
 
         const response = await axios.post('https://lumin-ai.xyz/', payload);
         console.log(response.data);
-        return response.data;
+        return response.data;  // Hanya mengembalikan teks dari respons
     } catch (error) {
         console.error(error);
-        throw error; 
+        throw error;
     }
 }
 
@@ -178,22 +177,29 @@ app.get('/quotes/motivasi', (req, res) => {
 app.get('/api/luminai', async (req, res) => {
   try {
     const message = req.query.message;
+    const user = req.query.user || 'default_user';  // Misalnya Anda ingin menggunakan 'user' sebagai parameter, jika tidak ada, gunakan default
+    const prompt = req.query.prompt || 'default_prompt';  // Parameter prompt
+    const webSearchMode = req.query.webSearchMode || false;  // Parameter webSearchMode, default false
+
+    // Validasi jika parameter message tidak ada
     if (!message) {
       return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
     }
-    fetchAllParameters(message)
-    .then((result) => {
+
+    // Panggil fungsi fetchTextOnly dengan semua parameter yang dibutuhkan
+    const result = await fetchTextOnly(message, user, prompt, webSearchMode);
+    
+    // Kirimkan teks sebagai respons ke client
     res.status(200).json({
       status: 200,
-      creatorai: "RezzDev",   
-      result 
+      creatorai: "RezzDev",
+      result: result.text // Ambil hanya teks yang relevan dari respons
     });
-    })
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 //=====[ OKECONNECT API ]=====//
 app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
