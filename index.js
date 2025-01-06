@@ -120,7 +120,6 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 app.get('/api/bocil', async (req, res) => {
-app.get('/api/bocil', async (req, res) => {
 	try {
 		let response = await axios('https://raw.githubusercontent.com/Rianofc/apis/master/function/bocil.json');
 		var data = await response.data
