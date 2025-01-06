@@ -2,6 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -117,73 +118,64 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 
-app.get('/api/bocil', (req, res) => {
-  // Lokasi file bocil.json
-  const filePath = path.join(__dirname, 'nsfw', 'bocil.json');
 
-  // Membaca file bocil.json
-  fs.readFile(filePath, 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error membaca file bocil.json:', err);
-      return res.status(500).json({ error: 'Gagal membaca file bocil.json' });
-    }
+app.get('/api/bocil', async (req, res) => {
+  try {
+    // URL tempat bocil.json disimpan di cloud atau di URL yang dapat diakses
+    const bocilJsonUrl = 'https://apis.xyrezz.online-server.biz.id/api/bocil.json';
+    const response = await axios.get(bocilJsonUrl);
+    const bocilData = response.data;
 
-    try {
-      // Parse JSON untuk mendapatkan array video
-      const bocilData = JSON.parse(data);
-      const videos = bocilData.randomBocil; // Pastikan struktur data sesuai dengan bocil.json
-      const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+    // Pastikan bocilData memiliki array video yang tepat
+    const videos = bocilData.randomBocil;
+    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
-      // Mengirimkan HTML dengan video acak sebagai background
-      res.send(`
-        <html>
-          <head>
-            <title>Video Acak Sebagai Background</title>
-            <style>
-              body {
-                margin: 0;
-                height: 100vh;
-                overflow: hidden;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: white;
-                font-family: Arial, sans-serif;
-                position: relative;
-              }
-              video {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                z-index: -1; /* Agar video di belakang konten */
-              }
-              h1 {
-                z-index: 1;
-                font-size: 3rem;
-              }
-            </style>
-          </head>
-          <body>
-            <video autoplay muted loop>
-              <source src="${randomVideo}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <h1>Video Acak sebagai Background</h1>
-          </body>
-        </html>
-      `);
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      res.status(500).json({ error: 'Gagal memproses file bocil.json' });
-    }
-  });
+    // Mengirimkan HTML dengan video acak sebagai background
+    res.send(`
+      <html>
+        <head>
+          <title>Video Acak Sebagai Background</title>
+          <style>
+            body {
+              margin: 0;
+              height: 100vh;
+              overflow: hidden;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              color: white;
+              font-family: Arial, sans-serif;
+              position: relative;
+            }
+            video {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              z-index: -1; /* Agar video di belakang konten */
+            }
+            h1 {
+              z-index: 1;
+              font-size: 3rem;
+            }
+          </style>
+        </head>
+        <body>
+          <video autoplay muted loop>
+            <source src="${randomVideo}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <h1>Video Acak sebagai Background</h1>
+        </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error('Terjadi kesalahan:', error);
+    res.status(500).json({ error: 'Gagal memproses file bocil.json' });
+  }
 });
-
-
-
 
 
 app.get("/api/tiktok", async (req, res) => {
