@@ -86,9 +86,25 @@ app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'feature.html'));
 });
 
-// API untuk cosplay.json
-app.get('/anime/cosplay', (req, res) => {
-  res.sendFile(path.join(__dirname, 'anime', 'cosplay.json'));
+app.get('/api/cosplay', async (req, res) => {
+  try {
+    const filePath = path.join(__dirname, 'anime', 'cosplay.json');
+    const data = fs.readFileSync(filePath, 'utf8');
+    const cosplayData = JSON.parse(data);
+
+    // Ambil data acak dari cosplayData
+    const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
+    const randomCosplay = cosplayData.results[randomIndex];
+    
+    // Kirim gambar secara langsung
+    const imageUrl = randomCosplay.url;
+    
+    request(imageUrl)
+      .pipe(res);  // Pipe gambar langsung ke response
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
+  }
 });
 
 app.get('/anime/akiyama', (req, res) => {
