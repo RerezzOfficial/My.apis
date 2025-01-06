@@ -115,6 +115,9 @@ app.get('/okeconnect/ovo', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'ovo.json'));
 });
 
+app.get('/api/bocil', (req, res) => {
+  res.sendFile(path.join(__dirname, 'nsfw', 'bocil.json'));
+});
 
 
 
