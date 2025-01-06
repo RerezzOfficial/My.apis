@@ -118,29 +118,24 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 
-
 app.get('/api/bocil', async (req, res) => {
-	try {
-		let response = await axios('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/nsfw/bocil.json');
-		var data = await response.data
-		var randomIndex = Math.floor(Math.random() * data.results.length);
-		var randomResult = data.results[randomIndex];
-		var downloadLink = randomResult.url;
-		var requestSettings = {
-			url: downloadLink,
-			method: 'GET',
-			encoding: null
-		};
-		request(requestSettings, function(error, response, body) {
-			res.set('Content-Type', 'video/mp4');
-			res.send(body);
-		});
-	} catch (error) {
-		res.status(500).json({
-			error: error.message
-		});
-	}
+
+  let response = await fetch('https://raw.githubusercontent.com/Rianofc/apis/master/function/bocil.json');
+        var data = await response.json();
+        var randomIndex = Math.floor(Math.random() * data.results.length);
+        var randomResult = data.results[randomIndex];
+        var downloadLink = randomResult.url;
+	var requestSettings = {
+        url: downloadLink,
+        method: 'GET',
+        encoding: null
+    };
+    request(requestSettings, function (error, response, body) {
+        res.set('Content-Type', 'video/mp4');
+        res.send(body);
+    });    
 });
+
 
 
 app.get("/api/tiktok", async (req, res) => {
