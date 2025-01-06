@@ -117,11 +117,10 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 
+
 app.get('/api/bocil', (req, res) => {
-  // Path ke file bocil.json
   const filePath = path.join(__dirname, 'nsfw', 'bocil.json');
   
-  // Membaca file JSON
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
       console.error('Error membaca file:', err);
@@ -129,18 +128,15 @@ app.get('/api/bocil', (req, res) => {
     }
     
     try {
-      // Parse data JSON
       const bocilData = JSON.parse(data);
       const videos = bocilData.randomBocil;
-
-      // Pilih video secara acak
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
-      // Kembalikan HTML dengan video sebagai background
+      // Kirimkan HTML untuk menampilkan video acak sebagai background
       res.send(`
         <html>
           <head>
-            <title>Video Bocil</title>
+            <title>Video Acak Sebagai Background</title>
             <style>
               body {
                 margin: 0;
@@ -159,8 +155,8 @@ app.get('/api/bocil', (req, res) => {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                object-fit: cover; /* Agar video memenuhi layar */
-                z-index: -1; /* Video berada di belakang konten */
+                object-fit: cover;
+                z-index: -1; /* Agar video di belakang konten */
               }
               h1 {
                 z-index: 1;
@@ -177,8 +173,8 @@ app.get('/api/bocil', (req, res) => {
           </body>
         </html>
       `);
-    } catch (parseError) {
-      console.error('Error parsing JSON:', parseError);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
       res.status(500).json({ error: 'Gagal memproses file bocil.json' });
     }
   });
