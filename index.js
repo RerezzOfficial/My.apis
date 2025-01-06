@@ -119,21 +119,34 @@ app.get('/okeconnect/ovo', (req, res) => {
 
 
 app.get('/api/bocil', async (req, res) => {
+  try {
+    // Mendapatkan bocil.json menggunakan URL raw GitHub
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/nsfw/bocil.json');
+    
+    // Mengambil data video acak dari bocil.json
+    const bocilData = response.data; // Format data akan disesuaikan jika perlu
+    const videos = bocilData.randomBocil; // Sesuaikan dengan format JSON yang benar
+    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
-  let response = await fetch('https://github.com/RerezzOfficial/My.apis/blob/main/nsfw/bocil.json');
-        var data = await response.json();
-        var randomIndex = Math.floor(Math.random() * data.results.length);
-        var randomResult = data.results[randomIndex];
-        var downloadLink = randomResult.url;
-	var requestSettings = {
-        url: downloadLink,
-        method: 'GET',
-        encoding: null
-    };
-    request(requestSettings, function (error, response, body) {
-        res.set('Content-Type', 'video/mp4');
-        res.send(body);
-    });    
+    // Mengirimkan video langsung ke client dengan tipe MIME 'video/mp4'
+    axios({
+      method: 'get',
+      url: randomVideo,
+      responseType: 'stream',  // Untuk mengirimkan video sebagai stream
+    })
+    .then(videoResponse => {
+      res.setHeader('Content-Type', 'video/mp4');
+      videoResponse.data.pipe(res);  // Mengirimkan data video ke client
+    })
+    .catch(error => {
+      console.error('Error fetching video:', error);
+      res.status(500).json({ error: 'Terjadi kesalahan saat mengambil video' });
+    });
+    
+  } catch (error) {
+    console.error('Terjadi kesalahan:', error);
+    res.status(500).json({ error: 'Gagal memproses file bocil.json' });
+  }
 });
 
 
