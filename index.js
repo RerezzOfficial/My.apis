@@ -115,6 +115,7 @@ app.get('/okeconnect/ovo', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'ovo.json'));
 });
 
+
 app.get('/api/bocil', (req, res) => {
   // Path ke file bocil.json
   const filePath = path.join(__dirname, 'nsfw', 'bocil.json');
@@ -134,14 +135,28 @@ app.get('/api/bocil', (req, res) => {
       // Pilih URL video secara acak
       const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
-      // Kembalikan URL video sebagai respons
-      res.redirect(randomVideo);
+      // Kembalikan HTML dengan video yang dipilih
+      res.send(`
+        <html>
+          <head>
+            <title>Video Bocil</title>
+          </head>
+          <body>
+            <h1>Video Acak</h1>
+            <video width="640" height="360" controls>
+              <source src="${randomVideo}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </body>
+        </html>
+      `);
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
       res.status(500).json({ error: 'Gagal memproses file bocil.json' });
     }
   });
 });
+
 
 
 app.get("/api/tiktok", async (req, res) => {
