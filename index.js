@@ -98,7 +98,7 @@ app.get('/quotes/galau.json', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
 
-app.get('/quotes/motivasi.json', (req, res) => {
+app.get('/quotes/motivasi', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
 
