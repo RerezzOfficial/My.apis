@@ -152,8 +152,23 @@ app.get('/api/akiyama', async (req, res) => {
   }
 });
 
-app.get('/quotes/galau', (req, res) => {
-  res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
+app.get('/api/quotes/galau', async (req, res) => {
+  try {
+    // Mengambil data dari URL GitHub
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/quotes/galau.json');
+    
+    // Mendapatkan array dari quotes yang ada di galau.json
+    const quotes = response.data.quotes;
+
+    // Pilih quote secara acak
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+    // Kirim quote acak ke klien
+    res.json({ quote: randomQuote });
+  } catch (error) {
+    console.error('Error fetching galau quotes:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil quotes galau.' });
+  }
 });
 
 app.get('/quotes/motivasi', (req, res) => {
