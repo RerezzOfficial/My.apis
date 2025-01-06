@@ -125,13 +125,13 @@ app.get('/api/bocil', async (req, res) => {
     
     // Mengambil data video acak dari bocil.json
     const bocilData = response.data; // Format data akan disesuaikan jika perlu
-    const videos = bocilData.randomBocil; // Sesuaikan dengan format JSON yang benar
+    const videos = bocilData.results; // Sesuaikan dengan format JSON yang benar
     const randomVideo = videos[Math.floor(Math.random() * videos.length)];
 
     // Mengirimkan video langsung ke client dengan tipe MIME 'video/mp4'
     axios({
       method: 'get',
-      url: randomVideo,
+      url: randomVideo.url,  // Mengambil URL video dari objek
       responseType: 'stream',  // Untuk mengirimkan video sebagai stream
     })
     .then(videoResponse => {
