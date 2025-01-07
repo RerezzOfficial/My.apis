@@ -35,12 +35,21 @@ body {
     color: #ffffff;
 }
 
+.header .menu {
+    display: flex;
+    align-items: center;
+}
+
 .header .menu i {
     margin-left: 25px;
     font-size: 28px; /* Lebih besar */
     color: #ffffff;
     cursor: pointer;
     transition: transform 0.5s;
+}
+
+.apis {
+    color: red;
 }
 
 /* Notification */
@@ -64,69 +73,230 @@ body {
     text-decoration: underline;
 }
 
+.notification .close-btn {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    width: 25px; /* Lebih besar */
+    height: 25px; /* Lebih besar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid aqua;
+}
+
 /* Sidebar */
 .sidebar {
+    height: 100%;
     width: 300px; /* Lebar lebih besar */
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #161b22;
+    overflow-x: hidden;
+    transition: 0.5s;
     padding-top: 70px;
 }
 
 .sidebar a {
     padding: 15px 20px; /* Padding lebih besar */
+    text-decoration: none;
     font-size: 20px; /* Ukuran font lebih besar */
+    color: #c9d1d9;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    color: #ffffff;
 }
 
 .sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
     font-size: 40px; /* Ukuran lebih besar */
+    margin-left: 50px;
 }
 
 /* Profile Popup */
 .profile-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background-color: #161b22;
+    padding: 25px; /* Padding lebih besar */
+    border-radius: 8px;
+    z-index: 2;
     width: 400px; /* Lebih lebar */
-    padding: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s;
+}
+
+.profile-popup.show {
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .profile-popup h2 {
+    margin: 0 0 10px 0;
     font-size: 24px; /* Ukuran font lebih besar */
+    color: #ffffff;
 }
 
 .profile-popup p {
     font-size: 18px; /* Ukuran font lebih besar */
+    color: #c9d1d9;
 }
 
-/* Section */
-section h2, section h3 {
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+    display: none;
+}
+
+section {
+    margin-bottom: 25px; /* Margin lebih besar */
+    opacity: 0;
+    animation: curlAppear 1.6s ease-out forwards;
+}
+
+section h2 {
+    margin-left: 5px;
     font-size: 26px; /* Ukuran heading lebih besar */
+    font-weight: bold;
+    margin-bottom: 25px; /* Margin lebih besar */
+    border-bottom: 3px solid aqua;
+    display: inline-block;
+    padding-bottom: 8px; /* Padding lebih besar */
+}
+
+section h3 {
+    font-size: 22px; /* Ukuran lebih besar */
+    font-weight: bold;
+    margin-bottom: 15px; /* Margin lebih besar */
+    margin-left: 15px;
+    border-bottom: 2px solid aqua;
+    display: inline-block;
+    padding-bottom: 8px;
 }
 
 /* Folder */
 .folder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px; /* Margin lebih besar */
     padding: 15px; /* Padding lebih besar */
+    background-color: #1e1f26;
+    border-radius: 10px;
     font-size: 22px; /* Ukuran font lebih besar */
+    border: 2px solid aqua;
 }
 
-/* List Items */
-ul li {
-    padding: 15px; /* Padding lebih besar */
+.folder span {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.folder button {
+    background-color: aqua;
+    border: none;
+    padding: 8px 15px; /* Padding lebih besar */
+    color: #000000;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 20px; /* Ukuran font lebih besar */
 }
 
+.folder button:hover {
+    background-color: blue;
+    color: #fff;
+}
+
+/* List Items */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px; /* Margin lebih besar */
+    background-color: #1e1f26;
+    border-radius: 8px; /* Border lebih halus */
+    border: 2px solid #fff;
+    padding: 15px; /* Padding lebih besar */
+}
+
+ul li span {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 ul li a {
+    color: #ffc107;
+    text-decoration: none;
     font-size: 16px; /* Ukuran font lebih besar */
+}
+
+ul li:hover {
+    background-color: aqua;
+    color: #000000;
 }
 
 /* Card */
 .card {
+    background-color: #161b22;
     padding: 25px; /* Padding lebih besar */
+    border-radius: 10px;
+    margin: 15px 0; /* Margin lebih besar */
+    display: flex;
+    align-items: center;
 }
 
 .card h2 {
     font-size: 20px; /* Ukuran heading lebih besar */
+    margin: 0 0 10px 0;
 }
 
 .card p {
     font-size: 18px; /* Ukuran font lebih besar */
+    margin: 5px 0;
 }
 
 .card .icon {
     font-size: 60px; /* Ukuran ikon lebih besar */
+    margin-right: 20px;
+    color: #00ffff;
+}
+
+@keyframes curlAppear {
+    from {
+        opacity: 0;
+        transform: rotateX(90deg);
+    }
+    to {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
 }
