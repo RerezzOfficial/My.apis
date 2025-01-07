@@ -1,247 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APIs I'M Rerezz</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="./css/style.css" rel="stylesheet">
-    <style>
-       * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-header {
-    background-color: #007bff;
-    color: white;
-    padding: 25px 20px; /* Mengurangi padding untuk mengurangi jarak */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 100;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-header nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0;
-}
-
-header .logo {
-    font-size: 24px;
-    font-weight: bold;
-    margin-right: 20px; /* Mengurangi jarak kanan logo */
-}
-
-header nav ul {
-    list-style: none;
-    display: flex;
-    margin-left: auto;
-    padding: 0;
-}
-
-header nav ul li {
-    margin-left: 15px; /* Mengurangi margin kiri antar menu */
-    display: flex;
-    align-items: center;
-}
-
-header nav ul li a {
-    color: white;
-    font-size: 16px;
-    text-transform: uppercase;
-    padding: 5px 10px;
-    display: flex;
-    align-items: center;
-    transition: color 0.3s ease;
-}
-
-header nav ul li a:hover {
-    color: #f39c12;
-}
-
-header nav ul li a i {
-    margin-right: 12px;
-}
-
-.menu-toggle {
-    display: none;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-    padding: 10px 20px;
-    border-radius: 5px;
-}
-
-.mobile-nav {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    position: absolute;
-    top: 100px;
-    left: 0;
-    background-color: #007bff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.6s ease, padding 0.6s ease;
-}
-
-.mobile-nav.show {
-    max-height: 500px;
-    padding: 10px 0;
-}
-
-.mobile-nav li {
-    text-align: left;
-    padding: 10px;
-    width: 100%;
-}
-
-.mobile-nav li a {
-    color: white;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-radius: 20px;
-    transition: background-color 0.3s ease;
-}
-
-.mobile-nav li a:hover {
-    background-color: #f7f3ed;
-    color: #000000;
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    header nav ul {
-        display: none;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-}
-
-section {
-    margin-top: 80px;
-    padding: 40px;
-    text-align: center;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-section h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #007bff;
-}
-
-section a {
-    font-size: 1.2rem;
-    color: #007bff;
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    border: 2px solid #007bff;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-section a:hover {
-    background-color: #007bff;
-    color: white;
-}
-
-section img {
-    width: 250px;
-    height: 250px;
-}
-        
-    </style>
+    <title>I'M Rerezz X APIs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="./public/styles.css" rel="stylesheet">
 </head>
-
 <body>
-    <header>
-        <nav>
-            <div class="logo">Kurumi Official</div>
-            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <section class="developer">
+            <h3>&nbsp;<i class="fas fa-fire apis"></i> Info Developer APIs&nbsp;</h3>
             <ul>
-                <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#apis"><i class="fas fa-cogs"></i> APIs</a></li>
-                <li><a href="#pricing"><i class="fas fa-dollar-sign"></i> Pricing</a></li>
+                <li>
+                    <a href="https://t.me/rerezz_official" target="_blank">
+                        <span><i class="fas fa-phone-alt"></i> Contac Me</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://link-ke-wabot-script.com" target="_blank">
+                        <span><i class="fas fa-users"></i> Group WA</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://link-ke-wabot-script.com" target="_blank">
+                        <span><i class="fas fa-users"></i> Channel WA</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://link-ke-wabot-script.com" target="_blank">
+                        <span><i class="fab fa-youtube"></i> Channel YT</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://link-ke-wabot-script.com" target="_blank">
+                        <span><i class="fas fa-robot"></i> Script Bot (Free)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://link-ke-wabot-script.com" target="_blank">
+                        <span><i class="fab fa-npm"></i> Official Fetcher</span>
+                    </a>
+                </li>
             </ul>
-        </nav>
-        <!-- Mobile Menu -->
-        <ul class="mobile-nav" id="mobile-nav">
-            <li><a href="#home"><i class="fas fa-home">&nbsp;</i> Home</a></li>
-            <li><a href="#apis"><i class="fas fa-cogs">&nbsp;</i> APIs</a></li>
-            <li><a href="#pricing"><i class="fas fa-dollar-sign">&nbsp;</i> Pricing</a></li>
-        </ul>
-    </header>
+        </section>
+    </div>
 
-    <section id="#home">
-        <img src="https://rammpntxxx-up.hf.space/file/image-jlwyzj3ona.png" alt="Y">
-        <h2>I'M Rerezz Official</h2>
-    </section>
+    <div id="profilePopup" class="profile-popup">
+        <h2>Profile</h2>
+        <p>Name : I'M REREZZ OFFICIAL</p>
+        <p>Email : rerezzofficial@gmail.com</p>
+    </div>
 
-    <section id="#apis">
-        <h1><i class="fas fa-cogs"></i> DATA APIs</h1>
-        <a href="./api/cosplay">ANIME COSPLAY <i class="fas fa-share"></i></a>
-        <a href="./api/akiyama">ANIME AKIYAMA <i class="fas fa-share"></i></a>
-        <a href="./api/quotes/galau">QUOTES GALAU <i class="fas fa-share"></i></a>
-        <a href="./quotes/motivasi">QUOTES MOTIVASI <i class="fas fa-share"></i></a>
-        <a href="./okeconnect/dana">OKT DANA <i class="fas fa-share"></i></a>
-        <a href="./okeconnect/godrive">OKT GOJEK DRIVE <i class="fas fa-share"></i></a>
-        <a href="./okeconnect/ovo">OKT OVO <i class="fas fa-share"></i></a>
-        <a href="./api/bocil">ASUPAN BOCIL <i class="fas fa-share"></i></a>
-        <a href="./api/luminai">LUMINA AI <i class="fas fa-share"></i></a>
-    </section>
+    <div class="header">
+        <h1><i class="fas fa-fire apis"></i> I'M REREZZ X APIS</h1>
+        <div class="menu">
+            <i id="menuIcon" class="fas fa-bars" onclick="toggleNav()"></i>
+            <i id="profileIcon" class="fas fa-user-circle" onclick="toggleProfilePopup()"></i>
+        </div>
+    </div>
 
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById("mobile-nav");
-            menu.classList.toggle("show");
-        }
+    <div class="notification" id="notification">
+        INGIN MEMESAN LAYANAN PREMIUM? <a href="https://t.me/rerezz_official">HUBUNGI KAMI</a>
+        <button class="close-btn" onclick="closeNotification()">&times;</button>
+    </div>
 
-        document.addEventListener("click", function (event) {
-            const menu = document.getElementById("mobile-nav");
-            const menuToggle = document.querySelector(".menu-toggle");
-            const isClickInside = menu.contains(event.target) || menuToggle.contains(event.target);
+    <div class="container">
+        <section>
+            <div class="card">
+                <div class="icon request"><i class="fas fa-server"></i></div>
+                <div>
+                    <h2>WEB INFORMATION</h2>
+                    <p id="current-time"></p>
+                </div>
+            </div>    
+        </section>
+        <section class="folders">
+            <h2>&nbsp;<i class="fas fa-fire apis"></i> DOCUMENTASI APIs&nbsp;</h2>
+            <div class="folder">
+                <span><i class="fas fa-robot"></i> APIs AI</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+            <div class="folder">
+                <span><i class="fas fa-quote-right"></i> APIs QUOTES</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+            <div class="folder">
+                <span><i class="fas fa-hat-wizard"></i> APIs ANIME</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+            <div class="folder">
+                <span><i class="fas fa-thumbs-up"></i> APIs OKECONNECT</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+            <div class="folder">
+                <span><i class="fas fa-cloud-download-alt"></i> APIs DOWNLOADER</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+            <div class="folder">
+                <span><i class="fas fa-calendar-day"></i> APIs TEBAK KATA</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+            <div class="folder">
+                <span><i class="fas fa-gamepad"></i> APIs GAMES</span>
+                <button onclick="openLink(this)" data-url="https://example.com">
+                Open <i class="fas fa-share"></i>
+                </button>
+            </div>
+        </section>
+    </div>
 
-            if (!isClickInside) {
-                menu.classList.remove("show");
-            }
-        });
-    </script>
+    <!-- Overlay -->
+    <div id="overlay" class="overlay" onclick="closeAll()"></div>
+
+    <script src="./public/script.js"></script>
 </body>
-
 </html>
