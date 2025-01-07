@@ -104,7 +104,15 @@ app.get('/public/styles.css', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'styles.css'));
 });
 
+app.get('/styles.css', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+});
+
 app.get('/public/script.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'script.js'));
+});
+
+app.get('/script.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'script.js'));
 });
 
