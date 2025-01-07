@@ -420,7 +420,7 @@ ul li:hover {
                     <h2>USER INFORMATION</h2>
                     <p>IP Adres: <span id="visitorIP">Loading...</span></p>
                     <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
-                    <p>Lokasi Anda: <span id="location">Menunggu izin untuk mendeteksi lokasi...</span></p>
+                    <p>Lokasi Anda: <span id="batteryStatus">Loading...</span></p>
                 </div>
             </div> 
         </section>
@@ -682,38 +682,34 @@ function openLink(button) {
         }
         setInterval(updateNetworkSpeed, 500);
 
-        //==== GET LOKASI USER 
-
-         function showPosition(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-            const locationText = `Latitude: ${latitude}, Longitude: ${longitude}`;
-            document.getElementById('location').innerHTML = locationText;
+        //==== GET STATUS BATRAI 
+        function updateBatteryStatus(battery) {
+            // Menampilkan persentase baterai
+            const batteryPercentage = battery.level * 100;
+            const chargingStatus = battery.charging ? "Sedang mengisi daya" : "Tidak sedang mengisi daya";
+            
+            // Menampilkan status baterai
+            document.getElementById('batteryStatus').innerHTML = `Persentase Baterai: ${batteryPercentage}%<br>Status Pengisian: ${chargingStatus}`;
         }
 
-        // Fungsi untuk menangani kesalahan jika gagal mengambil lokasi
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    document.getElementById('location').innerHTML = "Pengguna menolak izin untuk mendeteksi lokasi.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    document.getElementById('location').innerHTML = "Informasi lokasi tidak tersedia.";
-                    break;
-                case error.TIMEOUT:
-                    document.getElementById('location').innerHTML = "Permintaan waktu habis.";
-                    break;
-                case error.UNKNOWN_ERROR:
-                    document.getElementById('location').innerHTML = "Terjadi kesalahan tidak terduga.";
-                    break;
-            }
-        }
+        // Memeriksa apakah Battery Status API tersedia di browser
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(function(battery) {
+                // Memperbarui status baterai ketika ada perubahan
+                battery.addEventListener('levelchange', function() {
+                    updateBatteryStatus(battery);
+                });
+                battery.addEventListener('chargingchange', function() {
+                    updateBatteryStatus(battery);
+                });
 
-        // Meminta izin untuk mendapatkan lokasi pengguna
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
+                // Memperbarui status baterai setiap 1 detik
+                setInterval(function() {
+                    updateBatteryStatus(battery);
+                }, 1000); // Update setiap 1 detik
+            });
         } else {
-            document.getElementById('location').innerHTML = "Geolocation tidak didukung di browser ini.";
+            document.getElementById('batteryStatus').innerHTML = "Battery Status API tidak didukung di browser ini.";
         }
     </script>
 </body>
