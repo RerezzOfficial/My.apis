@@ -409,7 +409,8 @@ ul li:hover {
                 <div class="icon request"><i class="fas fa-server"></i></div>
                 <div>
                     <h2>WEB INFORMATION</h2>
-                    <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
+                    <p>Pengunjung 1 Jam Terakhir : <span id="visitorCount">Loading...</span></p>
+                    <p>Hri Ini : <p id="dateTime">Loading...</p></p>
                 </div>
             </div>    
         </section>
@@ -554,62 +555,71 @@ function openLink(button) {
     window.open(url, "_blank");
 }
 
-// Fungsi untuk mendapatkan waktu saat ini dalam milidetik
 function getCurrentTime() {
     return new Date().getTime();
 }
 
-// Fungsi untuk mendapatkan jumlah pengunjung dari localStorage
 function getVisitorCount() {
     const count = localStorage.getItem('visitorCount');
     return count ? parseInt(count, 10) : 0;
 }
 
-// Fungsi untuk menyimpan jumlah pengunjung ke localStorage
 function setVisitorCount(count) {
     localStorage.setItem('visitorCount', count);
 }
 
-// Fungsi untuk mengatur waktu reset di localStorage
 function setResetTime() {
     localStorage.setItem('resetTime', getCurrentTime());
 }
 
-// Fungsi untuk mendapatkan waktu reset terakhir dari localStorage
 function getResetTime() {
     return localStorage.getItem('resetTime');
 }
 
-// Fungsi untuk mengecek apakah sudah 60 menit sejak reset terakhir
 function isResetTimePassed() {
     const lastReset = getResetTime();
     const currentTime = getCurrentTime();
-    // Jika waktu reset tidak ada atau sudah lebih dari 60 menit (3600000 ms), reset jumlah pengunjung
+
     return !lastReset || (currentTime - lastReset > 3600000); // 60 menit = 3600000 ms
 }
 
-// Fungsi untuk menangani jumlah pengunjung
 function handleVisitorCount() {
     if (isResetTimePassed()) {
-        // Reset pengunjung dan set waktu reset baru
+
         setVisitorCount(0);
         setResetTime();
     } else {
-        // Tambah jumlah pengunjung
+
         const currentCount = getVisitorCount();
         setVisitorCount(currentCount + 1);
     }
     updateVisitorCountDisplay();
 }
 
-// Fungsi untuk memperbarui elemen HTML dengan ID 'visitorCount'
 function updateVisitorCountDisplay() {
     const count = getVisitorCount();
     document.getElementById('visitorCount').innerText = count;
 }
-
-// Panggil fungsi saat halaman dimuat
 handleVisitorCount();
+
+function getFormattedDate() {
+    const now = new Date();
+
+    const daysOfWeek = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const dayOfWeek = daysOfWeek[now.getDay()];
+
+    const day = now.getDate();
+    const month = now.getMonth() + 1; 
+    const year = now.getFullYear();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    const formattedDate = `${dayOfWeek}, ${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+}
+
     </script>
 </body>
 </html>
