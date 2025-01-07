@@ -348,8 +348,6 @@ ul li:hover {
 
 
 
-
-/* Umum */
 .status-bar {
     display: flex;
     font-size: 20px;
@@ -358,64 +356,64 @@ ul li:hover {
     padding: 20px;
     border-radius: 5px;
     margin-bottom: 20px;
-}
+  }
 
-.status {
+  .status {
     display: flex;
     align-items: center;
     font-size: 14px;
     font-weight: bold;
-}
+  }
 
-.status span {
+  .status span {
     display: inline-block;
     width: 10px;
     height: 10px;
     margin-right: 5px;
     border-radius: 50%;
-}
+  }
 
-.status .active span {
+  .status .active span {
     background-color: #27ae60;
-}
+  }
 
-.status .inactive span {
+  .status .inactive span {
     background-color: #e74c3c;
-}
+  }
 
-.table {
+  .table {
     width: 100%;
     border-collapse: collapse;
     background-color: #1b212f;
     border-radius: 5px;
     overflow: hidden;
-}
+  }
 
-.table th, .table td {
+  .table th, .table td {
     padding: 15px;
     text-align: left;
-}
+  }
 
-.table th {
+  .table th {
     background-color: #252b39;
     font-size: 16px;
-}
+  }
 
-.table td {
+  .table td {
     font-size: 16px;
     text-align: right;
     position: relative;
-}
+  }
 
-.table tr {
+  .table tr {
     border-bottom: 1px solid #252b39;
-}
+  }
 
-.table tr:last-child {
+  .table tr:last-child {
     border-bottom: none;
-}
+  }
 
-.table td button {
+  .table td button {
     padding: 10px 25px;
     background-color: #252b39;
     color: #ffffff;
@@ -424,14 +422,64 @@ ul li:hover {
     font-size: 16px;
     border: 2px solid aqua;
     border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
+  }
 
-.table td button:hover {
+  .table td button:hover {
     color: #47a3ff;
-}
+  }
 
-.coppy, .openapi {
+  .dropdown-content {
+    display: none;
+    background-color: #2b2f3d;
+    padding: 15px;
+    border-radius: 3px;
+    font-size: 16px;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .dropdown-open .dropdown-content {
+    display: block;
+  }
+
+  .table td:first-child {
+    text-align: left;
+    padding-left: 15px;
+  }
+
+  .coppy {
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    margin-top: 10px;
+    background-color: #2b2f3d;
+    color: #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    border: 2px solid #fff;
+    width: max-content;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .coppy:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .coppy i {
+    font-size: 25px;
+    margin-right: 15px;
+  }
+
+  .coppy span {
+    font-size: 16px;
+  }
+
+  .coppy:active {
+    background-color: #1d6fb8;
+  }
+
+  .openapi {
     display: flex;
     align-items: center;
     padding: 15px 30px;
@@ -443,87 +491,106 @@ ul li:hover {
     border: 2px solid #fff;
     width: max-content;
     transition: background-color 0.3s ease, color 0.3s ease;
-}
+  }
 
-.coppy:hover, .openapi:hover {
+  .openapi:hover {
     background-color: rgba(255, 255, 255, 0.5);
-}
+    color: #333;
+  }
 
-.coppy:active, .openapi:active {
-    background-color: #1d6fb8;
-}
-
-.coppy i, .openapi i {
+  .openapi i {
     font-size: 25px;
     margin-right: 15px;
-}
+  }
 
-.judul {
-    color: #ffffff;
+  .judul {
+    color: rgb(255, 255, 255);
     border-bottom: 2px solid aqua;
     margin-left: 20px;
     margin-bottom: 15px;
     font-size: 18px;
-}
+  }
 
-/* Responsif untuk perangkat mobile */
-@media (max-width: 768px) {
+  .apion {
+    color: rgb(43, 255, 0);
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .apioff {
+    color: rgb(255, 0, 0);
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .namaapi {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .anya {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 18px;
+  }
+
+  /* Responsif untuk perangkat mobile */
+  @media (max-width: 768px) {
     .status-bar {
-        font-size: 22px;
-        padding: 25px;
+      font-size: 24px;
+      padding: 25px;
     }
 
     .table th, .table td {
-        padding: 18px;
-        font-size: 18px;
+      padding: 20px;
+      font-size: 18px;
     }
 
     .table td button {
-        padding: 12px 30px;
-        font-size: 18px;
+      padding: 12px 30px;
+      font-size: 18px;
     }
 
     .coppy, .openapi {
-        padding: 18px 40px;
-        font-size: 20px;
+      padding: 18px 40px;
+      font-size: 20px;
     }
 
-    .coppy i, .openapi i {
-        font-size: 30px;
+    .coppy i {
+      font-size: 30px;
     }
 
     .judul {
-        font-size: 22px;
+      font-size: 22px;
     }
-}
+  }
 
-@media (max-width: 480px) {
+  @media (max-width: 480px) {
     .status-bar {
-        font-size: 24px;
-        padding: 30px;
+      font-size: 28px;
+      padding: 30px;
     }
 
     .table th, .table td {
-        padding: 20px;
-        font-size: 20px;
+      padding: 25px;
+      font-size: 20px;
     }
 
     .table td button {
-        padding: 14px 35px;
-        font-size: 20px;
+      padding: 14px 35px;
+      font-size: 20px;
     }
 
     .coppy, .openapi {
-        padding: 20px 50px;
-        font-size: 22px;
+      padding: 20px 50px;
+      font-size: 22px;
     }
 
-    .coppy i, .openapi i {
-        font-size: 35px;
+    .coppy i {
+      font-size: 35px;
     }
 
     .judul {
-        font-size: 26px;
+      font-size: 26px;
     }
-}
-
+  }
