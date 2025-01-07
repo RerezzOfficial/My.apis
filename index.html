@@ -412,7 +412,15 @@ ul li:hover {
                     <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
                     <p>Hari Ini: <span id="dateTime">Loading...</span></p>
                 </div>
-            </div>    
+            </div>
+
+            <div class="card">
+                <div class="icon request"><i class="fas fa-server"></i></div>
+                <div>
+                    <h2>USER INFORMATION</h2>
+                    <p>IP Adres: <span id="visitorIP">Loading...</span></p>
+                </div>
+            </div> 
         </section>
         <section class="folders">
             <h2>&nbsp;<i class="fas fa-fire apis"></i> DOCUMENTASI APIs&nbsp;</h2>
@@ -586,11 +594,11 @@ function openLink(button) {
 
         function handleVisitorCount() {
             if (isResetTimePassed()) {
-                setVisitorCount(0);   // Reset jumlah pengunjung
-                setResetTime();       // Set waktu reset baru
+                setVisitorCount(0); 
+                setResetTime();      
             } else {
                 const currentCount = getVisitorCount();
-                setVisitorCount(currentCount + 1);   // Tambah jumlah pengunjung
+                setVisitorCount(currentCount + 1);  
             }
             updateVisitorCountDisplay();
         }
@@ -600,13 +608,12 @@ function openLink(button) {
             document.getElementById('visitorCount').innerText = count;
         }
 
-        // Fungsi untuk mendapatkan tanggal, hari, bulan, tahun, jam, menit, dan detik
         function getFormattedDate() {
             const now = new Date();
             const daysOfWeek = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const dayOfWeek = daysOfWeek[now.getDay()];
             const day = now.getDate();
-            const month = now.getMonth() + 1;  // Bulan dimulai dari 0, jadi tambahkan 1
+            const month = now.getMonth() + 1;  
             const year = now.getFullYear();
             const hours = now.getHours();
             const minutes = now.getMinutes();
@@ -615,17 +622,25 @@ function openLink(button) {
 
             return formattedDate;
         }
-
-        // Fungsi untuk memperbarui waktu setiap detik
         function updateClock() {
             document.getElementById('dateTime').innerText = getFormattedDate();
         }
-
-        // Panggil updateClock setiap 1 detik (1000ms)
         setInterval(updateClock, 1000);
-
-        // Menangani jumlah pengunjung
         handleVisitorCount();
+
+
+        function getVisitorIP() {
+            fetch('http://ip-api.com/json') 
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('visitorIP').innerText = data.query;
+                })
+                .catch(error => {
+                    document.getElementById('visitorIP').innerText = 'Tidak dapat mendeteksi IP';
+                    console.error('Error:', error);
+                });
+        }
+        getVisitorIP();
     </script>
 </body>
 </html>
