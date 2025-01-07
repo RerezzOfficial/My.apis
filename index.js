@@ -19,6 +19,10 @@ const {
   checkQRISStatus
 } = require('./orkut.js') 
 
+const {
+ ChatGPTv2
+} = require('./lib/function.js')
+
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
         const payload = {
@@ -88,75 +92,7 @@ function genreff() {
 
 app.use(cors());
 
-const counterFilePath = path.join(__dirname, 'visitor_count.txt');
 
-// Fungsi untuk memastikan file ada dan membuatnya jika tidak ada
-function initializeVisitorCount() {
-    return new Promise((resolve, reject) => {
-        // Cek apakah file ada
-        fs.access(counterFilePath, fs.constants.F_OK, (err) => {
-            if (err) {
-                // Jika file tidak ada, buat file baru dengan nilai 0
-                fs.writeFile(counterFilePath, '0', (err) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(0); // Jika berhasil, mulai dengan 0 pengunjung
-                    }
-                });
-            } else {
-                // Jika file ada, lanjutkan
-                resolve();
-            }
-        });
-    });
-}
-
-// Fungsi untuk membaca jumlah pengunjung
-function getVisitorCount() {
-    return new Promise((resolve, reject) => {
-        fs.readFile(counterFilePath, 'utf8', (err, data) => {
-            if (err) {
-                reject(err);
-            } else {
-                const count = parseInt(data, 10);
-                if (isNaN(count)) {
-                    resolve(0);
-                } else {
-                    resolve(count);
-                }
-            }
-        });
-    });
-}
-
-// Fungsi untuk menambah jumlah pengunjung
-function incrementVisitorCount() {
-    return getVisitorCount()
-        .then((count) => {
-            const newCount = count + 1;
-            return new Promise((resolve, reject) => {
-                fs.writeFile(counterFilePath, newCount.toString(), (err) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(newCount);
-                    }
-                });
-            });
-        });
-}
-
-// API untuk mendapatkan dan menambah jumlah pengunjung
-app.get('/visitor', async (req, res) => {
-    try {
-        await initializeVisitorCount(); // Pastikan file ada sebelum dimulai
-        const newCount = await incrementVisitorCount();
-        res.json({ count: newCount });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 app.use('/anime', express.static(path.join(__dirname, 'anime')));
 
 
@@ -251,32 +187,23 @@ app.get('/quotes/motivasi', (req, res) => {
 });
 
 //=====[ API AI ]=====//
-app.get('/api/luminai', async (req, res) => {
-  try {
-    const message = req.query.message;
-    const user = req.query.user || 'default_user';  // Misalnya Anda ingin menggunakan 'user' sebagai parameter, jika tidak ada, gunakan default
-    const prompt = req.query.prompt || 'default_prompt';  // Parameter prompt
-    const webSearchMode = req.query.webSearchMode || false;  // Parameter webSearchMode, default false
-
-    // Validasi jika parameter message tidak ada
-    if (!message) {
-      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
+app.get("/api/ai/openai", async (req, res) => {
+    const { q } = req.query;
+    if (!q) {
+        return res.status(400).json({ status: false, creator: "Hello Line", error: "Isi parameter Query" });
     }
-
-    // Panggil fungsi fetchTextOnly dengan semua parameter yang dibutuhkan
-    const result = await fetchTextOnly(message, user, prompt, webSearchMode);
-    
-    // Kirimkan teks sebagai respons ke client
-    res.status(200).json({
-      status: 200,
-      creatorai: "RezzDev",
-      result: result.text // Ambil hanya teks yang relevan dari respons
-    });
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const response = await ChatGPTv2(q, "openai");
+        res.status(200).json({
+            status: true,
+            creator: "Hello Line",
+            result: response
+        });
+    } catch (error)        {
+        res.status(500).json({ status: false, creator: "Hello Line", error: error.message });
+    }
 });
+
 //=====[ OKECONNECT API ]=====//
 app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
