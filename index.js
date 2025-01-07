@@ -108,6 +108,10 @@ app.get('/public/script.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'script.js'));
 });
 
+app.get('/apis/ai', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ai.html'));
+});
+
 
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'feature.html'));
