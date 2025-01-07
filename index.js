@@ -90,20 +90,38 @@ app.use(cors());
 
 const counterFilePath = path.join(__dirname, 'visitor_count.txt');
 
+// Fungsi untuk memastikan file ada dan membuatnya jika tidak ada
+function initializeVisitorCount() {
+    return new Promise((resolve, reject) => {
+        // Cek apakah file ada
+        fs.access(counterFilePath, fs.constants.F_OK, (err) => {
+            if (err) {
+                // Jika file tidak ada, buat file baru dengan nilai 0
+                fs.writeFile(counterFilePath, '0', (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(0); // Jika berhasil, mulai dengan 0 pengunjung
+                    }
+                });
+            } else {
+                // Jika file ada, lanjutkan
+                resolve();
+            }
+        });
+    });
+}
+
+// Fungsi untuk membaca jumlah pengunjung
 function getVisitorCount() {
     return new Promise((resolve, reject) => {
         fs.readFile(counterFilePath, 'utf8', (err, data) => {
             if (err) {
-                if (err.code === 'ENOENT') {
-                    resolve(0); // Jika file tidak ditemukan, mulai dari 0
-                } else {
-                    reject(err);
-                }
+                reject(err);
             } else {
-                // Periksa apakah data valid dan bisa diubah menjadi angka
                 const count = parseInt(data, 10);
                 if (isNaN(count)) {
-                    resolve(0); // Jika data tidak valid, anggap jumlah pengunjung 0
+                    resolve(0);
                 } else {
                     resolve(count);
                 }
@@ -112,7 +130,7 @@ function getVisitorCount() {
     });
 }
 
-
+// Fungsi untuk menambah jumlah pengunjung
 function incrementVisitorCount() {
     return getVisitorCount()
         .then((count) => {
@@ -129,8 +147,10 @@ function incrementVisitorCount() {
         });
 }
 
+// API untuk mendapatkan dan menambah jumlah pengunjung
 app.get('/visitor', async (req, res) => {
     try {
+        await initializeVisitorCount(); // Pastikan file ada sebelum dimulai
         const newCount = await incrementVisitorCount();
         res.json({ count: newCount });
     } catch (err) {
