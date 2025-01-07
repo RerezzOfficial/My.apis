@@ -629,18 +629,15 @@ function openLink(button) {
         handleVisitorCount();
 
 
-        function getVisitorIP() {
-            fetch('http://ip-api.com/json') 
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('visitorIP').innerText = data.query;
-                })
-                .catch(error => {
-                    document.getElementById('visitorIP').innerText = 'Tidak dapat mendeteksi IP';
-                    console.error('Error:', error);
-                });
-        }
-        getVisitorIP();
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('visitorIP').innerText = data.ip;
+            })
+            .catch(error => {
+                document.getElementById('visitorIP').innerText = 'Tidak dapat mendeteksi IP';
+                console.error('Error:', error);
+            });
     </script>
 </body>
 </html>
