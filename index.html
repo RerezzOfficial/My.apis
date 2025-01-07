@@ -409,7 +409,7 @@ ul li:hover {
                 <div class="icon request"><i class="fas fa-server"></i></div>
                 <div>
                     <h2>WEB INFORMATION</h2>
-                    <p>Jumlah Pengunjung: <span id="fetchVisitorCount()">Loading...</span></p>
+                    <p>Jumlah Pengunjung: <span id="visitorCount">Loading...</span></p>
                 </div>
             </div>    
         </section>
@@ -555,18 +555,24 @@ function openLink(button) {
 }
 
 async function fetchVisitorCount() {
-            try {
-                const response = await fetch('/visitor');
-                const data = await response.json();
-                document.getElementById('visitorCount').innerText = data.count;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('visitorCount').innerText = 'Error fetching data';
-            }
-        }
+    try {
+        const response = await fetch('/visitor');
+        const data = await response.json();
+        updateVisitorCount(data.count); // Memanggil fungsi untuk memperbarui jumlah pengunjung
+    } catch (error) {
+        console.error('Error:', error);
+        updateVisitorCount('Error fetching data'); // Jika ada kesalahan
+    }
+}
 
-        // Panggil fungsi saat halaman dimuat
-        fetchVisitorCount();
+// Fungsi untuk memperbarui elemen HTML dengan ID 'visitorCount'
+function updateVisitorCount(count) {
+    document.getElementById('visitorCount').innerText = count;
+}
+
+// Panggil fetchVisitorCount() saat halaman dimuat
+fetchVisitorCount();
+
     </script>
 </body>
 </html>
