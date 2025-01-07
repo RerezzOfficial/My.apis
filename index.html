@@ -409,7 +409,7 @@ ul li:hover {
                 <div class="icon request"><i class="fas fa-server"></i></div>
                 <div>
                     <h2>WEB INFORMATION</h2>
-                    <p>Pengunjung 1 Jam Terakhir : <span id="visitorCount">Loading...</span></p>
+                    <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
                     <p>Hari Ini: <span id="dateTime">Loading...</span></p>
                 </div>
             </div>    
@@ -555,59 +555,58 @@ function openLink(button) {
     window.open(url, "_blank");
 }
 
+
+//=====[ FUNCTION JUMLAH PENGUNJUNG ]======//
 function getCurrentTime() {
-    return new Date().getTime();
-}
+            return new Date().getTime();
+        }
 
-function getVisitorCount() {
-    const count = localStorage.getItem('visitorCount');
-    return count ? parseInt(count, 10) : 0;
-}
+        function getVisitorCount() {
+            const count = localStorage.getItem('visitorCount');
+            return count ? parseInt(count, 10) : 0;
+        }
 
-function setVisitorCount(count) {
-    localStorage.setItem('visitorCount', count);
-}
+        function setVisitorCount(count) {
+            localStorage.setItem('visitorCount', count);
+        }
 
-function setResetTime() {
-    localStorage.setItem('resetTime', getCurrentTime());
-}
+        function setResetTime() {
+            localStorage.setItem('resetTime', getCurrentTime());
+        }
 
-function getResetTime() {
-    return localStorage.getItem('resetTime');
-}
+        function getResetTime() {
+            return localStorage.getItem('resetTime');
+        }
 
-function isResetTimePassed() {
-    const lastReset = getResetTime();
-    const currentTime = getCurrentTime();
+        function isResetTimePassed() {
+            const lastReset = getResetTime();
+            const currentTime = getCurrentTime();
+            return !lastReset || (currentTime - lastReset > 3600000); // 60 menit = 3600000 ms
+        }
 
-    return !lastReset || (currentTime - lastReset > 3600000); // 60 menit = 3600000 ms
-}
+        function handleVisitorCount() {
+            if (isResetTimePassed()) {
+                setVisitorCount(0);   // Reset jumlah pengunjung
+                setResetTime();       // Set waktu reset baru
+            } else {
+                const currentCount = getVisitorCount();
+                setVisitorCount(currentCount + 1);   // Tambah jumlah pengunjung
+            }
+            updateVisitorCountDisplay();
+        }
 
-function handleVisitorCount() {
-    if (isResetTimePassed()) {
+        function updateVisitorCountDisplay() {
+            const count = getVisitorCount();
+            document.getElementById('visitorCount').innerText = count;
+        }
 
-        setVisitorCount(0);
-        setResetTime();
-    } else {
-
-        const currentCount = getVisitorCount();
-        setVisitorCount(currentCount + 1);
-    }
-    updateVisitorCountDisplay();
-}
-
-function updateVisitorCountDisplay() {
-    const count = getVisitorCount();
-    document.getElementById('visitorCount').innerText = count;
-}
-handleVisitorCount();
-
-unction getFormattedDate() {
+        // Fungsi untuk mendapatkan tanggal, hari, bulan, tahun, jam, menit, dan detik
+        function getFormattedDate() {
             const now = new Date();
             const daysOfWeek = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
             const dayOfWeek = daysOfWeek[now.getDay()];
             const day = now.getDate();
-            const month = now.getMonth() + 1; 
+            const month = now.getMonth() + 1;  // Bulan dimulai dari 0, jadi tambahkan 1
             const year = now.getFullYear();
             const hours = now.getHours();
             const minutes = now.getMinutes();
@@ -616,7 +615,12 @@ unction getFormattedDate() {
 
             return formattedDate;
         }
+
+        // Menampilkan waktu di elemen dengan id 'dateTime'
         document.getElementById('dateTime').innerText = getFormattedDate();
+
+        // Menangani jumlah pengunjung
+        handleVisitorCount();
     </script>
 </body>
 </html>
