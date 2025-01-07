@@ -419,6 +419,7 @@ ul li:hover {
                 <div>
                     <h2>USER INFORMATION</h2>
                     <p>IP Adres: <span id="visitorIP">Loading...</span></p>
+                    <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
                 </div>
             </div> 
         </section>
@@ -638,6 +639,39 @@ function openLink(button) {
                 document.getElementById('visitorIP').innerText = 'Tidak dapat mendeteksi IP';
                 console.error('Error:', error);
             });
+
+        //==== KECEPATAN JARINGAN
+        function measureNetworkSpeed() {
+            var startTime, endTime;
+            var downloadSize = 500000; 
+            var downloadUrl = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png"; 
+
+            var image = new Image();
+            image.onload = function() {
+                endTime = (new Date()).getTime();
+                showSpeed(endTime - startTime);
+            };
+
+            image.onerror = function() {
+                document.getElementById("networkSpeed").innerText = "Gagal mengukur kecepatan.";
+            };
+
+            startTime = (new Date()).getTime();
+            image.src = downloadUrl + "?cacheBuster=" + startTime;
+        }
+
+        function showSpeed(duration) {
+            var bitsLoaded = 500000 * 8;
+            var speedBps = (bitsLoaded / duration) * 1000; 
+            var speedKbps = speedBps / 1024;
+            var speedMbps = speedKbps / 1024;
+            if (speedKbps < 1024) {
+                document.getElementById("networkSpeed").innerText = speedKbps.toFixed(2) + " KB/s";
+            } else {
+                document.getElementById("networkSpeed").innerText = speedMbps.toFixed(2) + " MB/s";
+            }
+        }
+        measureNetworkSpeed();
     </script>
 </body>
 </html>
