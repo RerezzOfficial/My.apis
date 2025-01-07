@@ -1,0 +1,142 @@
+<html>
+<head>
+    <title>I'M Rerezz X APIs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="./public/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="mySidebar" class="sidebar">
+        <section class="developer">
+            <h3>&nbsp;<i class="fas fa-fire apis"></i> Info Developer APIs&nbsp;</h3>
+            <ul>
+                <li>
+                    <a href="https://t.me/rerezz_official" target="_blank">
+                        <span><i class="fas fa-phone-alt"></i> Contac Me</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://chat.whatsapp.com/J2KV9Wydi3v5panKYX3VIv" target="_blank">
+                        <span><i class="fas fa-users"></i> Group WA</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://whatsapp.com/channel/0029Vat4lwpKLaHoS0MAwj3Z" target="_blank">
+                        <span><i class="fas fa-users"></i> Channel WA</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/@RerezzOffc" target="_blank">
+                        <span><i class="fab fa-youtube"></i> Channel YT</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com/@RerezzOffc" target="_blank">
+                        <span><i class="fas fa-robot"></i> Script Bot (Free)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" target="_blank">
+                        <span><i class="fab fa-npm"></i> Official Fetcher</span>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </div>
+
+    <div id="profilePopup" class="profile-popup">
+        <h2>Profile</h2>
+        <p>Name : I'M REREZZ OFFICIAL</p>
+        <p>Email : rerezzofficial@gmail.com</p>
+    </div>
+
+    <div class="header">
+        <h1><i class="fas fa-fire apis"></i> I'M REREZZ X APIS</h1>
+        <div class="menu">
+            <i id="menuIcon" class="fas fa-bars" onclick="toggleNav()"></i>
+            <i id="profileIcon" class="fas fa-user-circle" onclick="toggleProfilePopup()"></i>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        INGIN MEMESAN LAYANAN PREMIUM? <a href="https://t.me/rerezz_official">HUBUNGI KAMI</a>
+        <button class="close-btn" onclick="closeNotification()">&times;</button>
+    </div>
+
+    <div class="container">
+        <section>
+            <div class="card">
+                <div class="icon request"><i class="fas fa-server"></i></div>
+                <div>
+                    <h2>WEB INFORMATION</h2>
+                    <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
+                    <p>Hari Ini: <span id="dateTime">Loading...</span></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="icon request"><i class="fas fa-server"></i></div>
+                <div>
+                    <h2>USER INFORMATION</h2>
+                    <p>IP Adres: <span id="visitorIP">Loading...</span></p>
+                    <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
+                    <p>Batrai: <span id="batteryStatus">Loading...</span></p>
+                </div>
+            </div> 
+        </section>
+
+        
+        <div class="status-bar">
+          <div class="status active">
+            <span></span><i class="fas fa-fire apion"></i>&nbsp;Active: 1
+          </div>
+          <div class="status inactive">
+            <span></span> Inactive: 0&nbsp;<i class="fas fa-fire apioff"></i>&nbsp;&nbsp;
+          </div>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th style="text-align: right;">Action</th>&nbsp;
+    
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="dropdown-row">
+              <td class="namaapi"><i class="fas fa-fire apion"></i> APIs CHAT GPT V2</td>
+              <td>
+                <button class="dropdown-button" onclick="toggleDropdown(this)">
+                  <i class="fas fa-chevron-down"></i>
+                </button>
+              </td>
+            </tr>
+            <tr class="dropdown-content">
+                <td colspan="2">
+                    <b class="judul">&nbsp;<i class="fas fa-robot"></i> CHAT GPT V2&nbsp;</b><br><br>
+                  <div class="coppy" onclick="copyText()">
+                    <i class="fas fa-copy"></i> 
+                    <span>https://i.m-rerezz-my.apis.digital-server.biz.id/api/chatgpt-v2</span>
+                  </div>
+                  <div class="openapi">
+                    <i class="fas fa-share"></i> 
+                    <a href="#" class="anya">Open To APIs</a>
+                  </div>
+                </td>
+              </tr>
+              
+            <tr class="dropdown-content">
+              <td colspan="2">
+                Description for Language Detector or additional options here.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    <div id="overlay" class="overlay" onclick="closeAll()"></div>
+
+    <script src="./public/script.js"></script>
+</body>
+</html>
