@@ -420,7 +420,7 @@ ul li:hover {
                     <h2>USER INFORMATION</h2>
                     <p>IP Adres: <span id="visitorIP">Loading...</span></p>
                     <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
-                    <p>Lokasi Anda: <span id="batteryStatus">Loading...</span></p>
+                    <p>Batrai: <span id="batteryStatus">Loading...</span></p>
                 </div>
             </div> 
         </section>
@@ -689,13 +689,12 @@ function openLink(button) {
             const chargingStatus = battery.charging ? "Sedang mengisi daya" : "Tidak sedang mengisi daya";
             
             // Menampilkan status baterai
-            document.getElementById('batteryStatus').innerHTML = `Persentase Baterai: ${batteryPercentage}%<br>Status Pengisian: ${chargingStatus}`;
+            document.getElementById('batteryStatus').innerHTML = `${batteryPercentage}%<br>Status:${chargingStatus}`;
         }
 
-        // Memeriksa apakah Battery Status API tersedia di browser
         if ('getBattery' in navigator) {
             navigator.getBattery().then(function(battery) {
-                // Memperbarui status baterai ketika ada perubahan
+
                 battery.addEventListener('levelchange', function() {
                     updateBatteryStatus(battery);
                 });
@@ -703,10 +702,9 @@ function openLink(button) {
                     updateBatteryStatus(battery);
                 });
 
-                // Memperbarui status baterai setiap 1 detik
                 setInterval(function() {
                     updateBatteryStatus(battery);
-                }, 1000); // Update setiap 1 detik
+                }, 10);
             });
         } else {
             document.getElementById('batteryStatus').innerHTML = "Battery Status API tidak didukung di browser ini.";
