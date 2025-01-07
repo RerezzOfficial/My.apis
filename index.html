@@ -554,25 +554,62 @@ function openLink(button) {
     window.open(url, "_blank");
 }
 
-async function fetchVisitorCount() {
-    try {
-        const response = await fetch('/visitor');
-        const data = await response.json();
-        updateVisitorCount(data.count); // Memanggil fungsi untuk memperbarui jumlah pengunjung
-    } catch (error) {
-        console.error('Error:', error);
-        updateVisitorCount('Error fetching data'); // Jika ada kesalahan
+// Fungsi untuk mendapatkan waktu saat ini dalam milidetik
+function getCurrentTime() {
+    return new Date().getTime();
+}
+
+// Fungsi untuk mendapatkan jumlah pengunjung dari localStorage
+function getVisitorCount() {
+    const count = localStorage.getItem('visitorCount');
+    return count ? parseInt(count, 10) : 0;
+}
+
+// Fungsi untuk menyimpan jumlah pengunjung ke localStorage
+function setVisitorCount(count) {
+    localStorage.setItem('visitorCount', count);
+}
+
+// Fungsi untuk mengatur waktu reset di localStorage
+function setResetTime() {
+    localStorage.setItem('resetTime', getCurrentTime());
+}
+
+// Fungsi untuk mendapatkan waktu reset terakhir dari localStorage
+function getResetTime() {
+    return localStorage.getItem('resetTime');
+}
+
+// Fungsi untuk mengecek apakah sudah 60 menit sejak reset terakhir
+function isResetTimePassed() {
+    const lastReset = getResetTime();
+    const currentTime = getCurrentTime();
+    // Jika waktu reset tidak ada atau sudah lebih dari 60 menit (3600000 ms), reset jumlah pengunjung
+    return !lastReset || (currentTime - lastReset > 3600000); // 60 menit = 3600000 ms
+}
+
+// Fungsi untuk menangani jumlah pengunjung
+function handleVisitorCount() {
+    if (isResetTimePassed()) {
+        // Reset pengunjung dan set waktu reset baru
+        setVisitorCount(0);
+        setResetTime();
+    } else {
+        // Tambah jumlah pengunjung
+        const currentCount = getVisitorCount();
+        setVisitorCount(currentCount + 1);
     }
+    updateVisitorCountDisplay();
 }
 
 // Fungsi untuk memperbarui elemen HTML dengan ID 'visitorCount'
-function updateVisitorCount(count) {
+function updateVisitorCountDisplay() {
+    const count = getVisitorCount();
     document.getElementById('visitorCount').innerText = count;
 }
 
-// Panggil fetchVisitorCount() saat halaman dimuat
-fetchVisitorCount();
-
+// Panggil fungsi saat halaman dimuat
+handleVisitorCount();
     </script>
 </body>
 </html>
