@@ -557,7 +557,7 @@ function openLink(button) {
 
 
 //=====[ FUNCTION JUMLAH PENGUNJUNG ]======//
-function getCurrentTime() {
+        function getCurrentTime() {
             return new Date().getTime();
         }
 
@@ -616,8 +616,13 @@ function getCurrentTime() {
             return formattedDate;
         }
 
-        // Menampilkan waktu di elemen dengan id 'dateTime'
-        document.getElementById('dateTime').innerText = getFormattedDate();
+        // Fungsi untuk memperbarui waktu setiap detik
+        function updateClock() {
+            document.getElementById('dateTime').innerText = getFormattedDate();
+        }
+
+        // Panggil updateClock setiap 1 detik (1000ms)
+        setInterval(updateClock, 1000);
 
         // Menangani jumlah pengunjung
         handleVisitorCount();
