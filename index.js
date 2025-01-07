@@ -88,7 +88,48 @@ function genreff() {
 
 app.use(cors());
 
+const counterFilePath = path.join(__dirname, 'visitor_count.txt');
 
+function getVisitorCount() {
+    return new Promise((resolve, reject) => {
+        fs.readFile(counterFilePath, 'utf8', (err, data) => {
+            if (err) {
+                if (err.code === 'ENOENT') {
+                    resolve(0);
+                } else {
+                    reject(err);
+                }
+            } else {
+                resolve(parseInt(data, 10) || 0);
+            }
+        });
+    });
+}
+
+function incrementVisitorCount() {
+    return getVisitorCount()
+        .then((count) => {
+            const newCount = count + 1;
+            return new Promise((resolve, reject) => {
+                fs.writeFile(counterFilePath, newCount.toString(), (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(newCount);
+                    }
+                });
+            });
+        });
+}
+
+app.get('/visitor', async (req, res) => {
+    try {
+        const newCount = await incrementVisitorCount();
+        res.json({ count: newCount });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.use('/anime', express.static(path.join(__dirname, 'anime')));
 
 
