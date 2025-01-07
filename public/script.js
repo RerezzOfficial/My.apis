@@ -222,3 +222,33 @@ function openLink(button) {
         } else {
             document.getElementById('batteryStatus').innerHTML = "Battery Status API tidak didukung di browser ini.";
         }
+
+
+
+
+
+        //===== js fitur 
+
+        function toggleDropdown(button) {
+            const row = button.closest("tr");
+            const dropdownContent = row.nextElementSibling;
+      
+            if (dropdownContent.style.display === "table-row") {
+              dropdownContent.style.display = "none";
+              button.querySelector("i").className = "fas fa-chevron-down";
+            } else {
+              dropdownContent.style.display = "table-row";
+              button.querySelector("i").className = "fas fa-chevron-up";
+            }
+          }
+      
+          function copyText() {
+              var text = "text yang akan di salin"; 
+              var tempInput = document.createElement("input");
+              document.body.appendChild(tempInput);
+              tempInput.value = text;
+              tempInput.select();
+              document.execCommand('copy');
+              document.body.removeChild(tempInput);
+              alert("Teks telah disalin ke clipboard!");
+            }
