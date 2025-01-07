@@ -187,7 +187,7 @@ app.get('/quotes/motivasi', (req, res) => {
 });
 
 //=====[ API AI ]=====//
-app.get("/api/ai/openai", async (req, res) => {
+app.get("/api/chatgpt-v2", async (req, res) => {
     const { q } = req.query;
     if (!q) {
         return res.status(400).json({ status: false, creator: "Hello Line", error: "Isi parameter Query" });
