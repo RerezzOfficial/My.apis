@@ -95,16 +95,23 @@ function getVisitorCount() {
         fs.readFile(counterFilePath, 'utf8', (err, data) => {
             if (err) {
                 if (err.code === 'ENOENT') {
-                    resolve(0);
+                    resolve(0); // Jika file tidak ditemukan, mulai dari 0
                 } else {
                     reject(err);
                 }
             } else {
-                resolve(parseInt(data, 10) || 0);
+                // Periksa apakah data valid dan bisa diubah menjadi angka
+                const count = parseInt(data, 10);
+                if (isNaN(count)) {
+                    resolve(0); // Jika data tidak valid, anggap jumlah pengunjung 0
+                } else {
+                    resolve(count);
+                }
             }
         });
     });
 }
+
 
 function incrementVisitorCount() {
     return getVisitorCount()
