@@ -3,7 +3,333 @@
     <title>I'M Rerezz X APIs</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    /* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Mono', monospace;
+    color: #c9d1d9;
+    background-color: #0c0d0f;
+}
 
+.container {
+    padding: 20px;
+    opacity: 0;
+    animation: curlAppear 1s ease-out forwards;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px 25px;
+    border-radius: 15px;
+    margin: 20px;
+    border: 2px solid aqua;
+    background-color: #161b22;
+    opacity: 0;
+    animation: curlAppear 1.2s ease-out forwards;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 36px;
+    color: #ffffff;
+}
+
+.header .menu {
+    display: flex;
+    align-items: center;
+}
+
+.header .menu i {
+    margin-left: 25px;
+    font-size: 30px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.5s;
+}
+
+/* Notification */
+.notification {
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 2px solid aqua;
+    padding: 15px;
+    margin: 20px;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 24px;
+    color: #ffffff;
+    font-weight: bold;
+    position: relative;
+    opacity: 0;
+    animation: curlAppear 1.4s ease-out forwards;
+}
+
+.notification a {
+    color: aqua;
+    text-decoration: underline;
+}
+
+.notification .close-btn {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid aqua;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #161b22;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidebar a {
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #c9d1d9;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    color: #ffffff;
+}
+
+.sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* Profile Popup */
+.profile-popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background-color: #161b22;
+    padding: 30px;
+    border-radius: 10px;
+    z-index: 2;
+    width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s;
+}
+
+.profile-popup.show {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.profile-popup h2 {
+    margin: 0 0 10px 0;
+    color: #ffffff;
+}
+
+.profile-popup p {
+    color: #c9d1d9;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+    display: none;
+}
+
+section {
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: curlAppear 1.6s ease-out forwards;
+}
+
+section h2 {
+    margin-left: 5px;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 3px solid aqua;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+section h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-left: 15px;
+    border-bottom: 2px solid aqua;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Folder */
+.folder {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #1e1f26;
+    border-radius: 10px;
+    font-size: 22px;
+    border: 2px solid aqua;
+}
+
+.folder span {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.folder button {
+    background-color: aqua;
+    border: none;
+    padding: 10px 15px;
+    color: #000000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.folder button:hover {
+    background-color: blue;
+    color: #fff;
+}
+
+/* List */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: #1e1f26;
+    border-radius: 10px;
+    padding: 15px;
+    border: 2px solid #fff;
+}
+
+ul li span {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+ul li a {
+    color: #ffc107;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+ul li:hover {
+    background-color: aqua;
+    color: #000000;
+}
+
+/* Card */
+.card {
+    background-color: #161b22;
+    padding: 25px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+}
+
+.card h2 {
+    font-size: 22px;
+    margin: 0 0 10px 0;
+}
+
+.card p {
+    margin: 5px 0;
+}
+
+.card .icon {
+    font-size: 60px;
+    margin-right: 25px;
+    color: #00ffff;
+}
+
+/* Animations */
+@keyframes curlAppear {
+    from {
+        opacity: 0;
+        transform: rotateX(90deg);
+    }
+    to {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 28px;
+    }
+
+    .notification {
+        font-size: 20px;
+    }
+
+    .folder {
+        font-size: 18px;
+    }
+
+    ul li span {
+        font-size: 16px;
+    }
+
+    .card h2 {
+        font-size: 20px;
+    }
+
+    .card .icon {
+        font-size: 50px;
+    }
+
+    .profile-popup {
+        width: 90%;
+    }
+}
+</style>
 </head>
 <body>
     <!-- Sidebar -->
