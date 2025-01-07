@@ -196,7 +196,7 @@ app.get("/api/ai/openai", async (req, res) => {
         const response = await ChatGPTv2(q, "openai");
         res.status(200).json({
             status: true,
-            creator: "Hello Line",
+            creator: "I'M Rerezz Official",
             result: response
         });
     } catch (error)        {
