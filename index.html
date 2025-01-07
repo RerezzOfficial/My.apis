@@ -410,7 +410,7 @@ ul li:hover {
                 <div>
                     <h2>WEB INFORMATION</h2>
                     <p>Pengunjung 1 Jam Terakhir : <span id="visitorCount">Loading...</span></p>
-                    <p>Hri Ini : <p id="formattedDate">Loading...</p></p>
+                    <p>Hari Ini: <span id="dateTime">Loading...</span></p>
                 </div>
             </div>    
         </section>
@@ -602,24 +602,21 @@ function updateVisitorCountDisplay() {
 }
 handleVisitorCount();
 
-function getFormattedDate() {
-    const now = new Date();
+unction getFormattedDate() {
+            const now = new Date();
+            const daysOfWeek = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+            const dayOfWeek = daysOfWeek[now.getDay()];
+            const day = now.getDate();
+            const month = now.getMonth() + 1; 
+            const year = now.getFullYear();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const formattedDate = `${dayOfWeek}, ${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 
-    const daysOfWeek = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    const dayOfWeek = daysOfWeek[now.getDay()];
-
-    const day = now.getDate();
-    const month = now.getMonth() + 1; 
-    const year = now.getFullYear();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-
-    const formattedDate = `${dayOfWeek}, ${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-
-    return formattedDate;
-}
-
+            return formattedDate;
+        }
+        document.getElementById('dateTime').innerText = getFormattedDate();
     </script>
 </body>
 </html>
