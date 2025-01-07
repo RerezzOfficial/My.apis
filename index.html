@@ -688,10 +688,10 @@ function openLink(button) {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             const locationText = `Latitude: ${latitude}, Longitude: ${longitude}`;
-
             document.getElementById('location').innerHTML = locationText;
         }
 
+        // Fungsi untuk menangani kesalahan jika gagal mengambil lokasi
         function showError(error) {
             switch(error.code) {
                 case error.PERMISSION_DENIED:
@@ -709,6 +709,7 @@ function openLink(button) {
             }
         }
 
+        // Meminta izin untuk mendapatkan lokasi pengguna
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition, showError);
         } else {
