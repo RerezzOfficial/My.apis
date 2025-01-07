@@ -420,6 +420,7 @@ ul li:hover {
                     <h2>USER INFORMATION</h2>
                     <p>IP Adres: <span id="visitorIP">Loading...</span></p>
                     <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
+                    <p>Lokasi Anda: <span id="location">Menunggu izin untuk mendeteksi lokasi...</span></p>
                 </div>
             </div> 
         </section>
@@ -642,30 +643,24 @@ function openLink(button) {
 
         //==== KECEPATAN JARINGAN
         var startTime;
-        var downloadSize = 500000; // Ukuran file yang diunduh dalam byte (500 KB)
-        var downloadUrl = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png"; // Gambar kecil yang diunduh untuk pengukuran
+        var downloadSize = 500000;
+        var downloadUrl = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png";
         var image = new Image();
         var speedDisplayElement = document.getElementById('networkSpeed');
         
-        // Menyimpan nilai kecepatan terkini
         var currentSpeed = 0;
 
-        // Fungsi untuk mengukur kecepatan jaringan
         function measureNetworkSpeed() {
-            startTime = (new Date()).getTime(); // Catat waktu mulai
+            startTime = (new Date()).getTime();
 
-            // Memulai pengunduhan file gambar
-            image.src = downloadUrl + "?cacheBuster=" + startTime; // Menambahkan cache buster agar setiap permintaan baru
+            image.src = downloadUrl + "?cacheBuster=" + startTime; 
         }
 
-        // Fungsi untuk menghitung dan menampilkan kecepatan jaringan
         function calculateSpeed(duration) {
-            var bitsLoaded = downloadSize * 8; // 500 KB * 8 untuk mendapatkan jumlah bit
-            var speedBps = (bitsLoaded / duration) * 1000; // Kecepatan dalam bit per detik
-            var speedKbps = speedBps / 1024; // Kecepatan dalam kilobit per detik
-            var speedMbps = speedKbps / 1024; // Kecepatan dalam megabit per detik
-
-            // Menampilkan kecepatan dalam KB/s atau MB/s
+            var bitsLoaded = downloadSize * 8; 
+            var speedBps = (bitsLoaded / duration) * 1000;
+            var speedKbps = speedBps / 1024; 
+            var speedMbps = speedKbps / 1024; 
             if (speedKbps < 1024) {
                 currentSpeed = speedKbps.toFixed(2) + " KB/s";
             } else {
@@ -674,26 +669,51 @@ function openLink(button) {
 
             speedDisplayElement.innerText = currentSpeed;
         }
-
-        // Fungsi untuk mulai mengukur kecepatan setiap detik
         function updateNetworkSpeed() {
             measureNetworkSpeed();
-
-            // Fungsi untuk mengukur waktu yang dibutuhkan untuk pengunduhan
             image.onload = function() {
-                var endTime = (new Date()).getTime(); // Catat waktu selesai
-                var duration = endTime - startTime; // Hitung durasi pengunduhan
+                var endTime = (new Date()).getTime(); 
+                var duration = endTime - startTime;
                 calculateSpeed(duration);
             };
-
-            // Jika terjadi error saat mengunduh, tampilkan pesan error
             image.onerror = function() {
                 speedDisplayElement.innerText = "Gagal mengukur kecepatan.";
             };
         }
+        setInterval(updateNetworkSpeed, 500);
 
-        // Memperbarui kecepatan setiap detik
-        setInterval(updateNetworkSpeed, 1000);
+        //==== GET LOKASI USER 
+
+         function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const locationText = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+            document.getElementById('location').innerHTML = locationText;
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById('location').innerHTML = "Pengguna menolak izin untuk mendeteksi lokasi.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById('location').innerHTML = "Informasi lokasi tidak tersedia.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById('location').innerHTML = "Permintaan waktu habis.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById('location').innerHTML = "Terjadi kesalahan tidak terduga.";
+                    break;
+            }
+        }
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            document.getElementById('location').innerHTML = "Geolocation tidak didukung di browser ini.";
+        }
     </script>
 </body>
 </html>
