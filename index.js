@@ -99,42 +99,41 @@ app.use('/anime', express.static(path.join(__dirname, 'anime')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
-
-app.get('/style/script', (req, res) => {
-  res.redirect('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/public/script.js');
-});
-
 app.get('/style/styles', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'styles.css'));
-  });
-
-
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'feature.html'));
+  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+});
+app.get('/style/script', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'script.js'));
 });
 
+app.get('/doc/ai', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ai.html'));
+});
+app.get('/style/style', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ai.css'));
+});
+app.get('/style/scrip', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'ai.js'));
+});
+  
+
+//=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/cosplay.json';
-    
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
-
     if (!cosplayData.results || cosplayData.results.length === 0) {
       return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
     }
-
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
     const randomCosplay = cosplayData.results[randomIndex];
-    
     const imageUrl = randomCosplay.url;
-
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
       responseType: 'stream'
     });
-
     imageResponse.data.pipe(res); 
   } catch (error) {
     console.error('Error:', error);
@@ -145,25 +144,19 @@ app.get('/api/cosplay', async (req, res) => {
 app.get('/api/akiyama', async (req, res) => {
   try {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/akiyama.json';
-    
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
-
     if (!cosplayData.results || cosplayData.results.length === 0) {
       return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
     }
-
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
     const randomCosplay = cosplayData.results[randomIndex];
-    
     const imageUrl = randomCosplay.url;
-
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
       responseType: 'stream'
     });
-
     imageResponse.data.pipe(res);  
   } catch (error) {
     console.error('Error:', error);
@@ -171,6 +164,7 @@ app.get('/api/akiyama', async (req, res) => {
   }
 });
 
+//=====[ API QUOTES ]=====//
 app.get('/api/quotes/galau', async (req, res) => {
   try {
     const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/quotes/galau.json');
@@ -190,7 +184,7 @@ app.get('/quotes/motivasi', (req, res) => {
 app.get("/api/chatgpt-v2", async (req, res) => {
     const { q } = req.query;
     if (!q) {
-        return res.status(400).json({ status: false, creator: "Hello Line", error: "Isi parameter Query" });
+        return res.status(400).json({ status: false, creator: "IM Rerezz", error: "Isi parameter Query" });
     }
     try {
         const response = await ChatGPTv2(q, "openai");
@@ -200,25 +194,53 @@ app.get("/api/chatgpt-v2", async (req, res) => {
             result: response
         });
     } catch (error)        {
-        res.status(500).json({ status: false, creator: "Hello Line", error: error.message });
+        res.status(500).json({ status: false, creator: "IM Rerezz", error: error.message });
+    }
+});
+
+app.get("/api/llama", async (req, res) => {
+    const { q } = req.query;
+    if (!q) {
+        return res.status(400).json({ status: false, creator: "IM Rerezz", error: "Isi parameter Query" });
+    }
+    try {
+        const response = await ChatGPTv2(q, "llama");
+        res.status(200).json({
+            status: true,
+            creator: "IM Rerezz",
+            result: response
+        });
+    } catch (error) {
+        res.status(500).json({ status: false, creator: "IM Rerezz", error: error.message });
     }
 });
 
 //=====[ OKECONNECT API ]=====//
-app.get('/okeconnect/dana', (req, res) => {
-  res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
+app.get('/okeconnect/dana', async (req, res) => {
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/okeconnect/dana.json');
+    const quotes = response.data.quotes;
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    res.json({ quote: randomQuote });
+  } catch (error) {
+    console.error('Error Mendapatkan Dana Okeconnect:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil data.' });
+  }
 });
 
-app.get('/okeconnect/godrive', (req, res) => {
-  res.sendFile(path.join(__dirname, 'okeconnect', 'godrive.json'));
+app.get('/okeconnect/ovo', async (req, res) => {
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/okeconnect/ovo.json');
+    const quotes = response.data.quotes;
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    res.json({ quote: randomQuote });
+  } catch (error) {
+    console.error('Error Mendapatkan Ovo Okeconnect:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil data.' });
+  }
 });
 
-app.get('/okeconnect/ovo', (req, res) => {
-  res.sendFile(path.join(__dirname, 'okeconnect', 'ovo.json'));
-});
-
-
-
+//=====[ API VID RANDOM ]=====//
 app.get('/api/bocil', async (req, res) => {
   try {
     const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/nsfw/bocil.json');
