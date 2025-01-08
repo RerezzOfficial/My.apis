@@ -110,8 +110,17 @@ app.get('/doc/ai', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.html'));
 });
 app.get('/doc/okeconnec', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'okeconnect.html'));
-  });
+  res.sendFile(path.join(__dirname, 'public', 'okeconnect.html'));
+});
+app.get('/doc/anime', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'anime.html'));
+});
+
+app.get('/doc/downloader', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'downloader.html'));
+});
+
+
 app.get('/style/style', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.css'));
 });
