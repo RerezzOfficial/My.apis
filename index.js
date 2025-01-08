@@ -109,6 +109,9 @@ app.get('/style/script', (req, res) => {
 app.get('/doc/ai', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.html'));
 });
+app.get('/doc/okeconnec', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'okeconnect.html'));
+  });
 app.get('/style/style', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.css'));
 });
