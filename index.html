@@ -1,139 +1,83 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>I'M Rerezz X APIs</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/public/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IM REREZZ API</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <link rel="stylesheet" href="/style/styles">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div id="mySidebar" class="sidebar">
-        <section class="developer">
-            <h3>&nbsp;<i class="fas fa-fire apis"></i> Info Developer APIs&nbsp;</h3>
-            <ul>
-                <li>
-                    <a href="https://t.me/rerezz_official" target="_blank">
-                        <span><i class="fas fa-phone-alt"></i> Contac Me</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://chat.whatsapp.com/J2KV9Wydi3v5panKYX3VIv" target="_blank">
-                        <span><i class="fas fa-users"></i> Group WA</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://whatsapp.com/channel/0029Vat4lwpKLaHoS0MAwj3Z" target="_blank">
-                        <span><i class="fas fa-users"></i> Channel WA</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.youtube.com/@RerezzOffc" target="_blank">
-                        <span><i class="fab fa-youtube"></i> Channel YT</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.youtube.com/@RerezzOffc" target="_blank">
-                        <span><i class="fas fa-robot"></i> Script Bot (Free)</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" target="_blank">
-                        <span><i class="fab fa-npm"></i> Official Fetcher</span>
-                    </a>
-                </li>
-            </ul>
-        </section>
+<div id="particles-js"></div>
+
+<header>
+  <h1><i class="fas fa-fire"></i>API IM REREZZ</h1>
+  <div class="icons">
+    <i class="fas fa-bars" id="menuToggle"></i>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <h2><i class="fas fa-info-circle"></i> INFO DEVELOPER</h2>
+  <ul>
+    <a href="https://t.me/rerezz_official">
+      <li><i class="fas fa-phone"></i> Contact Me</li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><span><i class="fas fa-users"></i> Group WhatsApp</span></li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><span><i class="fas fa-users"></i> Channel WhatsApp</span></li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><span><i class="fab fa-youtube"></i> Channel YouTube</span></li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><span><i class="fab fa-github"></i> Github Me</span></li>
+    </a>
+  </ul>
+</div>
+
+<section>
+  <div class="card">
+    <div class="icon request"><i class="fas fa-server"></i></div>
+    <div>
+      <h2>WEB INFORMATION</h2>
+      <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
+      <p>Hari Ini: <span id="dateTime">Loading...</span></p>
     </div>
+  </div>
 
-    <div id="profilePopup" class="profile-popup">
-        <h2>Profile</h2>
-        <p>Name : I'M REREZZ OFFICIAL</p>
-        <p>Email : rerezzofficial@gmail.com</p>
+  <div class="card">
+    <div class="icon request"><i class="fas fa-user"></i></div>
+    <div>
+      <h2>USER INFORMATION</h2>
+      <p>IP Address: <span id="visitorIP">Loading...</span></p>
+      <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
+      <p>Baterai: <span id="batteryStatus">Loading...</span></p>
     </div>
+  </div> 
+</section>
 
-    <div class="header">
-        <h1><i class="fas fa-fire apis"></i> I'M REREZZ X APIS</h1>
-        <div class="menu">
-            <i id="menuIcon" class="fas fa-bars" onclick="toggleNav()"></i>
-            <i id="profileIcon" class="fas fa-user-circle" onclick="toggleProfilePopup()"></i>
-        </div>
-    </div>
+<div class="docapi">
+  <h1>
+    DOKUMENTASI API
+  </h1>
+  <div class="apis">
+    <p>API CHAT GPT V2</p>
+    <a href="./ai.html"><i class="fas fa-share"></i> OPEN</a>
+  </div>
 
-    <div class="notification" id="notification">
-        INGIN MEMESAN LAYANAN PREMIUM? <a href="https://t.me/rerezz_official">HUBUNGI KAMI</a>
-        <button class="close-btn" onclick="closeNotification()">&times;</button>
-    </div>
+  <div class="apis">
+    <p>API CHAT GPT V2</p>
+    <a href="#"><i class="fas fa-share"></i> OPEN</a>
+  </div>
+</div>
 
-    <div class="container">
-        <section>
-            <div class="card">
-                <div class="icon request"><i class="fas fa-server"></i></div>
-                <div>
-                    <h2>WEB INFORMATION</h2>
-                    <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
-                    <p>Hari Ini: <span id="dateTime">Loading...</span></p>
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="icon request"><i class="fas fa-user"></i></div>
-                <div>
-                    <h2>USER INFORMATION</h2>
-                    <p>IP Adres: <span id="visitorIP">Loading...</span></p>
-                    <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
-                    <p>Batrai: <span id="batteryStatus">Loading...</span></p>
-                </div>
-            </div> 
-        </section>
-        <section class="folders">
-            <h2>&nbsp;<i class="fas fa-fire apis"></i> DOCUMENTASI APIs&nbsp;</h2>
-            <div class="folder">
-                <span><i class="fas fa-robot"></i> APIs AI</span>
-                <button onclick="openLink(this)" data-url="./apis/ai">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-            <div class="folder">
-                <span><i class="fas fa-quote-right"></i> APIs QUOTES</span>
-                <button onclick="openLink(this)" data-url="https://example.com">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-            <div class="folder">
-                <span><i class="fas fa-hat-wizard"></i> APIs ANIME</span>
-                <button onclick="openLink(this)" data-url="https://example.com">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-            <div class="folder">
-                <span><i class="fas fa-thumbs-up"></i> APIs OKECONNECT</span>
-                <button onclick="openLink(this)" data-url="https://example.com">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-            <div class="folder">
-                <span><i class="fas fa-cloud-download-alt"></i> APIs DOWNLOADER</span>
-                <button onclick="openLink(this)" data-url="https://example.com">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-            <div class="folder">
-                <span><i class="fas fa-calendar-day"></i> APIs TEBAK KATA</span>
-                <button onclick="openLink(this)" data-url="https://example.com">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-            <div class="folder">
-                <span><i class="fas fa-gamepad"></i> APIs GAMES</span>
-                <button onclick="openLink(this)" data-url="https://example.com">
-                Open <i class="fas fa-share"></i>
-                </button>
-            </div>
-        </section>
-    </div>
-
-    <div id="overlay" class="overlay" onclick="closeAll()"></div>
-
-    <script src="./public/script.js"></script>
+  <div class="overlay" id="overlay"></div>
+  <script src="/style/script"></script>
 </body>
 </html>
