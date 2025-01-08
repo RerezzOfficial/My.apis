@@ -34,7 +34,7 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
 
         const response = await axios.post('https://lumin-ai.xyz/', payload);
         console.log(response.data);
-        return response.data;  // Hanya mengembalikan teks dari respons
+        return response.data; 
     } catch (error) {
         console.error(error);
         throw error;
@@ -100,25 +100,14 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/public/styles.css', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+app.get('/style/styles', (req, res) => {
+  res.redirect('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/public/styles.css');
 });
 
-app.get('/styles.css', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+app.get('/style/script', (req, res) => {
+  res.redirect('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/public/script.js');
 });
 
-app.get('/public/script.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'script.js'));
-});
-
-app.get('/script.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'script.js'));
-});
-
-app.get('/apis/ai', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'ai.html'));
-});
 
 
 app.get('/dashboard', (req, res) => {
