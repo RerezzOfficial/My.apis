@@ -19,7 +19,6 @@ menuToggle.addEventListener('click', () => {
 overlay.addEventListener('click', () => {
   sidebar.classList.remove('active');
   overlay.classList.remove('active');
-  
   menuToggle.classList.remove('active');
   menuToggle.classList.replace('fa-times', 'fa-bars');
 });
@@ -118,7 +117,6 @@ function calculateSpeed(duration) {
   var speedBps = (bitsLoaded / duration) * 1000;
   var speedKbps = speedBps / 1024;
   var speedMbps = speedKbps / 1024;
-  
   if (speedKbps < 1024) {
     currentSpeed = speedKbps.toFixed(2) + " KB/0.5s";
   } else {
@@ -163,6 +161,30 @@ if ('getBattery' in navigator) {
 } else {
   document.getElementById('batteryStatus').innerHTML = "Battery Status API tidak didukung di browser ini.";
 }
+
+document.querySelectorAll('.toggle-btn').forEach((button) => {
+  button.addEventListener('click', () => {
+    const allContents = document.querySelectorAll('.toggle-content');
+    const currentContent = button.closest('.apis').querySelector('.toggle-content');
+
+    // Tutup semua konten yang terbuka
+    allContents.forEach((content) => {
+      if (content !== currentContent && content.classList.contains('open')) {
+        content.classList.remove('open');
+      }
+    });
+
+    // Toggle konten saat ini
+    currentContent.classList.toggle('open');
+
+    // Ubah ikon
+    if (currentContent.classList.contains('open')) {
+      button.innerHTML = '<i class="fas fa-chevron-up"></i>';
+    } else {
+      button.innerHTML = '<i class="fas fa-chevron-down"></i>';
+    }
+  });
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const elements = document.querySelectorAll('.animated');
@@ -255,3 +277,13 @@ particlesJS("particles-js", {
   },
   retina_detect: true,
 });
+
+function copyToClipboard() {
+  const textarea = document.getElementById('apiUrl');
+  textarea.select();
+  textarea.setSelectionRange(0, 99999); 
+  document.execCommand('copy');
+
+  alert('Teks berhasil disalin: ' + textarea.value);
+}
+  
