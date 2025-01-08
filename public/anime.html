@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IM REREZZ API</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <link rel="stylesheet" href="/style/style">
+</head>
+<body>
+<div id="particles-js"></div>
+
+<header>
+  <h1><i class="fas fa-fire"></i>API IM REREZZ</h1>
+  <div class="icons">
+    <i class="fas fa-bars" id="menuToggle"></i>
+  </div>
+</header>
+<div class="sidebar" id="sidebar">
+  <h2><i class="fas fa-info-circle"></i> INFO DEVELOPER</h2>
+  <ul>
+    <a href="https://t.me/rerezz_official">
+      <li><i class="fas fa-phone"></i> Contat Me</li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><i class="fas fa-users"></i> Group WhatsApp</li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><i class="fas fa-users"></i> Channel WhatsApp</li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><i class="fab fa-youtube"></i> Channel YouTube</li>
+    </a>
+    <a href="https://t.me/rerezz_official">
+      <li><i class="fab fa-github"></i> Github Me</li>
+    </a>
+  </ul>
+</div>
+
+<section>
+  <div class="card">
+    <div class="icon request"><i class="fas fa-server"></i></div>
+    <div>
+      <h2>WEB INFORMATION</h2>
+      <p>Pengunjung 1 Jam Terakhir: <span id="visitorCount">Loading...</span></p>
+      <p>Hari Ini: <span id="dateTime">Loading...</span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="icon request"><i class="fas fa-user"></i></div>
+    <div>
+      <h2>USER INFORMATION</h2>
+      <p>IP Address: <span id="visitorIP">Loading...</span></p>
+      <p>Kecepatan Jaringan: <span id="networkSpeed">Menghitung...</span></p>
+      <p>Baterai: <span id="batteryStatus">Loading...</span></p>
+    </div>
+  </div>
+</section>
+
+<div class="docapi">
+    <h1>DOKUMENTASI API OKECONNECT</h1>
+
+   <div class="apis">
+      <div class="apis-header">
+        <p>API ANIME AKIYAMA</p>
+        <a class="toggle-btn"><i class="fas fa-chevron-down"></i></a>
+      </div>
+      <div class="toggle-content">
+        <p>API ANIME AKIYAMA</p>
+        <a href ="https://apis.xyrezz.online-server.biz.id/api/akiyama">OPEN API</a>
+        <div class="copy-container">
+         <textarea id="apiUrl" readonly>https://apis.xyrezz.online-server.biz.id/api/akiyama</textarea>
+        <button onclick="copyToClipboard()">Copy</button>
+       </div>
+      </div>
+    </div>
+  
+    <div class="apis">
+      <div class="apis-header">
+        <p>API COSPLAY ANIME</p>
+        <a class="toggle-btn"><i class="fas fa-chevron-down"></i></a>
+      </div>
+      <div class="toggle-content">
+        <p>API COSPLAY ANIME</p>
+        <a href ="https://apis.xyrezz.online-server.biz.id/api/cosplay">OPEN API</a>
+        <div class="copy-container">
+         <textarea id="apiUrl" readonly>https://apis.xyrezz.online-server.biz.id/api/cosplay</textarea>
+        <button onclick="copyToClipboard()">Copy</button>
+       </div>
+  
+      </div>
+    </div>
+  </div>
+
+<div class="overlay" id="overlay"></div>
+  
+  <script src="/style/scrip"></script>
+</body>
+</html>
