@@ -100,14 +100,13 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/style/styles', (req, res) => {
-  res.redirect('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/public/styles.css');
-});
-
 app.get('/style/script', (req, res) => {
   res.redirect('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/public/script.js');
 });
 
+app.get('/style/styles', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+  });
 
 
 app.get('/dashboard', (req, res) => {
