@@ -41,6 +41,33 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
     }
 }
 
+async function checkIpConnection(clientIp) {
+    try {
+        const response = await axios.get('https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json');
+        const allowedIps = response.data.allowed_ips;
+
+        return allowedIps.includes(clientIp);
+    } catch (error) {
+        console.error(chalk.red('Terjadi kesalahan saat membaca file ipuser.json:'), error);
+        return false;
+    }
+}
+
+// Endpoint untuk menerima permintaan verifikasi
+app.post('/verify-ip', async (req, res) => {
+    const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    const isIpAllowed = await checkIpConnection(clientIp);
+    
+    if (isIpAllowed) {
+        res.json({ success: true, message: "IP terverifikasi" });
+    } else {
+        res.json({ success: false, message: "IP tidak diizinkan" });
+    }
+});
+
+
+
 // Log Info
 const messages = {
   error: {
