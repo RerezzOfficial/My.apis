@@ -274,29 +274,35 @@ particlesJS("particles-js", {
   retina_detect: true,
 });
 
-function copy(text) {
-  // Gunakan Clipboard API jika tersedia
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text)
-      .then(() => {
-        alert('Teks berhasil disalin: ' + text);
-      })
-      .catch(err => {
-        console.error('Gagal menyalin teks:', err);
-        alert('Gagal menyalin teks.');
-      });
+function copyToClipboard(button) {
+  // Cari elemen textarea yang berada di atas tombol yang diklik
+  const textarea = button.previousElementSibling;
+
+  if (textarea) {
+    const textToCopy = textarea.value;
+
+    // Gunakan Clipboard API jika tersedia
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          alert('Teks berhasil disalin: ' + textToCopy);
+        })
+        .catch(err => {
+          console.error('Gagal menyalin teks:', err);
+          alert('Gagal menyalin teks.');
+        });
+    } else {
+      // Fallback untuk browser lama
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      alert('Teks berhasil disalin: ' + textToCopy);
+    }
   } else {
-    // Fallback untuk browser lama
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    textarea.setSelectionRange(0, 99999); // Untuk perangkat seluler
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    alert('Teks berhasil disalin: ' + text);
+    alert('Tidak dapat menemukan teks untuk disalin.');
   }
 }
+
 
 
   
