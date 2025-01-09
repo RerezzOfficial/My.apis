@@ -167,17 +167,13 @@ document.querySelectorAll('.toggle-btn').forEach((button) => {
     const allContents = document.querySelectorAll('.toggle-content');
     const currentContent = button.closest('.apis').querySelector('.toggle-content');
 
-    // Tutup semua konten yang terbuka
     allContents.forEach((content) => {
       if (content !== currentContent && content.classList.contains('open')) {
         content.classList.remove('open');
       }
     });
-
-    // Toggle konten saat ini
     currentContent.classList.toggle('open');
 
-    // Ubah ikon
     if (currentContent.classList.contains('open')) {
       button.innerHTML = '<i class="fas fa-chevron-up"></i>';
     } else {
@@ -280,10 +276,30 @@ particlesJS("particles-js", {
 
 function copyToClipboard() {
   const textarea = document.getElementById('apiUrl');
-  textarea.select();
-  textarea.setSelectionRange(0, 99999); 
-  document.execCommand('copy');
+  if (!textarea) {
+    alert('Elemen teks tidak ditemukan.');
+    return;
+  }
 
-  alert('Teks berhasil disalin: ' + textarea.value);
+  const textToCopy = textarea.value;
+
+  // Gunakan Clipboard API jika tersedia
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        alert('Teks berhasil disalin: ' + textToCopy);
+      })
+      .catch(err => {
+        console.error('Gagal menyalin teks:', err);
+        alert('Gagal menyalin teks.');
+      });
+  } else {
+    // Fallback untuk browser yang lebih lama
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // Untuk mendukung perangkat seluler
+    document.execCommand('copy');
+    alert('Teks berhasil disalin: ' + textToCopy);
+  }
 }
+
   
