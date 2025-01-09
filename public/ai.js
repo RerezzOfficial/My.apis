@@ -274,31 +274,32 @@ particlesJS("particles-js", {
   retina_detect: true,
 });
 
-function copyToClipboard() {
-  const textarea = document.getElementById('apiUrl');
-  if (!textarea) {
-    alert('Elemen teks tidak ditemukan.');
-    return;
-  }
+function copyToClipboard(button) {
+  // Cari textarea terkait dengan tombol yang diklik
+  const textarea = button.previousElementSibling;
+  
+  if (textarea) {
+    const textToCopy = textarea.value;
 
-  const textToCopy = textarea.value;
-
-  // Gunakan Clipboard API jika tersedia
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        alert('Teks berhasil disalin: ' + textToCopy);
-      })
-      .catch(err => {
-        console.error('Gagal menyalin teks:', err);
-        alert('Gagal menyalin teks.');
-      });
+    // Gunakan Clipboard API jika tersedia
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          alert('Teks berhasil disalin: ' + textToCopy);
+        })
+        .catch(err => {
+          console.error('Gagal menyalin teks:', err);
+          alert('Gagal menyalin teks.');
+        });
+    } else {
+      // Fallback untuk browser yang lebih lama
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      alert('Teks berhasil disalin: ' + textToCopy);
+    }
   } else {
-    // Fallback untuk browser yang lebih lama
-    textarea.select();
-    textarea.setSelectionRange(0, 99999); // Untuk mendukung perangkat seluler
-    document.execCommand('copy');
-    alert('Teks berhasil disalin: ' + textToCopy);
+    alert('Tidak dapat menemukan teks untuk disalin.');
   }
 }
 
