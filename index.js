@@ -231,14 +231,15 @@ app.get("/api/llama", async (req, res) => {
 app.get('/okeconnect/dana', async (req, res) => {
   try {
     const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/okeconnect/dana.json');
-    const quotes = response.data.quotes;
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    res.json({ quote: randomQuote });
+    const data = response.data; // Data langsung berupa array
+    const randomItem = data[Math.floor(Math.random() * data.length)];
+    res.json({ data: randomItem });
   } catch (error) {
     console.error('Error Mendapatkan Dana Okeconnect:', error);
     res.status(500).json({ error: 'Terjadi kesalahan saat mengambil data.' });
   }
 });
+
 
 app.get('/okeconnect/ovo', async (req, res) => {
   try {
