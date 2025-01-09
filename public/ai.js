@@ -274,40 +274,16 @@ particlesJS("particles-js", {
   retina_detect: true,
 });
 
-function copyToClipboard(button) {
-  // Temukan elemen textarea yang berada tepat sebelum tombol
-  const textarea = button.previousElementSibling;
-
+function copyToClipboard(textareaId) {
+  const textarea = document.getElementById(textareaId);
   if (textarea) {
-    const textToCopy = textarea.value;
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // Untuk kompatibilitas browser lama
+    document.execCommand('copy');
 
-    // Periksa apakah Clipboard API tersedia
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-          alert('Teks berhasil disalin: ' + textToCopy);
-        })
-        .catch(err => {
-          console.error('Gagal menyalin teks menggunakan Clipboard API:', err);
-          alert('Gagal menyalin teks.');
-        });
-    } else {
-      // Fallback untuk browser yang tidak mendukung Clipboard API
-      try {
-        textarea.select(); // Pilih teks dalam textarea
-        textarea.setSelectionRange(0, 99999); // Untuk perangkat seluler
-        const successful = document.execCommand('copy'); // Salin teks
-        if (successful) {
-          alert('Teks berhasil disalin: ' + textToCopy);
-        } else {
-          alert('Gagal menyalin teks.');
-        }
-      } catch (err) {
-        console.error('Fallback salin teks gagal:', err);
-        alert('Tidak dapat menyalin teks.');
-      }
-    }
+    alert('Teks berhasil disalin: ' + textarea.value);
   } else {
-    alert('Tidak dapat menemukan elemen teks untuk disalin.');
+    alert('Textarea tidak ditemukan!');
   }
 }
+
