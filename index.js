@@ -135,23 +135,25 @@ app.get('/api/cosplay', async (req, res) => {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/cosplay.json';
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
+
+    // Validasi data JSON
     if (!cosplayData.results || cosplayData.results.length === 0) {
       return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
     }
+
+    // Pilih gambar secara acak
     const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
     const randomCosplay = cosplayData.results[randomIndex];
     const imageUrl = randomCosplay.url;
-    const imageResponse = await axios({
-      method: 'get',
-      url: imageUrl,
-      responseType: 'stream'
-    });
-    imageResponse.data.pipe(res); 
+
+    // Kirimkan URL gambar ke klien
+    res.json({ url: imageUrl });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
   }
 });
+
 
 app.get('/api/akiyama', async (req, res) => {
   try {
