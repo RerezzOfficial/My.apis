@@ -132,27 +132,37 @@ app.get('/style/scrip', (req, res) => {
 
 app.get('/api/welcome', async (req, res) => {
   try {
-    // Melakukan pengecekan atau mengambil IP dari suatu sumber, misalnya file JSON
+    // Mengambil data dari URL
     const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
     const response = await axios.get(url);
-    
-    // Pengecekan IP atau proses lain yang perlu dilakukan, tetapi tidak menampilkan IP
-    const allowedIps = response.data.allowed_ips || [];
-    const clientIp = req.ip; // Mengambil IP dari request
 
+    // Memastikan 'allowed_ips' ada dan berformat array
+    const allowedIps = Array.isArray(response.data.allowed_ips) ? response.data.allowed_ips : [];
+
+    if (allowedIps.length === 0) {
+      console.log('allowed_ips tidak ditemukan atau tidak berformat array.');
+    } else {
+      console.log('Data allowed_ips:', allowedIps);
+    }
+
+    // Pengecekan IP dari request
+    const clientIp = req.ip;
+
+    // Mengecek apakah IP diizinkan
     if (allowedIps.includes(clientIp)) {
       console.log('IP diizinkan:', clientIp);
     } else {
       console.log('IP tidak diizinkan:', clientIp);
     }
 
-    // Kirim pesan tanpa menampilkan IP
+    // Kirim pesan yang diinginkan ke client
     res.send('Ada apa kak?');
   } catch (error) {
-    console.error(error);
+    console.error('Terjadi kesalahan:', error);
     res.status(500).send('Terjadi kesalahan saat mengambil data.');
   }
 });
+
 
 
 //=====[ API ANIME ]=====//
