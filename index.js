@@ -259,10 +259,9 @@ app.get('/okeconnect/dana', (req, res) => {
 
 app.get('/okeconnect/trx', async (req, res) => {
     const { merchant, pin, pw, code_product, dest, refID, signature } = req.query;
-
-    if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) {
-        return res.status(400).json({ error: 'Semua parameter harus disertakan' });
-    }
+if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) {
+    return res.status(400).json({ error: 'Semua parameter harus disertakan' });
+}
 
     const url = `https://h2h.okeconnect.com/trx?memberID=${merchant}&pin=${pin}&password=${pw}&product=${code_product}&dest=${dest}&refID=${refID}&sign=${signature}`;
 
