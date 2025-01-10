@@ -277,7 +277,7 @@ app.get('/okeconnect/trx', async (req, res) => {
 
 app.get('/okeconnect/harga', async (req, res) => {
     const hargaID = req.query.hargaID; 
-    const url = `https://apis.xyrezz.online-server.biz.id/okeconnect/harga?id=${hargaID}`;
+    const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
 
     try {
         const response = await axios.get(url);
