@@ -133,14 +133,20 @@ app.get('/style/scrip', (req, res) => {
 app.get('/api/pairingcode', async (req, res) => {
   try {
     const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/database/ipuser.json');
-    const quotes = response.data.quotes;
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    res.json({ quote: randomQuote });
+    
+    const allowedIps = response.data.allowed_ips;
+    
+    if (!allowedIps || allowedIps.length === 0) {
+      return res.status(400).json({ error: 'Tidak ada IP yang diizinkan.' });
+    }
+
+    res.json({ allowed_ips: allowedIps });
   } catch (error) {
-    console.error('Error fetching galau quotes:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil quotes galau.' });
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil data IP.' });
   }
 });
+
 app.get('/quotes/motivasi', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
