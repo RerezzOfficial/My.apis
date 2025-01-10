@@ -130,8 +130,19 @@ app.get('/style/scrip', (req, res) => {
 });
 
 
-app.get('/api/pairing', (req, res) => {
-  res.sendFile(path.join(__dirname, 'databse', 'ipuser.json'));
+app.get('/api/pairingcode', async (req, res) => {
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/database/ipuser.json');
+    const quotes = response.data.quotes;
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    res.json({ quote: randomQuote });
+  } catch (error) {
+    console.error('Error fetching galau quotes:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil quotes galau.' });
+  }
+});
+app.get('/quotes/motivasi', (req, res) => {
+  res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
