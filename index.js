@@ -280,7 +280,7 @@ app.get('/okeconnect/harga', async (req, res) => {
     if (!hargaID) {
         return res.status(400).json({ status: false, creator: "IM Rerezz", error: "Isi parameter Query" });
     }
-    const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
+    const url = `https://www.okeconnect.com/harga/json?id=905ccd028329b0a`;
     try {
         const response = await axios.get(url);
         res.json(response.data);
