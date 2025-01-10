@@ -133,7 +133,7 @@ app.get('/style/scrip', (req, res) => {
 app.get('/get/pairingcode', async (req, res) => {
   try {
     // URL raw untuk mengakses file JSON
-    const url = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/database/ipuser.json';
+    const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
     
     // Mengambil data JSON dari GitHub
     const response = await axios.get(url);
