@@ -259,9 +259,13 @@ app.get('/okeconnect/dana', (req, res) => {
 
 app.get('/okeconnect/trx', async (req, res) => {
     const { merchant, pin, pw, code_product, dest, refID, signature } = req.query;
-if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) {
-    return res.status(400).json({ error: 'Semua parameter harus disertakan' });
-}
+
+    // Debug: Lihat semua parameter yang diterima
+    console.log("Received parameters:", req.query);
+
+    if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) {
+        return res.status(400).json({ error: 'Semua parameter harus disertakan' });
+    }
 
     const url = `https://h2h.okeconnect.com/trx?memberID=${merchant}&pin=${pin}&password=${pw}&product=${code_product}&dest=${dest}&refID=${refID}&sign=${signature}`;
 
@@ -272,6 +276,7 @@ if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) 
         res.status(500).json({ error: 'Gagal mengambil data dari API', details: error.message });
     }
 });
+
 
 app.get('/okeconnect/harga', async (req, res) => {
     const produk = req.params.produk; 
