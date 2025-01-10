@@ -276,9 +276,9 @@ app.get('/okeconnect/trx', async (req, res) => {
 
 
 app.get('/okeconnect/harga', async (req, res) => {
-    const hargaID = req.query.hargaID; // Mengambil hargaID dari query parameter
+    const { hargaID } = req.query;
     if (!hargaID) {
-        return res.status(400).json({ error: 'hargaID tidak diberikan' });
+        return res.status(400).json({ status: false, creator: "IM Rerezz", error: "Isi parameter Query" });
     }
     const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
     try {
