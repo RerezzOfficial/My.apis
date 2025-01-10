@@ -257,6 +257,31 @@ app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
 
+app.get('/okeconnect/trx', async (req, res) => {
+    // Mengambil parameter dari query string
+    const { merchant, pin, pw, code_product, dest, refID, signature } = req.query;
+
+    // Pastikan semua parameter yang dibutuhkan ada
+    if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) {
+        return res.status(400).json({ error: 'Semua parameter harus disertakan' });
+    }
+
+    // Menyusun URL dengan query string yang benar
+    const url = `https://h2h.okeconnect.com/trx?memberID=${merchant}&pin=${pin}&password=${pw}&product=${code_product}&dest=${dest}&refID=${refID}&sign=${signature}`;
+
+    try {
+        // Mengambil data dari API menggunakan axios
+        const response = await axios.get(url);
+
+        // Mengirimkan data dari API ke client
+        res.json(response.data);
+    } catch (error) {
+        // Jika terjadi error, mengirimkan status 500 dengan pesan error
+        res.status(500).json({ error: 'Gagal mengambil data dari API', details: error.message });
+    }
+});
+
+
 app.get('/okeconnect/harga', async (req, res) => {
     const hargaID = req.params.hargaID; // Mengambil hargaID dari parameter URL
     const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
