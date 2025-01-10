@@ -41,31 +41,53 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
     }
 }
 
+// cek ip user sc
+
+async function getServerIp() {
+    try {
+        const response = await axios.get('https://api.ipify.org?format=json');
+        return response.data.ip;
+    } catch (error) {
+        console.error(chalk.red('Gagal mendeteksi IP server:'), error.message);
+        return null;
+    }
+}
+
 async function checkIpConnection(clientIp) {
     try {
         const response = await axios.get('https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json');
         const allowedIps = response.data.allowed_ips;
 
+        if (!Array.isArray(allowedIps)) {
+            console.error(chalk.red('Format data di ipuser.json tidak valid.'));
+            return false;
+        }
+
         return allowedIps.includes(clientIp);
     } catch (error) {
-        console.error(chalk.red('Terjadi kesalahan saat membaca file ipuser.json:'), error);
+        console.error(chalk.red('Terjadi kesalahan saat membaca file ipuser.json:'), error.message);
         return false;
     }
 }
 
-// Endpoint untuk menerima permintaan verifikasi
-app.post('/verify-ip', async (req, res) => {
-    const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+// Endpoint untuk mengecek IP
+app.get('/check-ip', async (req, res) => {
+    try {
+        const clientIp = await getServerIp();
+        if (!clientIp) {
+            return res.status(500).json({ message: 'Tidak dapat mendeteksi IP server.' });
+        }
 
-    const isIpAllowed = await checkIpConnection(clientIp);
-    
-    if (isIpAllowed) {
-        res.json({ success: true, message: "IP terverifikasi" });
-    } else {
-        res.json({ success: false, message: "IP tidak diizinkan" });
+        const isIpAllowed = await checkIpConnection(clientIp);
+        if (!isIpAllowed) {
+            return res.status(403).json({ message: `IP tidak diizinkan: ${clientIp}` });
+        }
+
+        return res.status(200).json({ message: `Akses diizinkan untuk IP: ${clientIp}` });
+    } catch (error) {
+        return res.status(500).json({ message: 'Terjadi kesalahan saat memeriksa IP.' });
     }
 });
-
 
 
 // Log Info
