@@ -153,6 +153,11 @@ app.get('/getip', (req, res) => {
 app.get('/quotes/motivasi', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
+
+//=====[ API GAME ]=====//
+app.get('/game/asahotak', (req, res) => {
+  res.sendFile(path.join(__dirname, 'game', 'asahotak.json'));
+});
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
