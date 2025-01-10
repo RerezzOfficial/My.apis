@@ -257,6 +257,22 @@ app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
 
+app.get('/okeconnect/kuota-tree', async (req, res) => {
+    const produk = req.params.produk; // Mengambil produk dari parameter URL
+    const hargaID = '905ccd028329b0a'; // ID harga yang tetap
+    const url = `https://okeconnect.com/harga/json?id=905ccd028329b0a&produk=kuota_tri`; // Menggunakan produk dinamis
+
+    try {
+        // Mengambil data dari API asli menggunakan axios
+        const response = await axios.get(url);
+
+        // Mengirimkan data dari API asli ke client
+        res.json(response.data);
+    } catch (error) {
+        // Jika terjadi error, mengirimkan status 500 dengan pesan error
+        res.status(500).json({ error: 'Gagal mengambil data dari API asli', details: error.message });
+    }
+});
 
 app.get('/okeconnect/ovo', async (req, res) => {
   try {
