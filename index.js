@@ -132,14 +132,28 @@ app.get('/style/scrip', (req, res) => {
 
 app.get('/api/welcome', async (req, res) => {
   try {
+    // Melakukan pengecekan atau mengambil IP dari suatu sumber, misalnya file JSON
     const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
     const response = await axios.get(url);
+    
+    // Pengecekan IP atau proses lain yang perlu dilakukan, tetapi tidak menampilkan IP
+    const allowedIps = response.data.allowed_ips || [];
+    const clientIp = req.ip; // Mengambil IP dari request
+
+    if (allowedIps.includes(clientIp)) {
+      console.log('IP diizinkan:', clientIp);
+    } else {
+      console.log('IP tidak diizinkan:', clientIp);
+    }
+
+    // Kirim pesan tanpa menampilkan IP
     res.send('Ada apa kak?');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Terjadi kesalahan saat mengambil file.');
+    res.status(500).send('Terjadi kesalahan saat mengambil data.');
   }
 });
+
 
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
