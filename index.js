@@ -258,16 +258,14 @@ app.get('/okeconnect/dana', (req, res) => {
 });
 
 app.get('/okeconnect/trx', async (req, res) => {
-    const { merchant, pin, pw, code_product, dest, refID, signature } = req.query;
+    const { memberID, pin, password, product, dest, refID, sign } = req.query;
 
-    // Debug: Lihat semua parameter yang diterima
-    console.log("Received parameters:", req.query);
-
-    if (!merchant || !pin || !pw || !code_product || !dest || !refID || !signature) {
+    // Pastikan semua parameter ada
+    if (!memberID || !pin || !password || !product || !dest || !refID || !sign) {
         return res.status(400).json({ error: 'Semua parameter harus disertakan' });
     }
 
-    const url = `https://h2h.okeconnect.com/trx?memberID=${merchant}&pin=${pin}&password=${pw}&product=${code_product}&dest=${dest}&refID=${refID}&sign=${signature}`;
+    const url = `https://h2h.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
 
     try {
         const response = await axios.get(url);
@@ -276,6 +274,7 @@ app.get('/okeconnect/trx', async (req, res) => {
         res.status(500).json({ error: 'Gagal mengambil data dari API', details: error.message });
     }
 });
+
 
 
 app.get('/okeconnect/harga', async (req, res) => {
