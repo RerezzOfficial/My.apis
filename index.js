@@ -128,46 +128,11 @@ app.get('/style/style', (req, res) => {
 app.get('/style/scrip', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.js'));
 });
-  
 
-app.get('/api/welcome', async (req, res) => {
-  try {
-    // Mengambil data dari URL
-    const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
-    const response = await axios.get(url);
 
-    // Menampilkan seluruh data yang diterima
-    console.log('Data yang diterima:', response.data);
-
-    // Memastikan 'allowed_ips' ada dan berformat array
-    const allowedIps = Array.isArray(response.data.allowed_ips) ? response.data.allowed_ips : [];
-    console.log('allowed_ips:', allowedIps);
-
-    if (allowedIps.length === 0) {
-      console.log('allowed_ips tidak ditemukan atau tidak berformat array.');
-    }
-
-    // Pengecekan IP dari request
-    const clientIp = req.ip;
-
-    // Mengecek apakah IP diizinkan
-    if (allowedIps.includes(clientIp)) {
-      console.log('IP diizinkan:', clientIp);
-    } else {
-      console.log('IP tidak diizinkan:', clientIp);
-    }
-
-    // Kirim pesan yang diinginkan ke client
-    res.send('Ada apa kak?');
-  } catch (error) {
-    console.error('Terjadi kesalahan:', error);
-    res.status(500).send('Terjadi kesalahan saat mengambil data.');
-  }
+app.get('/quotes/motivasi', (req, res) => {
+  res.sendFile(path.join(__dirname, 'databse', 'ipuser.json'));
 });
-
-
-
-
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
