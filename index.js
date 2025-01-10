@@ -130,16 +130,21 @@ app.get('/style/scrip', (req, res) => {
 });
 
 
-app.get('/api/pairingcode', async (req, res) => {
+app.get('/get/pairingcode', async (req, res) => {
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/database/ipuser.json');
+    // URL raw untuk mengakses file JSON
+    const url = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/database/ipuser.json';
     
+    // Mengambil data JSON dari GitHub
+    const response = await axios.get(url);
     const allowedIps = response.data.allowed_ips;
-    
+
+    // Cek apakah allowed_ips ada dan memiliki isi
     if (!allowedIps || allowedIps.length === 0) {
       return res.status(400).json({ error: 'Tidak ada IP yang diizinkan.' });
     }
 
+    // Kirimkan data allowed_ips sebagai response
     res.json({ allowed_ips: allowedIps });
   } catch (error) {
     console.error('Error fetching data:', error);
