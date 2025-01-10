@@ -136,13 +136,15 @@ app.get('/api/welcome', async (req, res) => {
     const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
     const response = await axios.get(url);
 
+    // Menampilkan seluruh data yang diterima
+    console.log('Data yang diterima:', response.data);
+
     // Memastikan 'allowed_ips' ada dan berformat array
     const allowedIps = Array.isArray(response.data.allowed_ips) ? response.data.allowed_ips : [];
+    console.log('allowed_ips:', allowedIps);
 
     if (allowedIps.length === 0) {
       console.log('allowed_ips tidak ditemukan atau tidak berformat array.');
-    } else {
-      console.log('Data allowed_ips:', allowedIps);
     }
 
     // Pengecekan IP dari request
@@ -162,6 +164,7 @@ app.get('/api/welcome', async (req, res) => {
     res.status(500).send('Terjadi kesalahan saat mengambil data.');
   }
 });
+
 
 
 
