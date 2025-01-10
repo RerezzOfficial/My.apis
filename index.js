@@ -276,19 +276,23 @@ app.get('/okeconnect/trx', async (req, res) => {
 
 
 app.get('/okeconnect/harga', async (req, res) => {
-    const hargaID = req.query.hargaID; 
+    const hargaID = req.query.hargaID; // Mengambil hargaID dari query parameter
+    if (!hargaID) {
+        return res.status(400).json({ error: 'hargaID tidak diberikan' });
+    }
+
     const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
 
     try {
         const response = await axios.get(url);
-
-        const contentType = response.headers['content-type'];
         
-        if (contentType && contentType.includes('application/json')) {
-            res.json(response.data);
-        } else {
-            res.status(500).json({ error: 'Respons tidak dalam format JSON', details: response.data });
+        // Jika status kode HTTP bukan 200 OK, beri pesan error
+        if (response.status !== 200) {
+            return res.status(500).json({ error: 'Gagal mengambil data dari API', details: `Status code: ${response.status}` });
         }
+
+        // Mengirimkan respons data ke client
+        res.json(response.data);
     } catch (error) {
         res.status(500).json({ error: 'Gagal mengambil data dari API', details: error.message });
     }
