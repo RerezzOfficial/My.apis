@@ -145,6 +145,11 @@ app.get('/get/pairingcode', async (req, res) => {
   }
 });
 
+
+app.get('/getip', (req, res) => {
+  res.sendFile(path.join(__dirname, 'database', 'ipuser.json'));
+});
+
 app.get('/quotes/motivasi', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
