@@ -132,14 +132,15 @@ app.get('/style/scrip', (req, res) => {
 
 app.get('/api/welcome', async (req, res) => {
   try {
-    res.send('Ada apa kak?');
     const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
     const response = await axios.get(url);
+    res.json(response.data);
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan saat mengambil file.');
   }
 });
+
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
