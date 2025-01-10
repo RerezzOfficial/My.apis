@@ -276,10 +276,6 @@ app.get('/okeconnect/trx', async (req, res) => {
 
 
 app.get('/okeconnect/harga', async (req, res) => {
-    const { hargaID } = req.query;
-    if (!hargaID) {
-        return res.status(400).json({ status: false, creator: "IM Rerezz", error: "Isi parameter Query" });
-    }
     const url = `https://www.okeconnect.com/harga/json?id=905ccd028329b0a`;
     try {
         const response = await axios.get(url);
@@ -289,22 +285,6 @@ app.get('/okeconnect/harga', async (req, res) => {
     }
 });
 
-
-app.get('/product/harga/:hargaID', async (req, res) => {
-    const hargaID = req.params.hargaID; // Mengambil hargaID dari parameter URL
-    const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
-
-    try { 
-        // Mengambil data dari API asli menggunakan axios
-        const response = await axios.get(url);
-
-        // Mengirimkan data dari API asli ke client
-        res.json(response.data);
-    } catch (error) {
-        // Jika terjadi error, mengirimkan status 500 dengan pesan error
-        res.status(500).json({ error: 'Gagal mengambil data dari API asli', details: error.message });
-    }
-});
 app.get('/okeconnect/kuota-tree', async (req, res) => {
     const produk = req.params.produk; // Mengambil produk dari parameter URL
     const hargaID = '905ccd028329b0a'; // ID harga yang tetap
