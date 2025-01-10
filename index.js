@@ -130,7 +130,7 @@ app.get('/style/scrip', (req, res) => {
 });
 
 
-app.get('/quotes/motivasi', (req, res) => {
+app.get('/api/pairing', (req, res) => {
   res.sendFile(path.join(__dirname, 'databse', 'ipuser.json'));
 });
 //=====[ API ANIME ]=====//
