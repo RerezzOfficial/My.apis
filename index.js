@@ -134,7 +134,7 @@ app.get('/api/welcome', async (req, res) => {
   try {
     const url = 'https://raw.githubusercontent.com/RerezzOffc/dbip/main/ipuser.json';
     const response = await axios.get(url);
-    res.json(response.data);
+    res.send('Ada apa kak?');
   } catch (error) {
     console.error(error);
     res.status(500).send('Terjadi kesalahan saat mengambil file.');
