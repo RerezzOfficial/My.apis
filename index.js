@@ -280,21 +280,12 @@ app.get('/okeconnect/harga', async (req, res) => {
     if (!hargaID) {
         return res.status(400).json({ error: 'hargaID tidak diberikan' });
     }
-
     const url = `https://www.okeconnect.com/harga/json?id=${hargaID}`;
-
     try {
         const response = await axios.get(url);
-        
-        // Jika status kode HTTP bukan 200 OK, beri pesan error
-        if (response.status !== 200) {
-            return res.status(500).json({ error: 'Gagal mengambil data dari API', details: `Status code: ${response.status}` });
-        }
-
-        // Mengirimkan respons data ke client
         res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Gagal mengambil data dari API', details: error.message });
+        res.status(500).json({ error: 'Gagal mengambil data dari API asli', details: error.message });
     }
 });
 
