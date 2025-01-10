@@ -63,12 +63,14 @@ async function checkIpConnection(clientIp) {
             return false;
         }
 
+        console.log('Daftar IP yang diizinkan:', allowedIps);  // Tambahkan log ini untuk debug
         return allowedIps.includes(clientIp);
     } catch (error) {
         console.error(chalk.red('Terjadi kesalahan saat membaca file ipuser.json:'), error.message);
         return false;
     }
 }
+
 
 // Endpoint untuk mengecek IP
 app.get('/check-ip', async (req, res) => {
