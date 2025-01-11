@@ -258,11 +258,7 @@ app.get('/okeconnect/dana', (req, res) => {
 });
 
 app.get('/okeconnect/saldo', async (req, res) => {
-    const { apikey, merchant, pin, password } = req.query;
-    
-    if (apikey !== 'linebaik') {
-    return res.status(403).json({ error: "Isi Parameter Apikey" });
-    }
+    const { memberID, pin, pw } = req.query;
     
     if (!memberID) {
     return res.json({ error: "Isi Parameter Merchant." });
