@@ -258,30 +258,6 @@ app.get('/okeconnect/dana', (req, res) => {
 });
 
 
-app.get('/okeconnect/saldo', async (req, res) => {
-const memberID = 'OK2160280'
- const pin = '2007'
- const password 'Rerezz.0208'
-    try {
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${merchant}&pin=${pin}&password=${password}`;
-        const response = await axios.get(apiUrl);        
-        const result = response.data;
-        if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
-            const latestTransaction = result.data[0];
-            return res.json(latestTransaction);
-        } else {
-            return res.json({ message: "Tidak ada transaksi ditemukan." });
-        }
-    } catch (error) {
-        console.error("Error saat mengakses API eksternal:", error.message);
-        const errorMessage = error.response ? error.response.data : error.message;
-        return res.status(500).json({ error: errorMessage });
-    }
-});
-
-
-
-
 app.get('/okeconnect/harga', async (req, res) => {
     const hargaID = req.query.id || '905ccd028329b0a'; // Default hargaID jika tidak diberikan
 
