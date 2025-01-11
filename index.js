@@ -258,26 +258,36 @@ app.get('/okeconnect/dana', (req, res) => {
 });
 
 app.get('/okeconnect/saldo', async (req, res) => {
-    const memberID = 'OK2160280';
-    const pin = '2007';
-    const password = 'Rerezz.0208';  // Menambahkan '=' pada bagian ini
-    try {
-        // Gantilah 'merchant' dengan 'memberID' pada URL
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${memberID}&pin=${pin}&password=${password}`;
-        const response = await axios.get(apiUrl);        
-        const result = response.data;
+    // Variabel parameter yang akan digunakan untuk API request
+    const memberID = 'OK2160280';  // Ganti dengan memberID yang benar
+    const pin = '2007';  // Ganti dengan PIN yang benar
+    const password = 'Rerezz.0208';  // Ganti dengan password yang benar
 
-        // Mengecek jika ada transaksi dalam hasil yang diterima
-        if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
-            const latestTransaction = result.data[0];
-            return res.json(latestTransaction); // Menampilkan transaksi terbaru
+    try {
+        // Menyiapkan URL untuk mengakses API eksternal
+        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${memberID}&pin=${pin}&password=${password}`;
+        
+        // Melakukan request ke API eksternal
+        const response = await axios.get(apiUrl);
+        
+        // Menampilkan seluruh data respons untuk debugging
+        console.log(response.data);  // Cek seluruh data respons
+
+        // Memastikan respons API sesuai format yang diharapkan
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+            // Jika ada data transaksi, ambil transaksi pertama
+            const latestTransaction = response.data.data[0];
+            return res.json(latestTransaction);
         } else {
-            return res.json({ message: "Tidak ada transaksi ditemukan." }); // Jika tidak ada transaksi
+            // Jika tidak ada transaksi atau data tidak valid
+            return res.json({ message: "Tidak ada transaksi ditemukan." });
         }
     } catch (error) {
         console.error("Error saat mengakses API eksternal:", error.message);
+        
+        // Jika API mengembalikan error, ambil respons error dari API
         const errorMessage = error.response ? error.response.data : error.message;
-        return res.status(500).json({ error: errorMessage }); // Mengirim error jika terjadi kesalahan
+        return res.status(500).json({ error: errorMessage });
     }
 });
 
