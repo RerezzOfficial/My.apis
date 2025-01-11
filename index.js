@@ -260,12 +260,12 @@ app.get('/okeconnect/dana', (req, res) => {
 app.get('/okeconnect/trx', async (req, res) => {
     const { memberID, pin, password, product, dest, refID, sign } = req.query;
 
-    // Pastikan semua parameter ada
+    // Validasi parameter
     if (!memberID || !pin || !password || !product || !dest || !refID || !sign) {
         return res.status(400).json({ error: 'Semua parameter harus disertakan' });
     }
 
-    const url = `https://h2h.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
+    const url = `https://apis.xyrezz.online-server.biz.id/okeconnect/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
 
     try {
         const response = await axios.get(url);
