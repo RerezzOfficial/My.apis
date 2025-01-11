@@ -257,37 +257,77 @@ app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
 
+app.use(express.json()); // Untuk menangani request JSON
+
+// Endpoint untuk transaksi
 app.get('/okeconnect/trx', async (req, res) => {
     const { memberID, pin, password, product, dest, refID, sign } = req.query;
 
     // Validasi parameter
     if (!memberID || !pin || !password || !product || !dest || !refID || !sign) {
-        return res.status(400).json({ error: 'Semua parameter harus disertakan' });
+        return res.status(400).json({ 
+            error: 'Semua parameter harus disertakan', 
+            requiredParams: ['memberID', 'pin', 'password', 'product', 'dest', 'refID', 'sign'] 
+        });
     }
 
-    const url = `https://apis.xyrezz.online-server.biz.id/okeconnect/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
+    // Buat URL untuk API tujuan
+    const url = `https://www.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
 
     try {
         const response = await axios.get(url);
-        res.json(response.data);
+        
+        // Pastikan respons valid
+        if (response && response.data) {
+            return res.json(response.data);
+        } else {
+            return res.status(500).json({ 
+                error: 'Respons dari API kosong atau tidak valid' 
+            });
+        }
     } catch (error) {
-        res.status(500).json({ error: 'Gagal mengambil data dari API', details: error.message });
+        console.error('Error pada transaksi:', error.message);
+        res.status(500).json({ 
+            error: 'Gagal mengambil data dari API', 
+            details: error.message 
+        });
     }
 });
 
-
-
+// Endpoint untuk daftar harga
 app.get('/okeconnect/harga', async (req, res) => {
-    const produk = req.params.produk; 
-    const hargaID = '905ccd028329b0a'; 
-    const url = `https://www.okeconnect.com/harga/json?id=905ccd028329b0a`; 
+    const hargaID = req.query.id || '905ccd028329b0a'; // Default hargaID jika tidak diberikan
+
+    // Validasi parameter
+    if (!hargaID) {
+        return res.status(400).json({ 
+            error: 'Parameter hargaID harus disertakan' 
+        });
+    }
+
+    // URL API tujuan
+    const url = `https://www.okeconnect.com/harga/json?id=${encodeURIComponent(hargaID)}`;
+
     try {
         const response = await axios.get(url);
-        res.json(response.data);
+
+        // Pastikan respons valid
+        if (response && response.data) {
+            return res.json(response.data);
+        } else {
+            return res.status(500).json({ 
+                error: 'Respons dari API kosong atau tidak valid' 
+            });
+        }
     } catch (error) {
-        res.status(500).json({ error: 'Gagal mengambil data dari API asli', details: error.message });
+        console.error('Error pada pengambilan harga:', error.message);
+        res.status(500).json({ 
+            error: 'Gagal mengambil data dari API asli', 
+            details: error.message 
+        });
     }
 });
+
 
 app.get('/okeconnect/kuota-tree', async (req, res) => {
     const produk = req.params.produk; // Mengambil produk dari parameter URL
