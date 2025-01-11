@@ -259,7 +259,6 @@ app.get('/okeconnect/dana', (req, res) => {
 
 app.use(express.json()); // Untuk menangani request JSON
 
-// Endpoint untuk transaksi
 app.get('/okeconnect/trx', async (req, res) => {
     const { memberID, pin, password, product, dest, refID, sign } = req.query;
 
@@ -274,27 +273,39 @@ app.get('/okeconnect/trx', async (req, res) => {
     // Buat URL untuk API tujuan
     const url = `https://www.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
 
+    console.log('Permintaan masuk ke /okeconnect/trx:', req.query);
+    console.log('URL yang dikirim ke API eksternal:', url);
+
     try {
         const response = await axios.get(url);
-        
+
         // Pastikan respons valid
         if (response && response.data) {
+            console.log('Respons dari API eksternal:', response.data);
             return res.json(response.data);
         } else {
+            console.error('Respons dari API eksternal kosong atau tidak valid.');
             return res.status(500).json({ 
-                error: 'Respons dari API kosong atau tidak valid' 
+                error: 'Respons dari API eksternal kosong atau tidak valid' 
             });
         }
     } catch (error) {
-        console.error('Error pada transaksi:', error.message);
-        res.status(500).json({ 
-            error: 'Gagal mengambil data dari API', 
-            details: error.message 
-        });
+        if (error.response) {
+            console.error('Error Response Data:', error.response.data);
+            console.error('Error Status:', error.response.status);
+            res.status(error.response.status).json({
+                error: 'Error dari API eksternal',
+                details: error.response.data
+            });
+        } else {
+            console.error('Error:', error.message);
+            res.status(500).json({
+                error: 'Kesalahan internal pada server',
+                details: error.message
+            });
+        }
     }
 });
-
-// Endpoint untuk daftar harga
 app.get('/okeconnect/harga', async (req, res) => {
     const hargaID = req.query.id || '905ccd028329b0a'; // Default hargaID jika tidak diberikan
 
