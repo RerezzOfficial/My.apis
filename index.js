@@ -272,11 +272,11 @@ app.get('/okeconnect/trx', async (req, res) => {
         memberID, pin, password, product, dest, refID, sign
     });
 
-    // API asli Okeconnect
+    // URL API Okeconnect yang asli
     const url = `https://www.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
 
     try {
-        // Mengirim permintaan ke API asli Okeconnect
+        // Mengirim permintaan ke API Okeconnect asli
         const response = await axios.get(url);
 
         // Mengecek jika respons valid dan sesuai format yang diharapkan
