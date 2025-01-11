@@ -258,22 +258,29 @@ app.get('/okeconnect/dana', (req, res) => {
 });
 
 app.get('/okeconnect/saldo', async (req, res) => {
-    const { merchant, pin, password } = req.query;
-    
-    if (!merchant) {
-    return res.json({ error: "Isi Parameter Merchant." });
+    const { memberID, pin, password } = req.query;
+
+    // Validasi parameter input
+    if (!memberID) {
+        return res.status(400).json({ error: "Isi parameter 'memberID'." });
     }
     if (!pin) {
-    return res.json({ error: "Isi Parameter Pin menggunakan Pin transaksi." });
+        return res.status(400).json({ error: "Isi parameter 'pin' menggunakan pin transaksi." });
     }
     if (!password) {
-        return res.status(400).json({ error: "Parameter 'password' tidak diisi." });
+        return res.status(400).json({ error: "Isi parameter 'password'." });
     }
-    
+
     try {
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${merchant}&pin=${pin}&password=${password}`;
-        const response = await axios.get(apiUrl);        
+        // URL API eksternal (Okeconnect)
+        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
+
+        // Mengirim permintaan ke API eksternal
+        const response = await axios.get(apiUrl);
+
+        // Memproses respons dari API eksternal
         const result = response.data;
+
         if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
             const latestTransaction = result.data[0];
             return res.json(latestTransaction);
@@ -282,8 +289,10 @@ app.get('/okeconnect/saldo', async (req, res) => {
         }
     } catch (error) {
         console.error("Error saat mengakses API eksternal:", error.message);
+
+        // Menangani pesan kesalahan dari API eksternal
         const errorMessage = error.response ? error.response.data : error.message;
-        return res.status(500).json({ error: errorMessage });
+        return res.status(500).json({ error: "Gagal mengambil saldo dari API eksternal.", details: errorMessage });
     }
 });
 
