@@ -259,34 +259,23 @@ app.get('/okeconnect/dana', (req, res) => {
 
 
 app.get("/okeconnect/saldo", async (req, res) => {
-    const { memberID, pin, password } = req.query;
-
-    // Validasi parameter
-    if (!memberID) return res.status(400).json({ error: "Parameter 'memberID' tidak boleh kosong." });
-    if (!pin) return res.status(400).json({ error: "Parameter 'pin' tidak boleh kosong." });
-    if (!password) return res.status(400).json({ error: "Parameter 'password' tidak boleh kosong." });
+  const memberID = 'OK2160280'
+  const pin ='2007'
+  const password = 'Rerezz.0208'
 
     try {
-        // Membentuk URL API Okeconnect
         const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
 
-        console.log("Mengirim permintaan ke API Okeconnect:", apiUrl); // Debugging
-
-        // Panggil API Okeconnect
+        console.log("Mengirim permintaan ke API Okeconnect:", apiUrl);
         const response = await axios.get(apiUrl);
-        console.log("Respons dari API Okeconnect:", response.data); // Debugging
-
+        console.log("Respons dari API Okeconnect:", response.data); 
         const result = response.data;
-
-        // Validasi respons
         if (!result || !result.data) {
             return res.status(500).json({
                 message: "API eksternal tidak mengembalikan data yang sesuai.",
                 details: result,
             });
         }
-
-        // Kembalikan data transaksi terbaru
         if (Array.isArray(result.data) && result.data.length > 0) {
             return res.json(result.data[0]);
         } else {
