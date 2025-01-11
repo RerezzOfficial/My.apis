@@ -256,7 +256,9 @@ app.get("/api/llama", async (req, res) => {
 app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
-app.get('/okeconnect/saldo', async (req, res) => {
+
+
+app.get("/okeconnect/saldo", async (req, res) => {
     const { memberID, pin, password } = req.query;
 
     // Validasi parameter
@@ -265,42 +267,37 @@ app.get('/okeconnect/saldo', async (req, res) => {
     if (!password) return res.status(400).json({ error: "Parameter 'password' tidak boleh kosong." });
 
     try {
+        // Membentuk URL API Okeconnect
         const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
 
-        // Debugging: Log URL yang diteruskan
-        console.log("Meneruskan ke API Asli:", apiUrl);
+        console.log("Mengirim permintaan ke API Okeconnect:", apiUrl); // Debugging
 
-        // Panggil API asli
+        // Panggil API Okeconnect
         const response = await axios.get(apiUrl);
+        console.log("Respons dari API Okeconnect:", response.data); // Debugging
 
-        // Debugging: Log respons dari API asli
-        console.log("Respons dari API Asli:", response.data);
-
-        // Validasi format respons
         const result = response.data;
-        if (!result) {
-            return res.status(500).json({ message: "API eksternal tidak mengembalikan respons." });
+
+        // Validasi respons
+        if (!result || !result.data) {
+            return res.status(500).json({
+                message: "API eksternal tidak mengembalikan data yang sesuai.",
+                details: result,
+            });
         }
 
-        // Jika `data` tidak ada, beri pesan jelas
-        if (!result.data) {
-            return res.status(500).json({ message: "API eksternal tidak mengembalikan field 'data'.", details: result });
-        }
-
-        // Ambil transaksi terbaru
+        // Kembalikan data transaksi terbaru
         if (Array.isArray(result.data) && result.data.length > 0) {
-            const latestTransaction = result.data[0];
-            return res.json(latestTransaction);
+            return res.json(result.data[0]);
         } else {
             return res.json({ message: "Tidak ada transaksi ditemukan.", details: result });
         }
     } catch (error) {
-        console.error("Error saat memanggil API asli:", error.message);
+        console.error("Kesalahan saat memanggil API Okeconnect:", error.message);
         const errorMessage = error.response ? error.response.data : error.message;
         return res.status(500).json({ error: "Gagal mengambil data dari API Okeconnect.", details: errorMessage });
     }
 });
-
 
 
 app.get('/okeconnect/harga', async (req, res) => {
