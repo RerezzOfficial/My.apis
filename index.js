@@ -259,32 +259,24 @@ app.get('/okeconnect/dana', (req, res) => {
 
 
 app.get("/okeconnect/saldo", async (req, res) => {
-  const memberID = 'OK2160280'
+  const merchant = 'OK2160280'
   const pin ='2007'
   const password = 'Rerezz.0208'
 
-    try {
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
-
-        console.log("Mengirim permintaan ke API Okeconnect:", apiUrl);
-        const response = await axios.get(apiUrl);
-        console.log("Respons dari API Okeconnect:", response.data); 
+try {
+        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${merchant}&pin=${pin}&password=${password}`;
+        const response = await axios.get(apiUrl);        
         const result = response.data;
-        if (!result || !result.data) {
-            return res.status(500).json({
-                message: "API eksternal tidak mengembalikan data yang sesuai.",
-                details: result,
-            });
-        }
-        if (Array.isArray(result.data) && result.data.length > 0) {
-            return res.json(result.data[0]);
+        if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+            const latestTransaction = result.data[0];
+            return res.json(latestTransaction);
         } else {
-            return res.json({ message: "Tidak ada transaksi ditemukan.", details: result });
+            return res.json({ message: "Tidak ada transaksi ditemukan." });
         }
     } catch (error) {
-        console.error("Kesalahan saat memanggil API Okeconnect:", error.message);
+        console.error("Error saat mengakses API eksternal:", error.message);
         const errorMessage = error.response ? error.response.data : error.message;
-        return res.status(500).json({ error: "Gagal mengambil data dari API Okeconnect.", details: errorMessage });
+        return res.status(500).json({ error: errorMessage });
     }
 });
 
