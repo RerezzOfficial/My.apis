@@ -259,18 +259,9 @@ app.get('/okeconnect/dana', (req, res) => {
 
 
 app.get('/okeconnect/saldo', async (req, res) => {
-    const { merchant, pin, password } = req.query;
-    
-    if (!merchant) {
-    return res.json({ error: "Isi Parameter Merchant." });
-    }
-    if (!pin) {
-    return res.json({ error: "Isi Parameter Pin menggunakan Pin transaksi." });
-    }
-    if (!password) {
-        return res.status(400).json({ error: "Parameter 'password' tidak diisi." });
-    }
-    
+const memberID = 'OK2160280'
+ const pin = '2007'
+ const password 'Rerezz.0208'
     try {
         const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${merchant}&pin=${pin}&password=${password}`;
         const response = await axios.get(apiUrl);        
