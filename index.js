@@ -258,25 +258,19 @@ app.get('/okeconnect/dana', (req, res) => {
 });
 
 
-app.get("/okeconnect/saldo", async (req, res) => {
-  const merchant = 'OK2160280'
-  const pin ='2007'
-  const password = 'Rerezz.0208'
-
-try {
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${merchant}&pin=${pin}&password=${password}`;
-        const response = await axios.get(apiUrl);        
-        const result = response.data;
-        if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
-            const latestTransaction = result.data[0];
-            return res.json(latestTransaction);
-        } else {
-            return res.json({ message: "Tidak ada transaksi ditemukan." });
-        }
+app.get('/okeconnect/saldo', async (req, res) => {
+    const { memberID, pin, password } = req.query;
+    if (!memberID || !pin || !password) {
+        return res.status(400).json({ error: "Parameter 'memberID', 'pin', dan 'password' tidak boleh kosong." });
+    }
+    try {
+        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
+        console.log("Meneruskan ke API Asli:", apiUrl);
+        const response = await axios.get(apiUrl);
+        return res.json(response.data);
     } catch (error) {
-        console.error("Error saat mengakses API eksternal:", error.message);
-        const errorMessage = error.response ? error.response.data : error.message;
-        return res.status(500).json({ error: errorMessage });
+        console.error("Error saat memanggil API asli:", error.message);
+        return res.status(500).json({ error: "Gagal mengambil data dari API Okeconnect.", details: error.message });
     }
 });
 
