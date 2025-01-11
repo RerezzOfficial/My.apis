@@ -257,46 +257,42 @@ app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
 
-app.use(express.json()); // Untuk menangani request JSON
-
-app.get('/okeconnect/trx', async (req, res) => {
-    const { memberID, pin, password, product, dest, refID, sign } = req.query;
-
-    // Validasi parameter
-    if (!memberID || !pin || !password || !product || !dest || !refID || !sign) {
-        return res.status(400).json({ error: 'Semua parameter harus disertakan' });
+app.get('/okeconnect/saldo', async (req, res) => {
+    const { apikey, merchant, pin, password } = req.query;
+    
+    if (apikey !== 'linebaik') {
+    return res.status(403).json({ error: "Isi Parameter Apikey" });
     }
-
-    // URL API Okeconnect yang asli
-    const url = `https://www.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
-
-    // Debugging: Tampilkan URL yang dikirim
-    console.log("URL Transaksi yang dikirim:", url);
-
+    
+    if (!memberID) {
+    return res.json({ error: "Isi Parameter Merchant." });
+    }
+    if (!pin) {
+    return res.json({ error: "Isi Parameter Pin menggunakan Pin transaksi." });
+    }
+    if (!pw) {
+        return res.status(400).json({ error: "Parameter 'password' tidak diisi." });
+    }
+    
     try {
-        // Mengirim permintaan ke API Okeconnect asli
-        const response = await axios.get(url);
-
-        // Mengecek jika respons valid dan sesuai format yang diharapkan
-        if (response.data && response.data.error) {
-            // Jika ada error dari API eksternal, kirimkan error tersebut
-            return res.status(500).json({
-                error: 'Error dari API Okeconnect',
-                details: response.data.error
-            });
+        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${memberID}&pin=${pin}&password=${pw}`;
+        const response = await axios.get(apiUrl);        
+        const result = response.data;
+        if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+            const latestTransaction = result.data[0];
+            return res.json(latestTransaction);
+        } else {
+            return res.json({ message: "Tidak ada transaksi ditemukan." });
         }
-
-        // Kirimkan data dari API Okeconnect jika berhasil
-        res.json(response.data);
     } catch (error) {
-        // Menangani error yang terjadi saat mengambil data dari API Okeconnect
-        console.error("Error dalam menghubungi API Okeconnect:", error);
-        res.status(500).json({
-            error: 'Gagal mengambil data dari API Okeconnect',
-            details: error.message
-        });
+        console.error("Error saat mengakses API eksternal:", error.message);
+        const errorMessage = error.response ? error.response.data : error.message;
+        return res.status(500).json({ error: errorMessage });
     }
 });
+
+
+
 app.get('/okeconnect/harga', async (req, res) => {
     const hargaID = req.query.id || '905ccd028329b0a'; // Default hargaID jika tidak diberikan
 
