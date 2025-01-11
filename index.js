@@ -256,11 +256,9 @@ app.get("/api/llama", async (req, res) => {
 app.get('/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
 });
-
 app.get('/okeconnect/saldo', async (req, res) => {
     const { memberID, pin, password } = req.query;
 
-    // Validasi parameter input
     if (!memberID) {
         return res.status(400).json({ error: "Isi parameter 'memberID'." });
     }
@@ -272,30 +270,27 @@ app.get('/okeconnect/saldo', async (req, res) => {
     }
 
     try {
-        // URL API eksternal (Okeconnect)
         const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
-
-        // Mengirim permintaan ke API eksternal
         const response = await axios.get(apiUrl);
-
-        // Memproses respons dari API eksternal
         const result = response.data;
+
+        // Debugging: Log hasil mentah
+        console.log("Respons dari API eksternal:", result);
 
         if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
             const latestTransaction = result.data[0];
             return res.json(latestTransaction);
+        } else if (result && !result.data) {
+            return res.status(200).json({ message: "API eksternal tidak mengembalikan field 'data'." });
         } else {
-            return res.json({ message: "Tidak ada transaksi ditemukan." });
+            return res.status(200).json({ message: "Tidak ada transaksi ditemukan.", rawResponse: result });
         }
     } catch (error) {
         console.error("Error saat mengakses API eksternal:", error.message);
-
-        // Menangani pesan kesalahan dari API eksternal
         const errorMessage = error.response ? error.response.data : error.message;
         return res.status(500).json({ error: "Gagal mengambil saldo dari API eksternal.", details: errorMessage });
     }
 });
-
 
 
 
