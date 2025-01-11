@@ -267,13 +267,11 @@ app.get('/okeconnect/trx', async (req, res) => {
         return res.status(400).json({ error: 'Semua parameter harus disertakan' });
     }
 
-    // Debugging: Tampilkan parameter yang diterima
-    console.log("Parameter yang diterima:", {
-        memberID, pin, password, product, dest, refID, sign
-    });
-
     // URL API Okeconnect yang asli
     const url = `https://www.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
+
+    // Debugging: Tampilkan URL yang dikirim
+    console.log("URL Transaksi yang dikirim:", url);
 
     try {
         // Mengirim permintaan ke API Okeconnect asli
