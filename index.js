@@ -264,46 +264,39 @@ app.get('/okeconnect/trx', async (req, res) => {
 
     // Validasi parameter
     if (!memberID || !pin || !password || !product || !dest || !refID || !sign) {
-        return res.status(400).json({ 
-            error: 'Semua parameter harus disertakan', 
-            requiredParams: ['memberID', 'pin', 'password', 'product', 'dest', 'refID', 'sign'] 
-        });
+        return res.status(400).json({ error: 'Semua parameter harus disertakan' });
     }
 
-    // Buat URL untuk API tujuan
+    // Debugging: Tampilkan parameter yang diterima
+    console.log("Parameter yang diterima:", {
+        memberID, pin, password, product, dest, refID, sign
+    });
+
+    // API asli Okeconnect
     const url = `https://www.okeconnect.com/trx?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}&product=${encodeURIComponent(product)}&dest=${encodeURIComponent(dest)}&refID=${encodeURIComponent(refID)}&sign=${encodeURIComponent(sign)}`;
 
-    console.log('Permintaan masuk ke /okeconnect/trx:', req.query);
-    console.log('URL yang dikirim ke API eksternal:', url);
-
     try {
+        // Mengirim permintaan ke API asli Okeconnect
         const response = await axios.get(url);
 
-        // Pastikan respons valid
-        if (response && response.data) {
-            console.log('Respons dari API eksternal:', response.data);
-            return res.json(response.data);
-        } else {
-            console.error('Respons dari API eksternal kosong atau tidak valid.');
-            return res.status(500).json({ 
-                error: 'Respons dari API eksternal kosong atau tidak valid' 
+        // Mengecek jika respons valid dan sesuai format yang diharapkan
+        if (response.data && response.data.error) {
+            // Jika ada error dari API eksternal, kirimkan error tersebut
+            return res.status(500).json({
+                error: 'Error dari API Okeconnect',
+                details: response.data.error
             });
         }
+
+        // Kirimkan data dari API Okeconnect jika berhasil
+        res.json(response.data);
     } catch (error) {
-        if (error.response) {
-            console.error('Error Response Data:', error.response.data);
-            console.error('Error Status:', error.response.status);
-            res.status(error.response.status).json({
-                error: 'Error dari API eksternal',
-                details: error.response.data
-            });
-        } else {
-            console.error('Error:', error.message);
-            res.status(500).json({
-                error: 'Kesalahan internal pada server',
-                details: error.message
-            });
-        }
+        // Menangani error yang terjadi saat mengambil data dari API Okeconnect
+        console.error("Error dalam menghubungi API Okeconnect:", error);
+        res.status(500).json({
+            error: 'Gagal mengambil data dari API Okeconnect',
+            details: error.message
+        });
     }
 });
 app.get('/okeconnect/harga', async (req, res) => {
