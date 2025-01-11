@@ -259,20 +259,35 @@ app.get('/okeconnect/dana', (req, res) => {
 
 
 app.get('/okeconnect/saldo', async (req, res) => {
-    const { memberID, pin, password } = req.query;
-    if (!memberID || !pin || !password) {
-        return res.status(400).json({ error: "Parameter 'memberID', 'pin', dan 'password' tidak boleh kosong." });
+    const { merchant, pin, password } = req.query;
+    
+    if (!merchant) {
+    return res.json({ error: "Isi Parameter Merchant." });
     }
+    if (!pin) {
+    return res.json({ error: "Isi Parameter Pin menggunakan Pin transaksi." });
+    }
+    if (!password) {
+        return res.status(400).json({ error: "Parameter 'password' tidak diisi." });
+    }
+    
     try {
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${encodeURIComponent(memberID)}&pin=${encodeURIComponent(pin)}&password=${encodeURIComponent(password)}`;
-        console.log("Meneruskan ke API Asli:", apiUrl);
-        const response = await axios.get(apiUrl);
-        return res.json(response.data);
+        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${merchant}&pin=${pin}&password=${password}`;
+        const response = await axios.get(apiUrl);        
+        const result = response.data;
+        if (result && result.data && Array.isArray(result.data) && result.data.length > 0) {
+            const latestTransaction = result.data[0];
+            return res.json(latestTransaction);
+        } else {
+            return res.json({ message: "Tidak ada transaksi ditemukan." });
+        }
     } catch (error) {
-        console.error("Error saat memanggil API asli:", error.message);
-        return res.status(500).json({ error: "Gagal mengambil data dari API Okeconnect.", details: error.message });
+        console.error("Error saat mengakses API eksternal:", error.message);
+        const errorMessage = error.response ? error.response.data : error.message;
+        return res.status(500).json({ error: errorMessage });
     }
 });
+
 
 
 app.get('/okeconnect/harga', async (req, res) => {
