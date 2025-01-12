@@ -129,7 +129,7 @@ app.get('/doc/funngame', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'fun.html'));
 });
 
-app.get('/doc/sourcde', (req, res) => {
+app.get('/doc/sourcode', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'code.html'));
 });
 
