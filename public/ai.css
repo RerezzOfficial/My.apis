@@ -323,7 +323,6 @@ section {
 .copy-container textarea {
   resize: none;
   width: 100%;
-  height: 30px;
   max-height: 300px;
   border: 2px solid aqua;
   border-radius: 8px;
