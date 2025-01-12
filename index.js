@@ -122,7 +122,7 @@ app.get('/doc/downloader', (req, res) => {
 });
 
 app.get('/doc/game', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'asahotak.html'));
+  res.sendFile(path.join(__dirname, 'public', 'game.html'));
 });
 
 app.get('/doc/funngame', (req, res) => {
