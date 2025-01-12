@@ -121,6 +121,9 @@ app.get('/doc/downloader', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'downloader.html'));
 });
 
+app.get('/doc/funngame', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'fun.html'));
+});
 
 app.get('/style/style', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.css'));
