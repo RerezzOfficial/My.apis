@@ -121,6 +121,10 @@ app.get('/doc/downloader', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'downloader.html'));
 });
 
+app.get('/doc/game', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'asahotak.html'));
+});
+
 app.get('/doc/funngame', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'fun.html'));
 });
