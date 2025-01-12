@@ -154,10 +154,22 @@ app.get('/quotes/motivasi', (req, res) => {
   res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
 });
 
+app.get('/api/pantun', (req, res) => {
+  fs.readFile(path.join(__dirname, 'quotes', 'pantun.json'), 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send({ message: 'Error membaca file pantun' });
+    }
+    const pantunList = JSON.parse(data);
+    const randomPantun = pantunList[Math.floor(Math.random() * pantunList.length)];
+    res.json({ pantun: randomPantun });
+  });
+});
 //=====[ API GAME ]=====//
 app.get('/game/asahotak', (req, res) => {
   res.sendFile(path.join(__dirname, 'game', 'asahotak.json'));
 });
+
+
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
