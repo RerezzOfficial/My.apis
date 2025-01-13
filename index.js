@@ -213,21 +213,24 @@ app.get('/api/husbu', async (req, res) => {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/husbu.json';
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
-    if (!cosplayData.results || cosplayData.results.length === 0) {
-      return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
+
+    if (!cosplayData || cosplayData.length === 0) {
+      return res.status(400).json({ error: 'Tidak ada gambar dalam husbu.json.' });
     }
-    const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
-    const randomCosplay = cosplayData.results[randomIndex];
+
+    const randomIndex = Math.floor(Math.random() * cosplayData.length);
+    const randomCosplay = cosplayData[randomIndex];
     const imageUrl = randomCosplay.url;
+
     const imageResponse = await axios({
       method: 'get',
       url: imageUrl,
       responseType: 'stream'
     });
-    imageResponse.data.pipe(res);  
+    imageResponse.data.pipe(res);
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
+    res.status(500).json({ error: 'Gagal memproses file husbu.json' });
   }
 });
 
