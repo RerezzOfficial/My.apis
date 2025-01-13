@@ -1,0 +1,219 @@
+[
+    {
+      "kode": "D1",
+      "keterangan": "Dana 1.000",
+      "harga": "Rp 1.090",
+      "status": "open"
+    },
+    {
+      "kode": "D2",
+      "keterangan": "Dana 2.000",
+      "harga": "Rp 2.090",
+      "status": "open"
+    },
+    {
+      "kode": "D3",
+      "keterangan": "Dana 3.000",
+      "harga": "Rp 3.090",
+      "status": "open"
+    },
+    {
+      "kode": "D4",
+      "keterangan": "Dana 4.000",
+      "harga": "Rp 4.090",
+      "status": "open"
+    },
+    {
+      "kode": "D5",
+      "keterangan": "Dana 5.000",
+      "harga": "Rp 5.090",
+      "status": "open"
+    },
+    {
+      "kode": "D10",
+      "keterangan": "Dana 10.000",
+      "harga": "Rp 10.090",
+      "status": "open"
+    },
+    {
+      "kode": "D15",
+      "keterangan": "Dana 15.000",
+      "harga": "Rp 15.090",
+      "status": "open"
+    },
+    {
+      "kode": "D20",
+      "keterangan": "Dana 20.000",
+      "harga": "Rp 20.090",
+      "status": "open"
+    },
+    {
+      "kode": "D25",
+      "keterangan": "Dana 25.000",
+      "harga": "Rp 25.090",
+      "status": "open"
+    },
+    {
+      "kode": "D30",
+      "keterangan": "Dana 30.000",
+      "harga": "Rp 30.090",
+      "status": "open"
+    },
+    {
+      "kode": "D35",
+      "keterangan": "Dana 35.000",
+      "harga": "Rp 35.090",
+      "status": "open"
+    },
+    {
+      "kode": "D40",
+      "keterangan": "Dana 40.000",
+      "harga": "Rp 40.090",
+      "status": "open"
+    },
+    {
+      "kode": "D45",
+      "keterangan": "Dana 45.000",
+      "harga": "Rp 45.090",
+      "status": "open"
+    },
+    {
+      "kode": "D50",
+      "keterangan": "Dana 50.000",
+      "harga": "Rp 50.090",
+      "status": "open"
+    },
+    {
+      "kode": "D55",
+      "keterangan": "Dana 55.000",
+      "harga": "Rp 55.090",
+      "status": "open"
+    },
+    {
+      "kode": "D60",
+      "keterangan": "Dana 60.000",
+      "harga": "Rp 60.090",
+      "status": "open"
+    },
+    {
+      "kode": "D65",
+      "keterangan": "Dana 65.000",
+      "harga": "Rp 65.090",
+      "status": "open"
+    },
+    {
+      "kode": "D70",
+      "keterangan": "Dana 70.000",
+      "harga": "Rp 70.090",
+      "status": "open"
+    },
+    {
+      "kode": "D75",
+      "keterangan": "Dana 75.000",
+      "harga": "Rp 75.090",
+      "status": "open"
+    },
+    {
+      "kode": "D80",
+      "keterangan": "Dana 80.000",
+      "harga": "Rp 80.090",
+      "status": "open"
+    },
+    {
+      "kode": "D85",
+      "keterangan": "Dana 85.000",
+      "harga": "Rp 85.090",
+      "status": "open"
+    },
+    {
+      "kode": "D90",
+      "keterangan": "Dana 90.000",
+      "harga": "Rp 90.090",
+      "status": "open"
+    },
+    {
+      "kode": "D95",
+      "keterangan": "Dana 95.000",
+      "harga": "Rp 95.090",
+      "status": "open"
+    },
+    {
+      "kode": "D100",
+      "keterangan": "Dana 100.000",
+      "harga": "Rp 100.090",
+      "status": "open"
+    },
+    {
+      "kode": "D125",
+      "keterangan": "Dana 125.000",
+      "harga": "Rp 125.090",
+      "status": "open"
+    },
+    {
+      "kode": "D150",
+      "keterangan": "Dana 150.000",
+      "harga": "Rp 150.090",
+      "status": "open"
+    },
+    {
+      "kode": "D200",
+      "keterangan": "Dana 200.000",
+      "harga": "Rp 200.090",
+      "status": "open"
+    },
+    {
+      "kode": "D250",
+      "keterangan": "Dana H2H 250.000",
+      "harga": "Rp 250.090",
+      "status": "open"
+    },
+    {
+      "kode": "D300",
+      "keterangan": "Dana H2H 300.000",
+      "harga": "Rp 300.090",
+      "status": "open"
+    },
+    {
+      "kode": "D400",
+      "keterangan": "Dana H2H 400.000",
+      "harga": "Rp 400.090",
+      "status": "open"
+    },
+    {
+      "kode": "D500",
+      "keterangan": "Dana H2H 500.000",
+      "harga": "Rp 500.090",
+      "status": "open"
+    },
+    {
+      "kode": "D600",
+      "keterangan": "Dana H2H 600.000",
+      "harga": "Rp 600.090",
+      "status": "open"
+    },
+    {
+      "kode": "D700",
+      "keterangan": "Dana H2H 700.000",
+      "harga": "Rp 700.090",
+      "status": "open"
+    },
+    {
+      "kode": "D800",
+      "keterangan": "Dana H2H 800.000",
+      "harga": "Rp 800.090",
+      "status": "open"
+    },
+    {
+      "kode": "D900",
+      "keterangan": "Dana H2H 900.000",
+      "harga": "Rp 900.090",
+      "status": "open"
+    },
+    {
+      "kode": "D1000",
+      "keterangan": "Dana H2H 1.000.000",
+      "harga": "Rp 1.000.090",
+      "status": "open"
+    }
+  ]
+  
