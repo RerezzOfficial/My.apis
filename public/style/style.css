@@ -1,0 +1,272 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto Mono', monospace;
+  background-color: #000000;
+  z-index: 1; 
+}
+
+#particles-js {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0c0d0f;
+  z-index: 0; 
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin: 15px;
+  border-radius: 5px;
+  border: 2px solid aqua;
+  transform: translateY(-50px);
+  opacity: 0;
+  animation: fadeInFromTop 0.8s ease forwards;
+  z-index: 1; 
+}
+
+header h1 {
+  color: aqua;
+  margin: 0;
+  font-size: 35px;
+  border-bottom: 2px solid aqua;
+  display: flex;
+  align-items: center;
+}
+
+header h1 i {
+  margin-right: 10px;
+  font-size: 40px;
+  color: red;
+}
+
+.icons {
+  display: flex;
+  gap: 15px;
+}
+
+.icons i {
+  color: #fff;
+  font-size: 35px;
+  cursor: pointer;
+  transition: transform 0.5s ease, color 0.5s ease;
+}
+
+.icons i.active {
+  transform: rotate(90deg);
+  color: red;
+}
+
+.sidebar {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.7);
+  top: 70px;
+  left: 0;
+  width: 0;
+  height: auto;
+  overflow: hidden;
+  margin: 15px;
+  z-index: 1000; /* Sidebar berada di atas header dan background */
+  transition: width 1s ease, height 1s ease;
+}
+
+.sidebar.active {
+  width: 300px;
+  border: 2px solid aqua;
+  border-radius: 8px;
+}
+
+.sidebar h2 {
+  color: #fff;
+  text-align: center;
+  background: #333;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 15px 10px 0 10px;
+  border: 2px solid aqua;
+}
+
+.sidebar a {
+  text-decoration: none;
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: opacity 3s ease;
+}
+
+.sidebar.active ul {
+  opacity: 1;
+}
+
+.sidebar ul li {
+  padding: 10px 5px;
+  border-bottom: 1px solid #333;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  text-align: left;
+  margin: 5px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.9);
+  border: 2px solid aqua;
+}
+
+.sidebar ul li:hover {
+  color: aqua;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999; 
+  display: none;
+  background-color: transparent;
+}
+
+.overlay.active {
+  display: block;
+}
+
+.docapi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 15px;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 15px;
+  transform: translateY(-50px);
+  opacity: 0;
+  animation: fadeInFromTop 0.8s ease forwards;
+}
+
+.docapi h1 {
+  background-color: transparent;
+  color: #ffffff;
+  text-align: left;
+  padding: 0;
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.docapi h2 {
+  background-color: transparent;
+  color: #ffffff;
+  text-align: left;
+  padding: 0;
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
+.docapi .apis {
+  color: #ffffff;
+  border: 2px solid aqua;
+  padding: 5px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.docapi .apis a {
+  color: aqua;
+  text-decoration: none;
+  font-weight: bold;
+  border: 2px solid aqua;
+  padding: 8px 15px;
+  border-radius: 8px;
+}
+
+.docapi .apis a:hover {
+  background-color: aqua;
+  color: #000000;
+  border: 2px solid #fff;
+}
+
+section {
+  margin: 25px 15px;
+  border-radius: 8px;
+}
+
+.card {
+  background-color: transparent;
+  padding: 5px;
+  border-radius: 8px;
+  display: flex;
+  margin: 10px 0;
+  align-items: center;
+  color: #fff;
+  border: 2px solid aqua;
+  transform: translateY(-50px);
+  opacity: 0;
+  animation: fadeInFromTop 0.8s ease forwards;
+}
+
+.card h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.card p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+
+.card .icon {
+  font-size: 50px;
+  margin-right: 20px;
+  margin-left: 10px;
+  border-bottom: 2px solid aqua;
+  color: #00ffff;
+}
+
+/* Animasi fadeInFromTop */
+@keyframes fadeInFromTop {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Elemen dengan animasi */
+.animated-item {
+  opacity: 0;
+  animation: fadeInFromTop 1s ease forwards;
+}
+
+/* Delay untuk elemen */
+.animated-item:nth-child(1) {
+  animation-delay: 0.2s;
+}
+.animated-item:nth-child(2) {
+  animation-delay: 0.4s;
+}
+.animated-item:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.animated-item:nth-child(4) {
+  animation-delay: 0.8s;
+}
+.animated-item:nth-child(5) {
+  animation-delay: 1s;
+}
