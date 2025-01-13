@@ -90,22 +90,32 @@ function genreff() {
   }
   return reffidgen;
 }
-
 app.use(cors());
 
 
-app.use('/anime', express.static(path.join(__dirname, 'anime')));
-
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 app.get('/style/styles', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'styles.css'));
+  res.sendFile(path.join(__dirname, 'public', 'style', 'style.css'));
 });
 app.get('/style/script', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'script.js'));
+  res.sendFile(path.join(__dirname, 'public', 'style', 'script.js'));
 });
+app.get('/style/style', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.css'));
+});
+app.get('/style/scrip', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.js'));
+});
+app.get('/style/code', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'style', 'code.css'));
+});
+app.get('/style/codejs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'style', 'code.js'));
+});
+  
 
 app.get('/doc/ai', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'ai.html'));
@@ -133,51 +143,32 @@ app.get('/doc/sourcode', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'code.html'));
 });
 
-app.get('/style/style', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'ai.css'));
-});
-app.get('/style/scrip', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'ai.js'));
-});
 
 
-app.get('/get/pairingcode', async (req, res) => {
-  try {
-    const url = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/database/ipuser.json';
-    const response = await axios.get(url);
-    const allowedIps = response.data.allowed_ips;
-    if (!allowedIps || allowedIps.length === 0) {
-      return res.status(400).json({ error: 'Tidak ada IP yang diizinkan.' });
-    }
-    res.json({ allowed_ips: allowedIps });
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil data IP.' });
-  }
+app.get('/api/quotes/motivasi', (req, res) => {
+  res.sendFile(path.join(__dirname, 'media', 'galau.json'));
 });
 
-
-app.get('/getip', (req, res) => {
-  res.sendFile(path.join(__dirname, 'database', 'ipuser.json'));
-});
-
-app.get('/quotes/motivasi', (req, res) => {
-  res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
+app.get('/api/quotes/galau', (req, res) => {
+  res.sendFile(path.join(__dirname, 'media', 'galau.json'));
 });
 
 app.get('/api/pantun', (req, res) => {
-  res.sendFile(path.join(__dirname, 'quotes', 'pantun.json'));
+  res.sendFile(path.join(__dirname, 'media', 'pantun.json'));
 });
 //=====[ API GAME ]=====//
 app.get('/game/asahotak', (req, res) => {
-  res.sendFile(path.join(__dirname, 'game', 'asahotak.json'));
+  const filePath = path.join(__dirname, 'media', 'asahotak.json');
+  console.log('File Path:', filePath); 
+  res.sendFile(filePath);
 });
+
 
 
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
-    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/cosplay.json';
+    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/cosplay.json';
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
     if (!cosplayData.results || cosplayData.results.length === 0) {
@@ -196,7 +187,7 @@ app.get('/api/cosplay', async (req, res) => {
 
 app.get('/api/akiyama', async (req, res) => {
   try {
-    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/anime/akiyama.json';
+    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/akiyama.json';
     const response = await axios.get(fileUrl);
     const cosplayData = response.data;
     if (!cosplayData.results || cosplayData.results.length === 0) {
@@ -217,21 +208,30 @@ app.get('/api/akiyama', async (req, res) => {
   }
 });
 
-//=====[ API QUOTES ]=====//
-app.get('/api/quotes/galau', async (req, res) => {
+app.get('/api/husbu', async (req, res) => {
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/quotes/galau.json');
-    const quotes = response.data.quotes;
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-    res.json({ quote: randomQuote });
+    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/husbu.json';
+    const response = await axios.get(fileUrl);
+    const cosplayData = response.data;
+    if (!cosplayData.results || cosplayData.results.length === 0) {
+      return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
+    }
+    const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
+    const randomCosplay = cosplayData.results[randomIndex];
+    const imageUrl = randomCosplay.url;
+    const imageResponse = await axios({
+      method: 'get',
+      url: imageUrl,
+      responseType: 'stream'
+    });
+    imageResponse.data.pipe(res);  
   } catch (error) {
-    console.error('Error fetching galau quotes:', error);
-    res.status(500).json({ error: 'Terjadi kesalahan saat mengambil quotes galau.' });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
   }
 });
-app.get('/quotes/motivasi', (req, res) => {
-  res.sendFile(path.join(__dirname, 'quotes', 'galau.json'));
-});
+
+
 
 //=====[ API AI ]=====//
 app.get("/api/chatgpt-v2", async (req, res) => {
@@ -268,99 +268,29 @@ app.get("/api/llama", async (req, res) => {
     }
 });
 
+
+
 //=====[ OKECONNECT API ]=====//
-app.get('/okeconnect/dana', (req, res) => {
-  res.sendFile(path.join(__dirname, 'okeconnect', 'dana.json'));
+app.get('/api/okeconnect/dana', (req, res) => {
+  res.sendFile(path.join(__dirname, 'media', 'dana.json'));
 });
 
-app.get('/okeconnect/saldo', async (req, res) => {
-    // Variabel parameter yang akan digunakan untuk API request
-    const memberID = 'OK2160280';  // Ganti dengan memberID yang benar
-    const pin = '2007';  // Ganti dengan PIN yang benar
-    const password = 'Rerezz.0208';  // Ganti dengan password yang benar
-
-    try {
-        // Menyiapkan URL untuk mengakses API eksternal
-        const apiUrl = `https://h2h.okeconnect.com/trx/balance?memberID=${memberID}&pin=${pin}&password=${password}`;
-        
-        // Melakukan request ke API eksternal
-        const response = await axios.get(apiUrl);
-        
-        // Menampilkan seluruh data respons untuk debugging
-        console.log(response.data);  // Cek seluruh data respons
-
-        // Memastikan respons API sesuai format yang diharapkan
-        if (response.data && response.data.data && Array.isArray(response.data.data)) {
-            // Jika ada data transaksi, ambil transaksi pertama
-            const latestTransaction = response.data.data[0];
-            return res.json(latestTransaction);
-        } else {
-            // Jika tidak ada transaksi atau data tidak valid
-            return res.json({ message: "Tidak ada transaksi ditemukan." });
-        }
-    } catch (error) {
-        console.error("Error saat mengakses API eksternal:", error.message);
-        
-        // Jika API mengembalikan error, ambil respons error dari API
-        const errorMessage = error.response ? error.response.data : error.message;
-        return res.status(500).json({ error: errorMessage });
-    }
-});
-
-app.get('/okeconnect/harga', async (req, res) => {
-    const hargaID = req.query.id || '905ccd028329b0a'; // Default hargaID jika tidak diberikan
-
-    // Validasi parameter
-    if (!hargaID) {
-        return res.status(400).json({ 
-            error: 'Parameter hargaID harus disertakan' 
-        });
-    }
-
-    // URL API tujuan
-    const url = `https://www.okeconnect.com/harga/json?id=${encodeURIComponent(hargaID)}`;
+app.get('/api/okeconnect/kuota-tree', async (req, res) => {
+    const produk = req.params.produk; 
+    const hargaID = '905ccd028329b0a'; 
+    const url = `https://okeconnect.com/harga/json?id=905ccd028329b0a&produk=kuota_tri`;
 
     try {
         const response = await axios.get(url);
-
-        // Pastikan respons valid
-        if (response && response.data) {
-            return res.json(response.data);
-        } else {
-            return res.status(500).json({ 
-                error: 'Respons dari API kosong atau tidak valid' 
-            });
-        }
-    } catch (error) {
-        console.error('Error pada pengambilan harga:', error.message);
-        res.status(500).json({ 
-            error: 'Gagal mengambil data dari API asli', 
-            details: error.message 
-        });
-    }
-});
-
-
-app.get('/okeconnect/kuota-tree', async (req, res) => {
-    const produk = req.params.produk; // Mengambil produk dari parameter URL
-    const hargaID = '905ccd028329b0a'; // ID harga yang tetap
-    const url = `https://okeconnect.com/harga/json?id=905ccd028329b0a&produk=kuota_tri`; // Menggunakan produk dinamis
-
-    try {
-        // Mengambil data dari API asli menggunakan axios
-        const response = await axios.get(url);
-
-        // Mengirimkan data dari API asli ke client
         res.json(response.data);
     } catch (error) {
-        // Jika terjadi error, mengirimkan status 500 dengan pesan error
         res.status(500).json({ error: 'Gagal mengambil data dari API asli', details: error.message });
     }
 });
 
-app.get('/okeconnect/ovo', async (req, res) => {
+app.get('/api/okeconnect/ovo', async (req, res) => {
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/okeconnect/ovo.json');
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/ovo.json');
     const quotes = response.data.quotes;
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     res.json({ quote: randomQuote });
@@ -373,7 +303,7 @@ app.get('/okeconnect/ovo', async (req, res) => {
 //=====[ API VID RANDOM ]=====//
 app.get('/api/bocil', async (req, res) => {
   try {
-    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/nsfw/bocil.json');
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/bocil.json');
     const bocilData = response.data;
     const videos = bocilData.results;
     const randomVideo = videos[Math.floor(Math.random() * videos.length)];
@@ -395,6 +325,7 @@ app.get('/api/bocil', async (req, res) => {
     res.status(500).json({ error: 'Gagal memproses file bocil.json' });
   }
 });
+
 
 
 
@@ -429,8 +360,6 @@ app.get('/api/orkut/createpayment', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-
 
 app.get('/api/orkut/cekstatus', async (req, res) => {
     const { merchant, keyorkut } = req.query;
