@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const axios = require("axios");
+const { search } = require('yt-search');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,7 +24,7 @@ const {
  ChatGPTv2
 } = require('./lib/function.js')
 
-const { ytdl } = require('./lib/scraper.js')
+const { ytdl, downloadMp3 } = require('./lib/scraper.js')
 
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
@@ -368,6 +369,23 @@ app.get('/api/download/ytdl', async (req, res) => {
       error: 'Internal server error.',
     });
   }
+});
+
+app.get('/api/download/mp3', async (req, res) => {
+  const { url } = req.query;
+
+  // Validasi parameter URL
+  if (!url) {
+    return res.status(400).json({
+      status: false,
+      creator: "Im Rerezz",
+      error: 'URL tidak boleh kosong.',
+    });
+  }
+
+  // Gunakan fungsi downloadMp3
+  const result = await downloadMp3(url);
+  res.status(result.status ? 200 : 400).json(result);
 });
 
 
