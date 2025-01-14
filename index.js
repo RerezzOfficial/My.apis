@@ -63,6 +63,55 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
     }
 }
 
+async function gptlogicnya(inputText, customPrompt) {
+  try {
+    const safetySettings = [
+      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+    ];
+
+    const genAI = new CustomGenerativeAI();  // Use a custom generative AI class that does not require an API key
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
+
+    const generationConfig = {
+      temperature: 1,
+      topP: 0.95,
+      topK: 64,
+      maxOutputTokens: 8192,
+      responseMimeType: "text/plain",
+    };
+
+    const history = [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: customPrompt,
+          },
+        ],
+      },
+      {
+        role: 'model',
+        parts: [
+          { text: 'Oke' },
+        ],
+      },
+    ];
+
+    const chatSession = await model.startChat({
+      generationConfig,
+      history,
+    });
+
+    const result = await chatSession.sendMessage(inputText);
+    return result.response.text();
+  } catch (error) {
+    console.error("Error in gptlogic function:", error);
+    throw error;
+  }
+}
 
 // Log Info
 const messages = {
@@ -293,7 +342,28 @@ app.get("/api/llama", async (req, res) => {
     }
 });
 
+app.get('/api/gptlogic', async (req, res) => {
+  try {
+    const message = req.query.message;
+    if (!message) {
+      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
+    }
 
+    const message2 = req.query.prompt;
+    if (!message2) {
+      return res.status(400).json({ error: 'Parameter "prompt" tidak ditemukan' });
+    }
+
+    let down = await gptlogicnya(message, message2); 
+    res.status(200).json({
+      status: 200,
+      creator: "IM REREZZ",
+      result: down
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 //=====[ OKECONNECT API ]=====//
 app.get('/api/okeconnect/dana', (req, res) => {
