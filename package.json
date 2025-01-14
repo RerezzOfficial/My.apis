@@ -21,6 +21,7 @@
     "qrcode-with-logos": "^1.0.3",
     "request": "^2.88.2",
     "tiktokdl": "^0.0.5",
-    "yt-search": "latest"
+    "yt-search": "latest",
+    "multer": "latest"
   }
 }
