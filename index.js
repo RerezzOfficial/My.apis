@@ -235,7 +235,30 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+//=====[ API UPLOAD ]
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');  // Tempat penyimpanan file di folder 'uploads'
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));  // Nama file unik berdasarkan timestamp
+  }
+});
 
+// Inisialisasi multer dengan konfigurasi storage
+const upload = multer({ storage });
+
+// Endpoint untuk mengunggah file
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+
+  // Jika berhasil mengunggah
+  res.status(200).json({
+    message: 'File uploaded successfully'
+  });
+});
 
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
