@@ -155,6 +155,11 @@ app.get('/style/script', (req, res) => {
 app.get('/style/style', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.css'));
 });
+
+app.get('/style/fitur', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.css'));
+});
+
 app.get('/style/scrip', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.js'));
 });
