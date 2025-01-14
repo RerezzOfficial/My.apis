@@ -64,53 +64,30 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
     }
 }
 
-async function gptlogicnya(inputText, customPrompt) {
+
+async function getPinterestImages(text) {
+  const url = 'https://www.pinterest.com/resource/BaseSearchResource/get/';
+  const params = {
+    source_url: `/search/pins/?q=${text}`,
+    data: JSON.stringify({
+      options: {
+        isPrefetch: false,
+        query: text,
+        scope: 'pins',
+        no_fetch_context_on_resource: false
+      },
+      context: {}
+    }),
+    _: Date.now() 
+  };
+
   try {
-    const safetySettings = [
-      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
-    ];
-
-    const genAI = new CustomGenerativeAI();  // Use a custom generative AI class that does not require an API key
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
-
-    const generationConfig = {
-      temperature: 1,
-      topP: 0.95,
-      topK: 64,
-      maxOutputTokens: 8192,
-      responseMimeType: "text/plain",
-    };
-
-    const history = [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: customPrompt,
-          },
-        ],
-      },
-      {
-        role: 'model',
-        parts: [
-          { text: 'Oke' },
-        ],
-      },
-    ];
-
-    const chatSession = await model.startChat({
-      generationConfig,
-      history,
-    });
-
-    const result = await chatSession.sendMessage(inputText);
-    return result.response.text();
+    const { data } = await axios.get(url, { params });
+    const imageUrls = data.resource_response.data.results.map(v => v.images.orig.url);
+    return imageUrls.splice(0, 6);
   } catch (error) {
-    console.error("Error in gptlogic function:", error);
-    throw error;
+    console.error(error);
+    return [];
   }
 }
 
@@ -235,30 +212,7 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
-//=====[ API UPLOAD ]
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');  // Tempat penyimpanan file di folder 'uploads'
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));  // Nama file unik berdasarkan timestamp
-  }
-});
 
-// Inisialisasi multer dengan konfigurasi storage
-const upload = multer({ storage });
-
-// Endpoint untuk mengunggah file
-app.post('/api/upload', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
-  }
-
-  // Jika berhasil mengunggah
-  res.status(200).json({
-    message: 'File uploaded successfully'
-  });
-});
 
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
@@ -329,6 +283,22 @@ app.get('/api/husbu', async (req, res) => {
   }
 });
 
+app.get('/api/pinterest2', async (req, res) => {
+  try {
+    const message = req.query.query;
+    if (!message) {
+      return res.status(400).json({ error: 'Parameter "url" tidak ditemukan' });
+    }
+   const anjayan = await getPinterestImages(message)
+    res.status(200).json({
+      status: 200,
+      creator: "IM - REREZZ",
+      result: anjayan
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 //=====[ API AI ]=====//
@@ -366,28 +336,6 @@ app.get("/api/llama", async (req, res) => {
     }
 });
 
-app.get('/api/gptlogic', async (req, res) => {
-  try {
-    const message = req.query.message;
-    if (!message) {
-      return res.status(400).json({ error: 'Parameter "message" tidak ditemukan' });
-    }
-
-    const message2 = req.query.prompt;
-    if (!message2) {
-      return res.status(400).json({ error: 'Parameter "prompt" tidak ditemukan' });
-    }
-
-    let down = await gptlogicnya(message, message2); 
-    res.status(200).json({
-      status: 200,
-      creator: "IM REREZZ",
-      result: down
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 //=====[ OKECONNECT API ]=====//
 app.get('/api/okeconnect/dana', (req, res) => {
