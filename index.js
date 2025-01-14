@@ -23,6 +23,8 @@ const {
  ChatGPTv2
 } = require('./lib/function.js')
 
+const { ytdl } = require('./lib/scraper.js')
+
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
         const payload = {
@@ -329,7 +331,44 @@ app.get('/api/bocil', async (req, res) => {
   }
 });
 
+app.get('/api/download/ytdl', async (req, res) => {
+  try {
+    const { url, videoQuality, audioQuality } = req.query;
 
+    if (!url || !videoQuality || !audioQuality) {
+      return res.status(400).json({
+        status: false,
+        creator: "Im Rerezz",
+        error: "Isi Parameter url, videoQuality, dan audioQuality.",
+      });
+    }
+
+    const videoQualityIndex = parseInt(videoQuality, 10);
+    const audioQualityIndex = parseInt(audioQuality, 10);
+
+    try {
+      const result = await ytdl.downloadVideoAndAudio(url, videoQualityIndex, audioQualityIndex);
+      return res.status(200).json({
+        status: true,
+        creator: "Im Rerezz",
+        result,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        status: false,
+        creator: "Im Rerezz",
+        error: error.message,
+      });
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    return res.status(500).json({
+      status: false,
+      creator: "Im Rerezz",
+      error: 'Internal server error.',
+    });
+  }
+});
 
 
 app.get("/api/tiktok", async (req, res) => {
