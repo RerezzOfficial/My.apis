@@ -24,7 +24,7 @@ const {
  ChatGPTv2
 } = require('./lib/function.js')
 
-const { ytdl, downloadMp3 } = require('./lib/scraper.js')
+const { ytdl, downloadMp3, downloadMp4 } = require('./lib/scraper.js')
 
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
