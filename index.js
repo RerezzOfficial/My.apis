@@ -25,6 +25,25 @@ const {
 } = require('./lib/function.js')
 
 const { ytdl, downloadMp3, downloadMp4 } = require('./lib/scraper.js')
+const validateYoutubeUrl = (req, res, next) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).json({
+      status: false,
+      error: "Isi parameter Url.",
+    });
+  }
+
+  if (!youtubeRegex.test(url)) {
+    return res.status(400).json({
+      status: false,
+      error: "URL YouTube tidak valid.",
+    });
+  }
+
+  next();
+};
 
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
