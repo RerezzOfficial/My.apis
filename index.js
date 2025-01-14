@@ -160,6 +160,10 @@ app.get('/style/fitur', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.css'));
 });
 
+app.get('/style/sc', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.js'));
+});
+
 app.get('/style/scrip', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'style', 'fitur.js'));
 });
