@@ -20,6 +20,7 @@
     "qrcode": "^1.5.4",
     "qrcode-with-logos": "^1.0.3",
     "request": "^2.88.2",
-    "tiktokdl": "^0.0.5"
+    "tiktokdl": "^0.0.5",
+    "yt-search": "latest"
   }
 }
