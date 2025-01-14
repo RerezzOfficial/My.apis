@@ -375,23 +375,23 @@ section {
    }
    
    .button-wrapper {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-      }
-      .button-wrapper button {
-        flex: 1;
-        background-color: rgba(0, 0, 0, 0.2);
-        color: aqua;
-        border: 2px solid aqua;
-        padding: 10px;
-        margin: 0 5px;
-        cursor: pointer;
-        text-align: center;
-        border-radius: 8px;
-       font-size: 17px;
-      }
-      .button-wrapper button:hover {
-        background-color: rgba(0, 0, 0, 0.3);
-        color: #fff;
-      }
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .button-wrapper button {
+      flex: 1;
+      background-color: rgba(0, 0, 0, 0.2);
+      color: aqua;
+      border: 2px solid aqua;
+      padding: 10px;
+      margin: 0 5px;
+      cursor: pointer;
+      text-align: center;
+      border-radius: 8px;
+     font-size: 17px;
+    }
+    .button-wrapper button:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+      color: #fff;
+    }
