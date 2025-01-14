@@ -332,60 +332,16 @@ app.get('/api/bocil', async (req, res) => {
   }
 });
 
-app.get('/api/download/ytdl', async (req, res) => {
-  try {
-    const { url, videoQuality, audioQuality } = req.query;
-
-    if (!url || !videoQuality || !audioQuality) {
-      return res.status(400).json({
-        status: false,
-        creator: "Im Rerezz",
-        error: "Isi Parameter url, videoQuality, dan audioQuality.",
-      });
-    }
-
-    const videoQualityIndex = parseInt(videoQuality, 10);
-    const audioQualityIndex = parseInt(audioQuality, 10);
-
-    try {
-      const result = await ytdl.downloadVideoAndAudio(url, videoQualityIndex, audioQualityIndex);
-      return res.status(200).json({
-        status: true,
-        creator: "Im Rerezz",
-        result,
-      });
-    } catch (error) {
-      return res.status(400).json({
-        status: false,
-        creator: "Im Rerezz",
-        error: error.message,
-      });
-    }
-  } catch (error) {
-    console.error('Error:', error.message);
-    return res.status(500).json({
-      status: false,
-      creator: "Im Rerezz",
-      error: 'Internal server error.',
-    });
-  }
+app.get('/api/download/mp4', validateYoutubeUrl, async (req, res) => {
+  const { url } = req.query;
+  const result = await downloadMp4(url);
+  return res.status(result.status ? 200 : 500).json(result);
 });
 
-app.get('/api/download/mp3', async (req, res) => {
+app.get('/api/download/mp3', validateYoutubeUrl, async (req, res) => {
   const { url } = req.query;
-
-  // Validasi parameter URL
-  if (!url) {
-    return res.status(400).json({
-      status: false,
-      creator: "Im Rerezz",
-      error: 'URL tidak boleh kosong.',
-    });
-  }
-
-  // Gunakan fungsi downloadMp3
   const result = await downloadMp3(url);
-  res.status(result.status ? 200 : 400).json(result);
+  return res.status(result.status ? 200 : 500).json(result);
 });
 
 
