@@ -256,129 +256,112 @@ app.get('/api/wasted', async (req, res) => {
     }
 });
 
-app.get('/profile', async (req, res) => {
-    // Ambil parameter dari URL
-    const { sender, rankName, rankId, exp, requireExp, level, name, avatarURL, backgroundURL } = req.query;
+app.get("/rankk", async (req, res) => {
+  const {
+    background,
+    profile,
+    name,
+    limit,
+    currentExp,
+    maxExp,
+    level,
+    balance,
+    rankPhoto,
+    rank,
+  } = req.query;
 
-    // Jika ada parameter yang tidak ada, berikan default value
-    const user = { sender, rankName: rankName || 'COIN', rankId: rankId || '1', exp: exp || '1000', requireExp: requireExp || '2000', level: level || '1', name: name || 'User' };
+  if (
+    !background ||
+    !profile ||
+    !name ||
+    !limit ||
+    !currentExp ||
+    !maxExp ||
+    !level ||
+    !balance ||
+    !rankPhoto ||
+    !rank
+  ) {
+    return res.status(400).json({ error: "Parameter tidak lengkap." });
+  }
 
-    // Jika tidak ada URL avatar, gunakan default
-    let ppuser = avatarURL || 'https://telegra.ph/file/a059a6a734ed202c879d3.jpg';
+  try {
+    // Register font kustom
+    registerFont("fonts.ttf", { family: "CustomFont" });
 
-    // Ukuran canvas
-    const width = 850;
-    const height = 300;
-    const canvas = createCanvas(width, height);
-    const ctx = canvas.getContext('2d');
+    const canvasWidth = 850;
+    const canvasHeight = 300;
+    const canvas = createCanvas(canvasWidth, canvasHeight);
+    const ctx = canvas.getContext("2d");
 
-    ctx.clearRect(0, 0, width, height);
+    // Load background
+    const backgroundImage = await loadImage(
+      (await axios.get(background, { responseType: "arraybuffer" })).data
+    );
+    ctx.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
 
-    // Memuat latar belakang
-    const background = await loadImage(backgroundURL || 'https://files.catbox.moe/f3sihx.jpg');
-    ctx.drawImage(background, 0, 0, width, height);
-
-    // Overlay
-    const overlayX = 20;
-    const overlayY = 20;
-    const overlayWidth = width - 40;
-    const overlayHeight = height - 40;
-    const overlayRadius = 30;
-
-    ctx.save();
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    // Draw profile image as a circle
+    const profileImage = await loadImage(
+      (await axios.get(profile, { responseType: "arraybuffer" })).data
+    );
     ctx.beginPath();
-    ctx.moveTo(overlayX + overlayRadius, overlayY);
-    ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
-    ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
-    ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
-    ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-
-    // Memuat gambar avatar
-    const avatar = await loadImage(ppuser);
-    const avatarSize = 120;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
+    ctx.arc(100, 150, 60, 0, Math.PI * 2, true);
     ctx.closePath();
     ctx.clip();
-    ctx.drawImage(avatar, 40, height / 2 - avatarSize / 2, avatarSize, avatarSize);
+    ctx.drawImage(profileImage, 40, 90, 120, 120);
     ctx.restore();
 
-    // Avatar Border
-    ctx.beginPath();
-    ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.strokeStyle = '#FFCC33';
-    ctx.lineWidth = 4;
-    ctx.stroke();
+    // Add rank icon
+    const rankImage = await loadImage(
+      (await axios.get(rankPhoto, { responseType: "arraybuffer" })).data
+    );
+    ctx.drawImage(rankImage, 700, 90, 80, 80);
 
-    // Menulis Nama
-    ctx.font = 'bold 36px Arial';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.textAlign = 'left';
-    ctx.fillText(user.name, 180, height / 2 - 20);
+    // Draw progress bar
+    const progressBarWidth = 450;
+    const progressBarHeight = 20;
+    const expProgress = (parseInt(currentExp) / parseInt(maxExp)) * progressBarWidth;
 
-    // Menulis Level dan Rank
-    ctx.font = 'bold 28px Arial';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`LEVEL ${user.level}`, width - 180, 80);
+    ctx.fillStyle = "white";
+    ctx.fillRect(170, 180, progressBarWidth, progressBarHeight);
+    ctx.fillStyle = "aqua";
+    ctx.fillRect(170, 180, expProgress, progressBarHeight);
 
-    ctx.font = 'bold 22px Arial';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`${user.rankName} ${user.rankId}`, width - 180, 120);
+    // Add progress text
+    ctx.font = "14px CustomFont";
+    ctx.fillStyle = "black";
+    ctx.fillText(`${currentExp}/${maxExp}`, 170 + progressBarWidth / 2 - 30, 195);
 
-    // Progress Bar
-    const barWidth = 600;
-    const barHeight = 30;
-    const barX = 180;
-    const barY = height / 2 + 20;
-    const progress = user.exp / user.requireExp;
-    const barRadius = 15;
+    // Add name and ID
+    ctx.font = "30px CustomFont";
+    ctx.fillStyle = "white";
+    ctx.fillText(name, 170, 120);
+    ctx.font = "20px CustomFont";
+    ctx.fillText(`Limit: ${limit}`, 170, 160);
+    ctx.fillText(`Level: ${level}`, 530, 160);
 
-    ctx.fillStyle = '#555555';
-    ctx.beginPath();
-    ctx.moveTo(barX + barRadius, barY);
-    ctx.arcTo(barX + barWidth, barY, barX + barWidth, barY + barHeight, barRadius);
-    ctx.arcTo(barX + barWidth, barY + barHeight, barX, barY + barHeight, barRadius);
-    ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
-    ctx.arcTo(barX, barY, barX + barWidth, barY, barRadius);
-    ctx.closePath();
-    ctx.fill();
+    // Add balance
+    ctx.font = "20px CustomFont";
+    ctx.fillStyle = "yellow";
+    ctx.fillText(`Saldo: ${balance}`, 680, 50);
 
-    ctx.fillStyle = '#FFCC33';
-    ctx.beginPath();
-    ctx.moveTo(barX + barRadius, barY);
-    ctx.arcTo(barX + barWidth * progress, barY, barX + barWidth * progress, barY + barHeight, barRadius);
-    ctx.arcTo(barX + barWidth * progress, barY + barHeight, barX, barY + barHeight, barRadius);
-    ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
-    ctx.arcTo(barX, barY, barX + barWidth * progress, barY, barRadius);
-    ctx.closePath();
-    ctx.fill();
+    // Add rank text
+    ctx.font = "15px CustomFont";
+    ctx.fillStyle = "white";
+    ctx.fillText(rank, 720, 180);
 
-    ctx.strokeStyle = '#FFCC33';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(barX + barRadius, barY);
-    ctx.arcTo(barX + barWidth, barY, barX + barWidth, barY + barHeight, barRadius);
-    ctx.arcTo(barX + barWidth, barY + barHeight, barX, barY + barHeight, barRadius);
-    ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
-    ctx.arcTo(barX, barY, barX + barWidth, barY, barRadius);
-    ctx.closePath();
-    ctx.stroke();
+    // Convert canvas to buffer
+    const finalBuffer = canvas.toBuffer("image/png");
 
-    ctx.font = 'bold 20px Arial';
-    ctx.fillStyle = '#FFFFFF';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${user.exp} / ${user.requireExp}`, barX + barWidth / 2, barY + barHeight - 5);
-
-    // Mengirim gambar sebagai buffer
-    res.setHeader('Content-Type', 'image/png');
-    res.send(canvas.toBuffer());
+    res.writeHead(200, { "Content-Type": "image/png" });
+    res.end(finalBuffer);
+  } catch (error) {
+    res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
+  }
 });
+
+
+
 app.get("/rank", async (req, res) => {
   const {
     background,
