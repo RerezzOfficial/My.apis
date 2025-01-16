@@ -7,6 +7,7 @@ const axios = require("axios");
 const { search } = require('yt-search');
 const puppeteer = require("puppeteer");
 const sharp = require('sharp');
+const { createCanvas, loadImage } = require('canvas');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -223,7 +224,7 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
- app.get("/rank", async (req, res) => {
+app.get("/rank", async (req, res) => {
   const {
     background,
     profile,
@@ -316,23 +317,19 @@ app.get('/game/asahotak', (req, res) => {
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
 
-    const renderTextSVG = (svgContent) => {
-      return sharp(Buffer.from(svgContent)).png().toBuffer();
+    // Rendering text using canvas
+    const createTextImage = (text, fontSize, color, x, y) => {
+      const canvas = createCanvas(canvasWidth, canvasHeight);
+      const ctx = canvas.getContext("2d");
+      ctx.font = `${fontSize}px sans-serif`; // default sans-serif font
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, y);
+      return canvas.toBuffer();
     };
 
-    const nameAndIDText = await renderTextSVG(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
-        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
-        <text x="170" y="160" font-size="20" fill="white">${limit}</text>
-        <text x="530" y="160" font-size="20" fill="white">Level: ${level}</text>
-      </svg>
-    `);
-
-    const levelAndBalanceText = await renderTextSVG(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
-        <text x="680" y="20" font-size="20" fill="yellow">Saldo: ${balance}</text>
-      </svg>
-    `);
+    const nameAndIDText = await createTextImage(`${name}\n${limit}\nLevel: ${level}`, 30, 'white', 170, 120);
+    const levelAndBalanceText = await createTextImage(`Saldo: ${balance}`, 20, 'yellow', 680, 20);
+    const rankText = await createTextImage(rank, config.rank.textSize, config.rank.textColor, 10, 22);
 
     const rankImageWithText = await sharp({
       create: {
@@ -344,15 +341,7 @@ app.get('/game/asahotak', (req, res) => {
     })
       .composite([
         { input: resizedRankIcon, top: 0, left: 0 },
-        {
-          input: await renderTextSVG(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
-              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-weight="bold">${rank}</text>
-            </svg>
-          `),
-          top: config.rank.iconSize + 2, // Jarak antara ikon rank dan teks rank
-          left: 0,
-        },
+        { input: rankText, top: config.rank.iconSize + 2, left: 0 },
       ])
       .png()
       .toBuffer();
@@ -388,7 +377,6 @@ app.get('/game/asahotak', (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
-
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
