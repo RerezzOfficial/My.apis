@@ -238,6 +238,7 @@ app.get("/rank", async (req, res) => {
     rankName,
   } = req.query;
 
+  // Validasi parameter input
   if (
     !background ||
     !userPhoto ||
@@ -260,14 +261,28 @@ app.get("/rank", async (req, res) => {
     const userImage = await axios.get(userPhoto, { responseType: "arraybuffer" });
     const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
 
-    // Konversi ke buffer
     const backgroundBuffer = Buffer.from(backgroundImage.data);
     const userBuffer = Buffer.from(userImage.data);
     const rankBuffer = Buffer.from(rankImage.data);
 
-    // Resize foto user dan rank
-    const resizedUserPhoto = await sharp(userBuffer).resize(120, 120).circle().toBuffer();
-    const resizedRankPhoto = await sharp(rankBuffer).resize(100, 100).toBuffer();
+    // Resize dan buat foto user menjadi lingkaran
+    const userCircle = await sharp(userBuffer)
+      .resize(120, 120)
+      .composite([
+        {
+          input: Buffer.from(
+            `<svg>
+              <circle cx="60" cy="60" r="60" fill="white"/>
+            </svg>`
+          ),
+          blend: "dest-in",
+        },
+      ])
+      .png()
+      .toBuffer();
+
+    // Resize foto rank
+    const resizedRankPhoto = await sharp(rankBuffer).resize(100, 100).png().toBuffer();
 
     // Hitung panjang progress bar EXP
     const expProgress = (parseInt(exp) / parseInt(targetExp)) * 400;
@@ -284,8 +299,8 @@ app.get("/rank", async (req, res) => {
     // Tambahkan elemen ke gambar
     const finalImage = await sharp(backgroundBuffer)
       .composite([
-        // Foto profil user
-        { input: resizedUserPhoto, top: 50, left: 50 },
+        // Foto user
+        { input: userCircle, top: 50, left: 50 },
         // Foto rank
         { input: resizedRankPhoto, top: 50, left: 600 },
         // Progress bar EXP
