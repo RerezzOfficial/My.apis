@@ -1,5 +1,5 @@
 {
-  "name": "nodejs",
+  "name": "IM REREZZ",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -24,6 +24,6 @@
     "yt-search": "latest",
     "multer": "latest",
     "puppeteer": "latest",
-    "canvafy": "latest"
+    "canvafy": "^7.0.4"
   }
 }
