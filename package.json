@@ -24,6 +24,7 @@
     "yt-search": "latest",
     "multer": "latest",
     "puppeteer": "latest",
-    "sharp": "latest"
+    "sharp": "latest",
+    "canvas": "latest"
   }
 }
