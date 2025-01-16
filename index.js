@@ -5,7 +5,6 @@ const path = require('path');
 const multer = require('multer');
 const axios = require("axios");
 const { search } = require('yt-search');
-const express = require("express");
 const puppeteer = require("puppeteer");
 const app = express();
 const PORT = process.env.PORT || 5000;
