@@ -223,6 +223,52 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+
+module.exports = async (req, res) => {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { background, name, level, level2, avatar } = req.query;
+
+  if (!background || !name || !level || !level2 || !avatar) {
+    return res.status(400).json({ error: 'Parameter "background", "name", "level", "level2", dan "avatar" harus ada' });
+  }
+
+  try {
+    // Coba fetch gambar background dan avatar
+    console.log('Mencoba mengambil gambar background...');
+    const backgroundBuffer = await fetch(background).then(res => {
+      if (!res.ok) {
+        throw new Error('Gagal mengambil gambar background');
+      }
+      return res.buffer();
+    });
+
+    console.log('Mencoba mengambil gambar avatar...');
+    const avatarBuffer = await fetch(avatar).then(res => {
+      if (!res.ok) {
+        throw new Error('Gagal mengambil gambar avatar');
+      }
+      return res.buffer();
+    });
+
+    // Proses gambar dengan sharp
+    const image = await sharp(backgroundBuffer)
+      .resize(800, 600) // Resize jika perlu
+      .composite([{ input: avatarBuffer, top: 50, left: 50 }])
+      .toBuffer();
+
+    res.setHeader('Content-Type', 'image/png');
+    res.send(image);
+  } catch (error) {
+    console.error('Terjadi kesalahan:', error.message);  // Menampilkan error di log
+    res.status(500).json({ error: `Terjadi kesalahan: ${error.message}` });
+  }
+};
+
+
+
 app.get('/api/levelupcard', async (req, res) => {
   const { background, name, level, level2, avatar } = req.query;
 
