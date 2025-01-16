@@ -23,7 +23,6 @@
     "tiktokdl": "^0.0.5",
     "yt-search": "latest",
     "multer": "latest",
-    "puppeteer": "latest",
-    "canvafy": "^7.0.4"
+    "puppeteer": "latest"
   }
 }
