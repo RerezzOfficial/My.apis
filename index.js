@@ -299,6 +299,32 @@ app.get("/rank", async (req, res) => {
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
 
+    // Function to render SVG text as an image
+    const renderTextSVG = (svgContent) => {
+      return sharp(Buffer.from(svgContent)).png().toBuffer();
+    };
+
+    // Generate SVGs for name, ID, level, balance, and rank
+    const nameAndIDText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
+        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white">ID: ${users}</text>
+      </svg>
+    `);
+
+    const levelAndBalanceText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
+        <text x="170" y="20" font-size="20" fill="white">Level: ${level}</text>
+        <text x="170" y="50" font-size="20" fill="white">Saldo: ${balance}</text>
+      </svg>
+    `);
+
+    const rankText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
+        <text x="0" y="20" font-size="20" fill="yellow" font-weight="bold">${rank}</text>
+      </svg>
+    `);
+
     // Combine all elements into the final image
     const finalImage = await sharp(resizedBackground)
       .composite([
@@ -309,42 +335,16 @@ app.get("/rank", async (req, res) => {
         { input: resizedRankIcon, top: 90, left: 700 },
 
         // Name and ID text
-        {
-          input: Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
-              <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
-              <text x="170" y="160" font-size="20" fill="white">ID: ${users}</text>
-            </svg>`
-          ),
-          top: 0,
-          left: 0,
-        },
+        { input: nameAndIDText, top: 0, left: 0 },
 
         // Progress bar
         { input: progressBarBuffer, top: 200, left: 170 },
 
         // Level and balance
-        {
-          input: Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
-              <text x="170" y="20" font-size="20" fill="white">Level: ${level}</text>
-              <text x="170" y="50" font-size="20" fill="white">Saldo: ${balance}</text>
-            </svg>`
-          ),
-          top: 240,
-          left: 0,
-        },
+        { input: levelAndBalanceText, top: 240, left: 0 },
 
         // Rank text
-        {
-          input: Buffer.from(
-            `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
-              <text x="0" y="20" font-size="20" fill="yellow" font-weight="bold">${rank}</text>
-            </svg>`
-          ),
-          top: 150,
-          left: 720,
-        },
+        { input: rankText, top: 150, left: 720 },
       ])
       .png()
       .toBuffer();
@@ -355,6 +355,7 @@ app.get("/rank", async (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
+         
 
 
 module.exports = async (req, res) => {
