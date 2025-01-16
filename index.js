@@ -225,6 +225,37 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+app.get('/api/wasted', async (req, res) => {
+    // Mengambil parameter 'url' dari query string
+    const text = req.query.url;
+
+    // Mengecek apakah parameter 'url' ada
+    if (!text) {
+        return res.json({ 
+            status: false, 
+            creator: 'Your Creator Name', 
+            message: '[!] Masukkan parameter url' 
+        });
+    }
+
+    try {
+        // Menghasilkan gambar "Wasted" menggunakan Canvacord
+        const hasil = await Canvacord.Canvas.wasted(text);
+
+        // Menyertakan header Content-Type untuk gambar PNG
+        res.set('Content-Type', 'image/png');
+        
+        // Mengirim gambar dalam format PNG
+        res.send(hasil);
+    } catch (error) {
+        // Menangani error jika terjadi
+        return res.json({
+            status: false,
+            message: '[!] Terjadi kesalahan saat membuat gambar.'
+        });
+    }
+});
+
 app.get('/profile', async (req, res) => {
     // Ambil parameter dari URL
     const { sender, rankName, rankId, exp, requireExp, level, name, avatarURL, backgroundURL } = req.query;
