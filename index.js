@@ -6,6 +6,7 @@ const multer = require('multer');
 const axios = require("axios");
 const { search } = require('yt-search');
 const puppeteer = require("puppeteer");
+const sharp = require('sharp');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -222,7 +223,28 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+app.get('/api/levelupcard', async (req, res) => {
+  const { background, name, level, level2, avatar } = req.query;
 
+  if (!background || !name || !level || !level2 || !avatar) {
+    return res.status(400).json({ error: 'Parameter "background", "name", "level", "level2", dan "avatar" harus ada' });
+  }
+
+  try {
+    const backgroundBuffer = await fetch(background).then((res) => res.buffer());
+    const avatarBuffer = await fetch(avatar).then((res) => res.buffer());
+
+    const image = await sharp(backgroundBuffer)
+      .resize(800, 600)
+      .composite([{ input: avatarBuffer, top: 50, left: 50 }])
+      .toBuffer();
+
+    res.setHeader('Content-Type', 'image/png');
+    res.send(image);
+  } catch (error) {
+    res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan' });
+  }
+});
 
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
