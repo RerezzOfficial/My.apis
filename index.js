@@ -224,6 +224,153 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+async function generateProfileImage({ backgroundURL, avatarURL, name, level, rankName, rankId, exp, requireExp }) {
+  const width = 850;
+  const height = 300;
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext('2d');
+
+  ctx.clearRect(0, 0, width, height);
+
+  const background = await loadImage(backgroundURL);
+  ctx.drawImage(background, 0, 0, width, height);
+
+  // Overlay
+  const overlayX = 20;
+  const overlayY = 20;
+  const overlayWidth = width - 40;
+  const overlayHeight = height - 40;
+  const overlayRadius = 30;
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.beginPath();
+  ctx.moveTo(overlayX + overlayRadius, overlayY);
+  ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
+  ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
+  ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
+  ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Gambar avatar
+  const avatar = await loadImage(avatarURL);
+  const avatarSize = 120;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(avatar, 40, height / 2 - avatarSize / 2, avatarSize, avatarSize);
+  ctx.restore();
+
+  // Avatar border
+  ctx.beginPath();
+  ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.strokeStyle = '#FFCC33';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.font = 'bold 36px Arial';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'left';
+  ctx.fillText(name, 180, height / 2 - 20);
+
+  // Level dan rank
+  ctx.font = 'bold 28px Arial';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(`LEVEL ${level}`, width - 180, 80);
+
+  ctx.font = 'bold 22px Arial';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(`${rankName} ${rankId}`, width - 180, 120);
+
+  // Progress bar
+  const barWidth = 600;
+  const barHeight = 30;
+  const barX = 180;
+  const barY = height / 2 + 20;
+  const progress = exp / requireExp;
+  const barRadius = 15;
+
+  ctx.fillStyle = '#555555';
+  ctx.beginPath();
+  ctx.moveTo(barX + barRadius, barY);
+  ctx.arcTo(barX + barWidth, barY, barX + barWidth, barY + barHeight, barRadius);
+  ctx.arcTo(barX + barWidth, barY + barHeight, barX, barY + barHeight, barRadius);
+  ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
+  ctx.arcTo(barX, barY, barX + barWidth, barY, barRadius);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#FFCC33';
+  ctx.beginPath();
+  ctx.moveTo(barX + barRadius, barY);
+  ctx.arcTo(barX + barWidth * progress, barY, barX + barWidth * progress, barY + barHeight, barRadius);
+  ctx.arcTo(barX + barWidth * progress, barY + barHeight, barX, barY + barHeight, barRadius);
+  ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
+  ctx.arcTo(barX, barY, barX + barWidth * progress, barY, barRadius);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = '#FFCC33';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(barX + barRadius, barY);
+  ctx.arcTo(barX + barWidth, barY, barX + barWidth, barY + barHeight, barRadius);
+  ctx.arcTo(barX + barWidth, barY + barHeight, barX, barY + barHeight, barRadius);
+  ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
+  ctx.arcTo(barX, barY, barX + barWidth, barY, barRadius);
+  ctx.closePath();
+  ctx.stroke();
+
+  ctx.font = 'bold 20px Arial';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${exp} / ${requireExp}`, barX + barWidth / 2, barY + barHeight - 5);
+
+  return canvas.toBuffer();
+}
+
+// API endpoint
+app.get('/generate-profile', async (req, res) => {
+  const {
+    backgroundURL,
+    avatarURL,
+    name,
+    level,
+    rankName,
+    rankId,
+    exp,
+    requireExp,
+  } = req.query;
+
+  // Cek parameter yang dibutuhkan
+  if (!backgroundURL || !avatarURL || !name || !level || !rankName || !rankId || !exp || !requireExp) {
+    return res.status(400).json({ error: 'Parameter tidak lengkap' });
+  }
+
+  try {
+    const imageBuffer = await generateProfileImage({
+      backgroundURL,
+      avatarURL,
+      name,
+      level,
+      rankName,
+      rankId,
+      exp,
+      requireExp,
+    });
+
+    res.setHeader('Content-Type', 'image/png');
+    res.send(imageBuffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Gagal menghasilkan gambar' });
+  }
+});
+
 app.get("/rank", async (req, res) => {
   const {
     background,
