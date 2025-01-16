@@ -273,7 +273,7 @@ app.get("/rank", async (req, res) => {
       .composite([
         {
           input: Buffer.from(
-            `<svg>
+            `<svg xmlns="http://www.w3.org/2000/svg">
               <circle cx="60" cy="60" r="60" fill="white"/>
             </svg>`
           ),
@@ -291,7 +291,7 @@ app.get("/rank", async (req, res) => {
 
     // Create progress bar SVG
     const progressBarSVG = `
-      <svg width="400" height="20">
+      <svg xmlns="http://www.w3.org/2000/svg" width="400" height="20">
         <rect width="400" height="20" fill="white" rx="10" ry="10"></rect>
         <rect width="${expProgress}" height="20" fill="red" rx="10" ry="10"></rect>
         <text x="180" y="15" font-size="14" fill="black">${currentExp}/${maxExp}</text>
@@ -311,7 +311,7 @@ app.get("/rank", async (req, res) => {
         // Name and ID text
         {
           input: Buffer.from(
-            `<svg width="800" height="200">
+            `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
               <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
               <text x="170" y="160" font-size="20" fill="white">ID: ${users}</text>
             </svg>`
@@ -326,7 +326,7 @@ app.get("/rank", async (req, res) => {
         // Level and balance
         {
           input: Buffer.from(
-            `<svg width="800" height="100">
+            `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
               <text x="170" y="20" font-size="20" fill="white">Level: ${level}</text>
               <text x="170" y="50" font-size="20" fill="white">Saldo: ${balance}</text>
             </svg>`
@@ -338,7 +338,7 @@ app.get("/rank", async (req, res) => {
         // Rank text
         {
           input: Buffer.from(
-            `<svg width="200" height="100">
+            `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100">
               <text x="0" y="20" font-size="20" fill="yellow" font-weight="bold">${rank}</text>
             </svg>`
           ),
@@ -355,6 +355,7 @@ app.get("/rank", async (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
+
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
