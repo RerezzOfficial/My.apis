@@ -223,6 +223,116 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+app.get("/rank", async (req, res) => {
+  const {
+    background,
+    userPhoto,
+    userName,
+    userId,
+    exp,
+    targetExp,
+    level,
+    coin,
+    balance,
+    rankPhoto,
+    rankName,
+  } = req.query;
+
+  if (
+    !background ||
+    !userPhoto ||
+    !userName ||
+    !userId ||
+    !exp ||
+    !targetExp ||
+    !level ||
+    !coin ||
+    !balance ||
+    !rankPhoto ||
+    !rankName
+  ) {
+    return res.status(400).json({ error: "Parameter tidak lengkap." });
+  }
+
+  try {
+    // Unduh gambar dari URL
+    const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
+    const userImage = await axios.get(userPhoto, { responseType: "arraybuffer" });
+    const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
+
+    // Konversi ke buffer
+    const backgroundBuffer = Buffer.from(backgroundImage.data);
+    const userBuffer = Buffer.from(userImage.data);
+    const rankBuffer = Buffer.from(rankImage.data);
+
+    // Resize foto user dan rank
+    const resizedUserPhoto = await sharp(userBuffer).resize(120, 120).circle().toBuffer();
+    const resizedRankPhoto = await sharp(rankBuffer).resize(100, 100).toBuffer();
+
+    // Hitung panjang progress bar EXP
+    const expProgress = (parseInt(exp) / parseInt(targetExp)) * 400;
+
+    // Buat progress bar
+    const progressBarSVG = `
+      <svg width="400" height="20">
+        <rect width="400" height="20" fill="white" rx="10" ry="10"></rect>
+        <rect width="${expProgress}" height="20" fill="red" rx="10" ry="10"></rect>
+      </svg>
+    `;
+    const progressBarBuffer = Buffer.from(progressBarSVG);
+
+    // Tambahkan elemen ke gambar
+    const finalImage = await sharp(backgroundBuffer)
+      .composite([
+        // Foto profil user
+        { input: resizedUserPhoto, top: 50, left: 50 },
+        // Foto rank
+        { input: resizedRankPhoto, top: 50, left: 600 },
+        // Progress bar EXP
+        { input: progressBarBuffer, top: 180, left: 180 },
+        // Nama user dan ID
+        {
+          input: Buffer.from(
+            `<svg width="800" height="100">
+              <text x="200" y="100" font-size="40" fill="white" font-weight="bold">${userName}</text>
+              <text x="200" y="140" font-size="20" fill="white">ID: ${userId}</text>
+            </svg>`
+          ),
+          top: 30,
+          left: 0,
+        },
+        // Informasi level, koin, saldo
+        {
+          input: Buffer.from(
+            `<svg width="800" height="100">
+              <text x="200" y="20" font-size="20" fill="white">Level: ${level}</text>
+              <text x="200" y="50" font-size="20" fill="white">EXP: ${exp}/${targetExp}</text>
+              <text x="200" y="80" font-size="20" fill="white">Koin: ${coin} | Saldo: ${balance}</text>
+            </svg>`
+          ),
+          top: 220,
+          left: 0,
+        },
+        // Nama rank
+        {
+          input: Buffer.from(
+            `<svg width="200" height="100">
+              <text x="0" y="20" font-size="20" fill="yellow" font-weight="bold">${rankName}</text>
+            </svg>`
+          ),
+          top: 150,
+          left: 610,
+        },
+      ])
+      .toBuffer();
+
+    res.writeHead(200, { "Content-Type": "image/png" });
+    res.end(finalImage);
+  } catch (error) {
+    res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
+  }
+});
+
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
