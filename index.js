@@ -1,15 +1,16 @@
 
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 const multer = require('multer');
 const axios = require("axios");
 const { search } = require('yt-search');
 const puppeteer = require("puppeteer");
 const sharp = require('sharp');
-const { createCanvas, loadImage } = require('canvas');
+const { createCanvas, loadImage, registerFont } = require('canvas');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
+registerFont(path.join(__dirname, 'fonts', 'Arial.ttf'), { family: 'Arial' });
 
 app.enable("trust proxy");
 app.set("json spaces", 2);
@@ -235,26 +236,7 @@ async function generateProfileImage({ backgroundURL, avatarURL, name, level, ran
   const background = await loadImage(backgroundURL);
   ctx.drawImage(background, 0, 0, width, height);
 
-  // Overlay
-  const overlayX = 20;
-  const overlayY = 20;
-  const overlayWidth = width - 40;
-  const overlayHeight = height - 40;
-  const overlayRadius = 30;
-
-  ctx.save();
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  ctx.beginPath();
-  ctx.moveTo(overlayX + overlayRadius, overlayY);
-  ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
-  ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
-  ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
-  ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-
-  // Gambar avatar
+  // Gambar avatar dan border
   const avatar = await loadImage(avatarURL);
   const avatarSize = 120;
   ctx.save();
@@ -265,25 +247,24 @@ async function generateProfileImage({ backgroundURL, avatarURL, name, level, ran
   ctx.drawImage(avatar, 40, height / 2 - avatarSize / 2, avatarSize, avatarSize);
   ctx.restore();
 
-  // Avatar border
+  // Border avatar
   ctx.beginPath();
   ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
   ctx.closePath();
   ctx.strokeStyle = '#FFCC33';
   ctx.lineWidth = 4;
   ctx.stroke();
-  ctx.font = 'bold 36px Arial';
+
+  // Teks dengan font yang sudah terdaftar
+  ctx.font = 'bold 36px Arial';  // Pastikan font ini terdaftar
   ctx.fillStyle = '#FFFFFF';
   ctx.textAlign = 'left';
   ctx.fillText(name, 180, height / 2 - 20);
 
   // Level dan rank
-  ctx.font = 'bold 28px Arial';
-  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 28px Arial'; 
   ctx.fillText(`LEVEL ${level}`, width - 180, 80);
-
   ctx.font = 'bold 22px Arial';
-  ctx.fillStyle = '#FFFFFF';
   ctx.fillText(`${rankName} ${rankId}`, width - 180, 120);
 
   // Progress bar
@@ -292,38 +273,11 @@ async function generateProfileImage({ backgroundURL, avatarURL, name, level, ran
   const barX = 180;
   const barY = height / 2 + 20;
   const progress = exp / requireExp;
-  const barRadius = 15;
-
   ctx.fillStyle = '#555555';
-  ctx.beginPath();
-  ctx.moveTo(barX + barRadius, barY);
-  ctx.arcTo(barX + barWidth, barY, barX + barWidth, barY + barHeight, barRadius);
-  ctx.arcTo(barX + barWidth, barY + barHeight, barX, barY + barHeight, barRadius);
-  ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
-  ctx.arcTo(barX, barY, barX + barWidth, barY, barRadius);
-  ctx.closePath();
-  ctx.fill();
+  ctx.fillRect(barX, barY, barWidth, barHeight);
 
   ctx.fillStyle = '#FFCC33';
-  ctx.beginPath();
-  ctx.moveTo(barX + barRadius, barY);
-  ctx.arcTo(barX + barWidth * progress, barY, barX + barWidth * progress, barY + barHeight, barRadius);
-  ctx.arcTo(barX + barWidth * progress, barY + barHeight, barX, barY + barHeight, barRadius);
-  ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
-  ctx.arcTo(barX, barY, barX + barWidth * progress, barY, barRadius);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.strokeStyle = '#FFCC33';
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.moveTo(barX + barRadius, barY);
-  ctx.arcTo(barX + barWidth, barY, barX + barWidth, barY + barHeight, barRadius);
-  ctx.arcTo(barX + barWidth, barY + barHeight, barX, barY + barHeight, barRadius);
-  ctx.arcTo(barX, barY + barHeight, barX, barY, barRadius);
-  ctx.arcTo(barX, barY, barX + barWidth, barY, barRadius);
-  ctx.closePath();
-  ctx.stroke();
+  ctx.fillRect(barX, barY, barWidth * progress, barHeight);
 
   ctx.font = 'bold 20px Arial';
   ctx.fillStyle = '#FFFFFF';
@@ -333,20 +287,10 @@ async function generateProfileImage({ backgroundURL, avatarURL, name, level, ran
   return canvas.toBuffer();
 }
 
-// API endpoint
+// Endpoint API
 app.get('/generate-profile', async (req, res) => {
-  const {
-    backgroundURL,
-    avatarURL,
-    name,
-    level,
-    rankName,
-    rankId,
-    exp,
-    requireExp,
-  } = req.query;
+  const { backgroundURL, avatarURL, name, level, rankName, rankId, exp, requireExp } = req.query;
 
-  // Cek parameter yang dibutuhkan
   if (!backgroundURL || !avatarURL || !name || !level || !rankName || !rankId || !exp || !requireExp) {
     return res.status(400).json({ error: 'Parameter tidak lengkap' });
   }
