@@ -223,171 +223,172 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
-  app.get("/rank", async (req, res) => {
-    const {
-      background,
-      profile,
-      name,
-      limit,
-      currentExp,
-      maxExp,
-      level,
-      balance,
-      rankPhoto,
-      rank,
-    } = req.query;
-  
-    if (
-      !background ||
-      !profile ||
-      !name ||
-      !limit ||
-      !currentExp ||
-      !maxExp ||
-      !level ||
-      !balance ||
-      !rankPhoto ||
-      !rank
-    ) {
-      return res.status(400).json({ error: "Parameter tidak lengkap." });
-    }
-  
-    try {
-      const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
-      const profileImage = await axios.get(profile, { responseType: "arraybuffer" });
-      const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
-  
-      const backgroundBuffer = Buffer.from(backgroundImage.data);
-      const profileBuffer = Buffer.from(profileImage.data);
-      const rankBuffer = Buffer.from(rankImage.data);
-  
-      const canvasWidth = 850;
-      const canvasHeight = 300;
-  
-      const config = {
-        profile: { size: 120, top: 90, left: 40 },
-        progressBar: { width: 450, height: 20, top: 180, left: 170 },
-        nameAndID: { top: 10, left: 0 },
-        levelAndBalance: { top: 0, left: 0 },
-        rank: {
-          iconSize: 80,
-          textSize: 15,
-          top: 50,
-          left: 700,
-          textOffset: 30, // Ikon rank + jarak 7px untuk teks
-          textColor: "white",
+ app.get("/rank", async (req, res) => {
+  const {
+    background,
+    profile,
+    name,
+    limit,
+    currentExp,
+    maxExp,
+    level,
+    balance,
+    rankPhoto,
+    rank,
+  } = req.query;
+
+  if (
+    !background ||
+    !profile ||
+    !name ||
+    !limit ||
+    !currentExp ||
+    !maxExp ||
+    !level ||
+    !balance ||
+    !rankPhoto ||
+    !rank
+  ) {
+    return res.status(400).json({ error: "Parameter tidak lengkap." });
+  }
+
+  try {
+    const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
+    const profileImage = await axios.get(profile, { responseType: "arraybuffer" });
+    const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
+
+    const backgroundBuffer = Buffer.from(backgroundImage.data);
+    const profileBuffer = Buffer.from(profileImage.data);
+    const rankBuffer = Buffer.from(rankImage.data);
+
+    const canvasWidth = 850;
+    const canvasHeight = 300;
+
+    const config = {
+      profile: { size: 120, top: 90, left: 40 },
+      progressBar: { width: 450, height: 20, top: 180, left: 170 },
+      nameAndID: { top: 10, left: 0 },
+      levelAndBalance: { top: 0, left: 0 },
+      rank: {
+        iconSize: 80,
+        textSize: 15,
+        top: 50,
+        left: 700,
+        textOffset: 30, // Ikon rank + jarak 7px untuk teks
+        textColor: "white",
+      },
+      margin: 30, // Menambahkan margin untuk memastikan bingkai tidak terlalu dekat
+    };
+
+    const resizedBackground = await sharp(backgroundBuffer)
+      .resize(canvasWidth, canvasHeight)
+      .png()
+      .toBuffer();
+
+    const profileCircle = await sharp(profileBuffer)
+      .resize(config.profile.size, config.profile.size)
+      .composite([
+        {
+          input: Buffer.from(
+            `<svg xmlns="http://www.w3.org/2000/svg">
+              <circle cx="${config.profile.size / 2}" cy="${config.profile.size / 2}" r="${config.profile.size / 2}" fill="white"/>
+            </svg>`
+          ),
+          blend: "dest-in",
         },
-        margin: 30 // Menambahkan margin untuk memastikan bingkai tidak terlalu dekat
-      };
-  
-      const resizedBackground = await sharp(backgroundBuffer)
-        .resize(canvasWidth, canvasHeight)
-        .png()
-        .toBuffer();
-  
-        const profileCircle = await sharp(profileBuffer)
-        .resize(config.profile.size, config.profile.size)
-        .composite([
-          {
-            input: Buffer.from(
-              `<svg xmlns="http://www.w3.org/2000/svg">
-                <circle cx="${config.profile.size / 2}" cy="${config.profile.size / 2}" r="${config.profile.size / 2}" fill="white"/>
-              </svg>`
-            ),
-            blend: "dest-in",
-          },
-        ])
-        .png()
-        .toBuffer();
-  
-      const resizedRankIcon = await sharp(rankBuffer)
-        .resize(config.rank.iconSize, config.rank.iconSize)
-        .png()
-        .toBuffer();
-  
-      const expProgress = (parseInt(currentExp) / parseInt(maxExp)) * config.progressBar.width;
-  
-      const progressBarSVG = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
-          <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
-          <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
-          <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Arial">${currentExp}/${maxExp}</text>
-        </svg>
-      `;
-      const progressBarBuffer = Buffer.from(progressBarSVG);
-  
-      const renderTextSVG = (svgContent) => {
-        return sharp(Buffer.from(svgContent)).png().toBuffer();
-      };
-  
-      const nameAndIDText = await renderTextSVG(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
-          <text x="170" y="120" font-size="30" fill="white" font-family="Arial" font-weight="bold">${name}</text>
-          <text x="170" y="160" font-size="20" fill="white" font-family="Arial">${limit}</text>
-          <text x="530" y="160" font-size="20" fill="white" font-family="Arial">Level: ${level}</text>
-        </svg>
-      `);
-  
-      const levelAndBalanceText = await renderTextSVG(`
-        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
-          <text x="680" y="20" font-size="20" fill="yellow" font-family="Arial">Saldo: ${balance}</text>
-        </svg>
-      `);
-  
-      const rankImageWithText = await sharp({
-        create: {
-          width: config.rank.iconSize,
-          height: config.rank.iconSize + config.rank.textOffset,
-          channels: 4,
-          background: { r: 0, g: 0, b: 0, alpha: 0 },
+      ])
+      .png()
+      .toBuffer();
+
+    const resizedRankIcon = await sharp(rankBuffer)
+      .resize(config.rank.iconSize, config.rank.iconSize)
+      .png()
+      .toBuffer();
+
+    const expProgress = (parseInt(currentExp) / parseInt(maxExp)) * config.progressBar.width;
+
+    const progressBarSVG = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
+        <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
+        <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
+        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Arial">${currentExp}/${maxExp}</text>
+      </svg>
+    `;
+    const progressBarBuffer = Buffer.from(progressBarSVG);
+
+    const renderTextSVG = (svgContent) => {
+      return sharp(Buffer.from(svgContent)).png().toBuffer();
+    };
+
+    const nameAndIDText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
+        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white">${limit}</text>
+        <text x="530" y="160" font-size="20" fill="white">Level: ${level}</text>
+      </svg>
+    `);
+
+    const levelAndBalanceText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
+        <text x="680" y="20" font-size="20" fill="yellow">Saldo: ${balance}</text>
+      </svg>
+    `);
+
+    const rankImageWithText = await sharp({
+      create: {
+        width: config.rank.iconSize,
+        height: config.rank.iconSize + config.rank.textOffset,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      },
+    })
+      .composite([
+        { input: resizedRankIcon, top: 0, left: 0 },
+        {
+          input: await renderTextSVG(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-weight="bold">${rank}</text>
+            </svg>
+          `),
+          top: config.rank.iconSize + 2, // Jarak antara ikon rank dan teks rank
+          left: 0,
         },
-      })
-        .composite([
-          { input: resizedRankIcon, top: 0, left: 0 },
-          {
-            input: await renderTextSVG(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
-                <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="Arial" font-weight="bold">${rank}</text>
-              </svg>
-            `),
-            top: config.rank.iconSize + 2, // Jarak antara ikon rank dan teks rank
-            left: 0,
-          },
-        ])
-        .png()
-        .toBuffer();
-  
-      const finalImage = await sharp(resizedBackground)
-        .composite([
-          {
-            input: Buffer.from(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
-                <!-- Bingkai biru terang dengan margin -->
-                <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
-                      rx="10" ry="10" fill="none" stroke="aqua" stroke-width="5" />
-                <!-- Area transparan gelap di dalam bingkai -->
-                <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
-                      rx="5" ry="5" fill="rgba(0, 0, 0, 0.6)" />
-              </svg>
-            `),
-            top: 0,
-            left: 0,
-          },
-          { input: profileCircle, top: config.profile.top, left: config.profile.left },
-          { input: nameAndIDText, top: config.nameAndID.top, left: config.nameAndID.left },
-          { input: progressBarBuffer, top: config.progressBar.top, left: config.progressBar.left },
-          { input: levelAndBalanceText, top: config.progressBar.top + 30, left: config.levelAndBalance.left }, // Membuat jarak antara level dan saldo
-          { input: rankImageWithText, top: config.rank.top, left: config.rank.left },
-        ])
-        .png()
-        .toBuffer();
-  
-      res.writeHead(200, { "Content-Type": "image/png" });
-      res.end(finalImage);
-    } catch (error) {
-      res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
-    }
-  });
+      ])
+      .png()
+      .toBuffer();
+
+    const finalImage = await sharp(resizedBackground)
+      .composite([
+        {
+          input: Buffer.from(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
+              <!-- Bingkai biru terang dengan margin -->
+              <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
+                    rx="10" ry="10" fill="none" stroke="aqua" stroke-width="5" />
+              <!-- Area transparan gelap di dalam bingkai -->
+              <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
+                    rx="5" ry="5" fill="rgba(0, 0, 0, 0.6)" />
+            </svg>
+          `),
+          top: 0,
+          left: 0,
+        },
+        { input: profileCircle, top: config.profile.top, left: config.profile.left },
+        { input: nameAndIDText, top: config.nameAndID.top, left: config.nameAndID.left },
+        { input: progressBarBuffer, top: config.progressBar.top, left: config.progressBar.left },
+        { input: levelAndBalanceText, top: config.progressBar.top + 30, left: config.levelAndBalance.left }, // Membuat jarak antara level dan saldo
+        { input: rankImageWithText, top: config.rank.top, left: config.rank.left },
+      ])
+      .png()
+      .toBuffer();
+
+    res.writeHead(200, { "Content-Type": "image/png" });
+    res.end(finalImage);
+  } catch (error) {
+    res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
+  }
+});
+
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
