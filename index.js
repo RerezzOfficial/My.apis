@@ -388,8 +388,6 @@ app.get('/game/asahotak', (req, res) => {
       res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
     }
   });
-         
-
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
