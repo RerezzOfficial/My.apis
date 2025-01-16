@@ -281,11 +281,13 @@ app.get("/rank", async (req, res) => {
       margin: 30, // Menambahkan margin untuk memastikan bingkai tidak terlalu dekat
     };
 
+    // Resize background image
     const resizedBackground = await sharp(backgroundBuffer)
       .resize(canvasWidth, canvasHeight)
       .png()
       .toBuffer();
 
+    // Resize profile image
     const profileCircle = await sharp(profileBuffer)
       .resize(config.profile.size, config.profile.size)
       .composite([
@@ -301,13 +303,14 @@ app.get("/rank", async (req, res) => {
       .png()
       .toBuffer();
 
+    // Resize rank image
     const resizedRankIcon = await sharp(rankBuffer)
       .resize(config.rank.iconSize, config.rank.iconSize)
       .png()
       .toBuffer();
 
+    // Resize progress bar image
     const expProgress = (parseInt(currentExp) / parseInt(maxExp)) * config.progressBar.width;
-
     const progressBarSVG = `
       <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
         <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
@@ -317,20 +320,28 @@ app.get("/rank", async (req, res) => {
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
 
-    // Rendering text using canvas
-    const createTextImage = (text, fontSize, color, x, y) => {
-      const canvas = createCanvas(canvasWidth, canvasHeight);
-      const ctx = canvas.getContext("2d");
-      ctx.font = `${fontSize}px sans-serif`; // default sans-serif font
-      ctx.fillStyle = color;
-      ctx.fillText(text, x, y);
-      return canvas.toBuffer();
+    // Function to render SVG text
+    const renderTextSVG = (svgContent) => {
+      return sharp(Buffer.from(svgContent)).png().toBuffer();
     };
 
-    const nameAndIDText = await createTextImage(`${name}\n${limit}\nLevel: ${level}`, 30, 'white', 170, 120);
-    const levelAndBalanceText = await createTextImage(`Saldo: ${balance}`, 20, 'yellow', 680, 20);
-    const rankText = await createTextImage(rank, config.rank.textSize, config.rank.textColor, 10, 22);
+    // Resize name and ID text
+    const nameAndIDText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
+        <text x="170" y="120" font-size="30" fill="white" font-family="Arial" font-weight="bold">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white" font-family="Arial">${limit}</text>
+        <text x="530" y="160" font-size="20" fill="white" font-family="Arial">Level: ${level}</text>
+      </svg>
+    `);
 
+    // Resize level and balance text
+    const levelAndBalanceText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
+        <text x="680" y="20" font-size="20" fill="yellow" font-family="Arial">Saldo: ${balance}</text>
+      </svg>
+    `);
+
+    // Resize rank image with text
     const rankImageWithText = await sharp({
       create: {
         width: config.rank.iconSize,
@@ -341,11 +352,20 @@ app.get("/rank", async (req, res) => {
     })
       .composite([
         { input: resizedRankIcon, top: 0, left: 0 },
-        { input: rankText, top: config.rank.iconSize + 2, left: 0 },
+        {
+          input: await renderTextSVG(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="Arial" font-weight="bold">${rank}</text>
+            </svg>
+          `),
+          top: config.rank.iconSize + 2, // Jarak antara ikon rank dan teks rank
+          left: 0,
+        },
       ])
       .png()
       .toBuffer();
 
+    // Final image composition
     const finalImage = await sharp(resizedBackground)
       .composite([
         {
@@ -371,12 +391,15 @@ app.get("/rank", async (req, res) => {
       .png()
       .toBuffer();
 
+    // Send the final image as response
     res.writeHead(200, { "Content-Type": "image/png" });
     res.end(finalImage);
+
   } catch (error) {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
+
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
