@@ -10,7 +10,7 @@ const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
-registerFont(path.join(__dirname, 'fonts', 'Arial.ttf'), { family: 'Arial' });
+
 
 app.enable("trust proxy");
 app.set("json spaces", 2);
