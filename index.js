@@ -6,7 +6,6 @@ const multer = require('multer');
 const axios = require("axios");
 const { search } = require('yt-search');
 const puppeteer = require("puppeteer");
-const canvafy = require('canvafy');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -224,40 +223,7 @@ app.get('/game/asahotak', (req, res) => {
 });
 
 
-app.get('/api/levelupcard', async (req, res) => {
-  const background = req.query.background;
-    if (!background) {
-      return res.status(400).json({ error: 'Parameter "query" tidak ditemukan' });
-    }
-	
-  const text = req.query.name;
-    if (!text) {
-      return res.status(400).json({ error: 'Parameter "query" tidak ditemukan' });
-    }
-	const text2 = req.query.level;
-    if (!text2) {
-      return res.status(400).json({ error: 'Parameter "query" tidak ditemukan' });
-    }
-	const text3 = req.query.level2;
-    if (!text3) {
-      return res.status(400).json({ error: 'Parameter "query" tidak ditemukan' });
-    }
-	const avatar = req.query.avatar;
-    if (!avatar) {
-      return res.status(400).json({ error: 'Parameter "query" tidak ditemukan' });
-    }  
-	const levelUp = await new canvafy.LevelUp()
-    .setAvatar(avatar)
-    .setBackground("image", background)
-    .setUsername(text)
-    .setBorder("#000000")
-    .setAvatarBorder("#ff0000")
-    .setOverlayOpacity(0.7)
-    .setLevels(text2, text3)
-    .build();
-          res.set('Content-Type', 'image/png');
-        res.send(levelUp);        
-});
+
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
