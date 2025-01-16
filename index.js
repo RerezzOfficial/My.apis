@@ -286,75 +286,153 @@ app.get("/rankk", async (req, res) => {
   }
 
   try {
-    // Register font kustom
-    registerFont("fonts.ttf", { family: "CustomFont" });
+    const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
+    const profileImage = await axios.get(profile, { responseType: "arraybuffer" });
+    const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
+
+    const backgroundBuffer = Buffer.from(backgroundImage.data);
+    const profileBuffer = Buffer.from(profileImage.data);
+    const rankBuffer = Buffer.from(rankImage.data);
 
     const canvasWidth = 850;
     const canvasHeight = 300;
-    const canvas = createCanvas(canvasWidth, canvasHeight);
-    const ctx = canvas.getContext("2d");
 
-    // Load background
-    const backgroundImage = await loadImage(
-      (await axios.get(background, { responseType: "arraybuffer" })).data
-    );
-    ctx.drawImage(backgroundImage, 0, 0, canvasWidth, canvasHeight);
+    const config = {
+      profile: { size: 120, top: 90, left: 40 },
+      progressBar: { width: 450, height: 20, top: 180, left: 170 },
+      nameAndID: { top: 10, left: 0 },
+      levelAndBalance: { top: 0, left: 0 },
+      rank: {
+        iconSize: 80,
+        textSize: 15,
+        top: 50,
+        left: 700,
+        textOffset: 30,
+        textColor: "white",
+      },
+      margin: 30,
+    };
 
-    // Draw profile image as a circle
-    const profileImage = await loadImage(
-      (await axios.get(profile, { responseType: "arraybuffer" })).data
-    );
-    ctx.beginPath();
-    ctx.arc(100, 150, 60, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.clip();
-    ctx.drawImage(profileImage, 40, 90, 120, 120);
-    ctx.restore();
+    const resizedBackground = await sharp(backgroundBuffer)
+      .resize(canvasWidth, canvasHeight)
+      .png()
+      .toBuffer();
 
-    // Add rank icon
-    const rankImage = await loadImage(
-      (await axios.get(rankPhoto, { responseType: "arraybuffer" })).data
-    );
-    ctx.drawImage(rankImage, 700, 90, 80, 80);
+    const profileCircle = await sharp(profileBuffer)
+      .resize(config.profile.size, config.profile.size)
+      .composite([
+        {
+          input: Buffer.from(
+            `<svg xmlns="http://www.w3.org/2000/svg">
+              <circle cx="${config.profile.size / 2}" cy="${config.profile.size / 2}" r="${config.profile.size / 2}" fill="white"/>
+            </svg>`
+          ),
+          blend: "dest-in",
+        },
+      ])
+      .png()
+      .toBuffer();
 
-    // Draw progress bar
-    const progressBarWidth = 450;
-    const progressBarHeight = 20;
-    const expProgress = (parseInt(currentExp) / parseInt(maxExp)) * progressBarWidth;
+    const resizedRankIcon = await sharp(rankBuffer)
+      .resize(config.rank.iconSize, config.rank.iconSize)
+      .png()
+      .toBuffer();
 
-    ctx.fillStyle = "white";
-    ctx.fillRect(170, 180, progressBarWidth, progressBarHeight);
-    ctx.fillStyle = "aqua";
-    ctx.fillRect(170, 180, expProgress, progressBarHeight);
+    const expProgress = (parseInt(currentExp) / parseInt(maxExp)) * config.progressBar.width;
 
-    // Add progress text
-    ctx.font = "14px CustomFont";
-    ctx.fillStyle = "black";
-    ctx.fillText(`${currentExp}/${maxExp}`, 170 + progressBarWidth / 2 - 30, 195);
+    const progressBarSVG = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
+        <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
+        <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
+        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="custom-font">${currentExp}/${maxExp}</text>
+      </svg>
+    `;
+    const progressBarBuffer = Buffer.from(progressBarSVG);
 
-    // Add name and ID
-    ctx.font = "30px CustomFont";
-    ctx.fillStyle = "white";
-    ctx.fillText(name, 170, 120);
-    ctx.font = "20px CustomFont";
-    ctx.fillText(`Limit: ${limit}`, 170, 160);
-    ctx.fillText(`Level: ${level}`, 530, 160);
+    const renderTextSVG = async (svgContent) => {
+      return sharp(Buffer.from(svgContent)).png().toBuffer();
+    };
 
-    // Add balance
-    ctx.font = "20px CustomFont";
-    ctx.fillStyle = "yellow";
-    ctx.fillText(`Saldo: ${balance}`, 680, 50);
+    const nameAndIDText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
+        <style>
+          @font-face {
+            font-family: 'custom-font';
+            src: url('fonts.ttf');
+          }
+        </style>
+        <text x="170" y="120" font-size="30" fill="white" font-family="custom-font" font-weight="bold">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white" font-family="custom-font">${limit}</text>
+        <text x="530" y="160" font-size="20" fill="white" font-family="custom-font">Level: ${level}</text>
+      </svg>
+    `);
 
-    // Add rank text
-    ctx.font = "15px CustomFont";
-    ctx.fillStyle = "white";
-    ctx.fillText(rank, 720, 180);
+    const levelAndBalanceText = await renderTextSVG(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
+        <style>
+          @font-face {
+            font-family: 'custom-font';
+            src: url('fonts.ttf');
+          }
+        </style>
+        <text x="680" y="20" font-size="20" fill="yellow" font-family="custom-font">Saldo: ${balance}</text>
+      </svg>
+    `);
 
-    // Convert canvas to buffer
-    const finalBuffer = canvas.toBuffer("image/png");
+    const rankImageWithText = await sharp({
+      create: {
+        width: config.rank.iconSize,
+        height: config.rank.iconSize + config.rank.textOffset,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      },
+    })
+      .composite([
+        { input: resizedRankIcon, top: 0, left: 0 },
+        {
+          input: await renderTextSVG(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
+              <style>
+                @font-face {
+                  font-family: 'custom-font';
+                  src: url('fonts.ttf');
+                }
+              </style>
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="custom-font" font-weight="bold">${rank}</text>
+            </svg>
+          `),
+          top: config.rank.iconSize + 2,
+          left: 0,
+        },
+      ])
+      .png()
+      .toBuffer();
+
+    const finalImage = await sharp(resizedBackground)
+      .composite([
+        {
+          input: Buffer.from(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
+              <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
+                    rx="10" ry="10" fill="none" stroke="aqua" stroke-width="5" />
+              <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
+                    rx="5" ry="5" fill="rgba(0, 0, 0, 0.6)" />
+            </svg>
+          `),
+          top: 0,
+          left: 0,
+        },
+        { input: profileCircle, top: config.profile.top, left: config.profile.left },
+        { input: nameAndIDText, top: config.nameAndID.top, left: config.nameAndID.left },
+        { input: progressBarBuffer, top: config.progressBar.top, left: config.progressBar.left },
+        { input: levelAndBalanceText, top: config.progressBar.top + 30, left: config.levelAndBalance.left },
+        { input: rankImageWithText, top: config.rank.top, left: config.rank.left },
+      ])
+      .png()
+      .toBuffer();
 
     res.writeHead(200, { "Content-Type": "image/png" });
-    res.end(finalBuffer);
+    res.end(finalImage);
   } catch (error) {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
