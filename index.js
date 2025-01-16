@@ -238,7 +238,6 @@ app.get("/rank", async (req, res) => {
     rankName,
   } = req.query;
 
-  // Validasi parameter input
   if (
     !background ||
     !userPhoto ||
@@ -265,7 +264,13 @@ app.get("/rank", async (req, res) => {
     const userBuffer = Buffer.from(userImage.data);
     const rankBuffer = Buffer.from(rankImage.data);
 
-    // Resize dan buat foto user menjadi lingkaran
+    // Resize latar belakang ke ukuran tetap (850x300)
+    const resizedBackground = await sharp(backgroundBuffer)
+      .resize(850, 300)
+      .png()
+      .toBuffer();
+
+    // Resize dan buat foto profil berbentuk lingkaran
     const userCircle = await sharp(userBuffer)
       .resize(120, 120)
       .composite([
@@ -287,7 +292,7 @@ app.get("/rank", async (req, res) => {
     // Hitung panjang progress bar EXP
     const expProgress = (parseInt(exp) / parseInt(targetExp)) * 400;
 
-    // Buat progress bar
+    // Progress bar SVG
     const progressBarSVG = `
       <svg width="400" height="20">
         <rect width="400" height="20" fill="white" rx="10" ry="10"></rect>
@@ -297,35 +302,35 @@ app.get("/rank", async (req, res) => {
     const progressBarBuffer = Buffer.from(progressBarSVG);
 
     // Tambahkan elemen ke gambar
-    const finalImage = await sharp(backgroundBuffer)
+    const finalImage = await sharp(resizedBackground)
       .composite([
         // Foto user
-        { input: userCircle, top: 50, left: 50 },
+        { input: userCircle, top: 90, left: 30 },
         // Foto rank
-        { input: resizedRankPhoto, top: 50, left: 600 },
-        // Progress bar EXP
-        { input: progressBarBuffer, top: 180, left: 180 },
-        // Nama user dan ID
+        { input: resizedRankPhoto, top: 100, left: 700 },
+        // Nama dan ID pengguna
         {
           input: Buffer.from(
-            `<svg width="800" height="100">
-              <text x="200" y="100" font-size="40" fill="white" font-weight="bold">${userName}</text>
-              <text x="200" y="140" font-size="20" fill="white">ID: ${userId}</text>
+            `<svg width="800" height="200">
+              <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${userName}</text>
+              <text x="170" y="160" font-size="20" fill="white">ID: ${userId}</text>
             </svg>`
           ),
-          top: 30,
+          top: 0,
           left: 0,
         },
+        // Progress bar EXP
+        { input: progressBarBuffer, top: 200, left: 170 },
         // Informasi level, koin, saldo
         {
           input: Buffer.from(
             `<svg width="800" height="100">
-              <text x="200" y="20" font-size="20" fill="white">Level: ${level}</text>
-              <text x="200" y="50" font-size="20" fill="white">EXP: ${exp}/${targetExp}</text>
-              <text x="200" y="80" font-size="20" fill="white">Koin: ${coin} | Saldo: ${balance}</text>
+              <text x="170" y="20" font-size="20" fill="white">Level: ${level}</text>
+              <text x="170" y="50" font-size="20" fill="white">EXP: ${exp}/${targetExp}</text>
+              <text x="170" y="80" font-size="20" fill="white">Koin: ${coin} | Saldo: ${balance}</text>
             </svg>`
           ),
-          top: 220,
+          top: 240,
           left: 0,
         },
         // Nama rank
@@ -336,9 +341,10 @@ app.get("/rank", async (req, res) => {
             </svg>`
           ),
           top: 150,
-          left: 610,
+          left: 720,
         },
       ])
+      .png()
       .toBuffer();
 
     res.writeHead(200, { "Content-Type": "image/png" });
