@@ -328,16 +328,16 @@ app.get("/rank", async (req, res) => {
     // Resize name and ID text
     const nameAndIDText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
-        <text x="170" y="120" font-size="30" fill="white" font-family="Arial" font-weight="bold">${name}</text>
-        <text x="170" y="160" font-size="20" fill="white" font-family="Arial">${limit}</text>
-        <text x="530" y="160" font-size="20" fill="white" font-family="Arial">Level: ${level}</text>
+        <text x="170" y="120" font-size="30" fill="white" font-family="sans-serif" font-weight="bold">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white" font-family="sans-serif">${limit}</text>
+        <text x="530" y="160" font-size="20" fill="white" font-family="sans-serif">Level: ${level}</text>
       </svg>
     `);
 
     // Resize level and balance text
     const levelAndBalanceText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
-        <text x="680" y="20" font-size="20" fill="yellow" font-family="Arial">Saldo: ${balance}</text>
+        <text x="680" y="20" font-size="20" fill="yellow" font-family="sans-serif">Saldo: ${balance}</text>
       </svg>
     `);
 
@@ -355,7 +355,7 @@ app.get("/rank", async (req, res) => {
         {
           input: await renderTextSVG(`
             <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
-              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="Arial" font-weight="bold">${rank}</text>
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="sans-serif" font-weight="bold">${rank}</text>
             </svg>
           `),
           top: config.rank.iconSize + 2, // Jarak antara ikon rank dan teks rank
