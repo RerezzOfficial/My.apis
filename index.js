@@ -225,7 +225,16 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
-app.get("/rankk", async (req, res) => {
+function escapeSVG(input) {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+app.get("/rank", async (req, res) => {
   const {
     background,
     profile,
@@ -315,7 +324,7 @@ app.get("/rankk", async (req, res) => {
       <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
         <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
         <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
-        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Roboto">${currentExp}/${maxExp}</text>
+        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Roboto">${escapeSVG(currentExp)}/${escapeSVG(maxExp)}</text>
       </svg>
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
@@ -335,9 +344,9 @@ app.get("/rankk", async (req, res) => {
             font-family: 'Roboto', sans-serif;
           }
         </style>
-        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
-        <text x="170" y="160" font-size="20" fill="white">${limit}</text>
-        <text x="530" y="160" font-size="20" fill="white">Level: ${level}</text>
+        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${escapeSVG(name)}</text>
+        <text x="170" y="160" font-size="20" fill="white">${escapeSVG(limit)}</text>
+        <text x="530" y="160" font-size="20" fill="white">Level: ${escapeSVG(level)}</text>
       </svg>
     `);
 
@@ -349,7 +358,7 @@ app.get("/rankk", async (req, res) => {
             font-family: 'Roboto', sans-serif;
           }
         </style>
-        <text x="680" y="20" font-size="20" fill="yellow">Saldo: ${balance}</text>
+        <text x="680" y="20" font-size="20" fill="yellow">Saldo: ${escapeSVG(balance)}</text>
       </svg>
     `);
 
@@ -372,7 +381,7 @@ app.get("/rankk", async (req, res) => {
                   font-family: 'Roboto', sans-serif;
                 }
               </style>
-              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-weight="bold">${rank}</text>
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-weight="bold">${escapeSVG(rank)}</text>
             </svg>
           `),
           top: config.rank.iconSize + 2,
