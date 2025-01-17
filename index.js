@@ -226,24 +226,54 @@ app.get('/asahotak', (req, res) => {
 });
 
 app.get('/profile', async (req, res) => {
-  const { sender, name, level, exp, requireExp, rankName, rankId } = req.query;
+  const {
+    background,
+    ppuser,
+    sender,
+    name,
+    level,
+    exp,
+    requireExp,
+    rankName,
+    rankId,
+  } = req.query;
 
-  // Validasi parameter
-  if (!sender || !name || !level || !exp || !requireExp || !rankName || !rankId) {
-    return res.status(400).json({ error: 'Parameter tidak lengkap.' });
+  // Validasi parameter yang diperlukan
+  if (
+    !background ||
+    !ppuser ||
+    !sender ||
+    !name ||
+    !level ||
+    !exp ||
+    !requireExp ||
+    !rankName ||
+    !rankId
+  ) {
+    return res.status(400).json({
+      error: 'Parameter tidak lengkap. Pastikan semua parameter sudah dikirim.',
+    });
   }
 
   try {
-    const apiUrl = `https://api-im-rerezz.glitch.me/profile?sender=${sender}&name=${name}&level=${level}&exp=${exp}&requireExp=${requireExp}&rankName=${rankName}&rankId=${rankId}`;
+    // URL API dengan template literal
+    const apiUrl = `https://api-im-rerezz.glitch.me/profile?background=${encodeURIComponent(background)}&ppuser=${encodeURIComponent(ppuser)}&name=${encodeURIComponent(name)}&level=${level}&exp=${exp}&requireExp=${requireExp}&rankName=${encodeURIComponent(rankName)}&rankId=${rankId}`;
 
+    // Request ke API dan mengambil gambar
     const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
 
+    // Mengirimkan gambar sebagai response
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Gagal mengambil data gambar', details: error.message });
+    // Error handling
+    res.status(500).json({
+      error: 'Gagal mengambil data gambar.',
+      details: error.message,
+    });
   }
 });
+
 
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
