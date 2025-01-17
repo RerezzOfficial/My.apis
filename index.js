@@ -225,6 +225,7 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+const fontPath = path.resolve(__dirname, "fonts.ttf");
 
 app.get("/rankk", async (req, res) => {
   const {
@@ -323,9 +324,6 @@ app.get("/rankk", async (req, res) => {
     const renderTextSVG = async (svgContent) => {
       return sharp(Buffer.from(svgContent)).png().toBuffer();
     };
-
-    const fontPath = path.join(__dirname, "fonts.ttf"); // Pastikan font tersedia di folder yang sesuai
-
     const nameAndIDText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
         <text x="170" y="120" font-size="30" fill="white" font-weight="bold" font-family="file:${fontPath}">${name}</text>
