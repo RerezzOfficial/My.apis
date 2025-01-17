@@ -234,22 +234,17 @@ app.get('/profile', async (req, res) => {
   }
 
   try {
-    // Mengambil data dari API yang sudah ada
+    // Membuat URL untuk API yang sudah ada dengan parameter yang diinginkan
     const apiUrl = `https://api-im-rerezz.glitch.me/profile?sender=${sender}&name=${name}&level=${level}&exp=${exp}&rankName=${rankName}&rankId=${rankId}`;
-    const response = await axios.get(apiUrl);
 
-    // Ubah format untuk "exp", "level", dan lainnya sesuai yang diminta
-    const updatedResponse = {
-      ...response.data,
-      exp: `${exp}`,
-      level: `${level}`,
-      rankName: `${rankName}`,
-      rankId: `${rankId}`,
-    };
+    // Mengambil gambar profil dari API yang sudah ada
+    const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
 
-    res.json(updatedResponse); // Kirim kembali data dalam format yang sudah diubah
+    // Mengirim gambar sebagai response
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    res.end(response.data);
   } catch (error) {
-    res.status(500).json({ error: 'Gagal mengambil data', details: error.message });
+    res.status(500).json({ error: 'Gagal mengambil data gambar', details: error.message });
   }
 });
 
