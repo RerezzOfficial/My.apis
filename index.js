@@ -69,6 +69,78 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
 }
 
 
+registerFont('fonts.ttf', { family: 'CustomFont' }); 
+async function createRankImage() {
+  const canvas = createCanvas(1024, 512); 
+  const ctx = canvas.getContext('2d');
+
+  // Load background
+  const background = await loadImage('path/to/background.jpg'); // Ganti dengan path background sunset
+  ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+
+  // Avatar pengguna (dalam lingkaran)
+  const avatar = await loadImage('path/to/avatar.jpg'); // Ganti dengan path avatar Joker
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(140, 140, 90, 0, Math.PI * 2); // Lingkaran untuk avatar
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(avatar, 50, 50, 180, 180); // Ukuran dan posisi avatar
+  ctx.restore();
+
+  // Nama pengguna
+  ctx.font = 'bold 50px CustomFont'; // Menggunakan font yang didaftarkan
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'left';
+  ctx.fillText('User123', 250, 110); // Posisi nama pengguna
+
+  // ID pengguna
+  ctx.font = '30px CustomFont'; // Menggunakan font yang didaftarkan
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText('12345', 250, 150); // Posisi ID pengguna
+
+  // EXP Bar
+  ctx.fillStyle = '#FF0000'; // Warna merah untuk progress
+  ctx.fillRect(250, 190, 500, 40); // Bar merah penuh
+  ctx.fillStyle = '#FFFFFF'; // Warna putih untuk sisa
+  ctx.fillRect(250 + 500 * (500 / 1000), 190, 500 - 500 * (500 / 1000), 40); // Bar putih (sisa)
+  ctx.font = '30px CustomFont';
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'center';
+  ctx.fillText('500/1000', 500, 220); // Teks progress di tengah bar
+
+  // Level
+  ctx.font = 'bold 40px CustomFont';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'left';
+  ctx.fillText('LEVEL: 10', 250, 280); // Posisi level
+
+  // Rank Badge (Master 3)
+  const rankBadge = await loadImage('path/to/rank-badge.png'); // Ganti dengan path badge Master 3
+  ctx.drawImage(rankBadge, 800, 60, 150, 150); // Posisi dan ukuran badge
+  ctx.font = 'bold 25px CustomFont';
+  ctx.fillStyle = '#FFD700'; // Warna emas
+  ctx.textAlign = 'center';
+  ctx.fillText('MASTER 3', 875, 240); // Teks rank di bawah badge
+
+  // Ikon Koin
+  const coinIcon = await loadImage('path/to/coin.png'); // Ganti dengan path ikon koin
+  ctx.drawImage(coinIcon, 250, 330, 40, 40); // Posisi dan ukuran koin
+  ctx.font = '30px CustomFont';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'left';
+  ctx.fillText('9999', 300, 360); // Jumlah koin di sebelah kanan ikon
+
+  // Ikon Diamond
+  const diamondIcon = await loadImage('path/to/diamond.png'); // Ganti dengan path ikon diamond
+  ctx.drawImage(diamondIcon, 400, 330, 40, 40); // Posisi dan ukuran diamond
+  ctx.fillText('50', 450, 360); // Jumlah diamond di sebelah kanan ikon
+
+  // Kembalikan buffer gambar
+  return canvas.toBuffer('image/png');
+}
+
+
 async function getPinterestImages(text) {
   const url = 'https://www.pinterest.com/resource/BaseSearchResource/get/';
   const params = {
@@ -237,6 +309,19 @@ const escapeSVG = (str) => {
     return escapeMap[match];
   });
 };
+
+app.get('/generate', async (req, res) => {
+  try {
+    const buffer = await createRankImage();
+    res.set('Content-Type', 'image/png'); // Set header response untuk gambar PNG
+    res.send(buffer); // Kirim buffer gambar sebagai response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error generating image');
+  }
+});
+
+
 
 app.get("/rankk", async (req, res) => {
   const {
