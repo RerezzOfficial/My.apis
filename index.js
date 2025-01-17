@@ -50,15 +50,6 @@ const validateYoutubeUrl = (req, res, next) => {
   next();
 };
 
-function escapeSVG(input) {
-  return input
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
         const payload = {
@@ -234,6 +225,18 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
+const escapeSVG = (str) => {
+  return str.replace(/[&<>"']/g, (match) => {
+    const escapeMap = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&apos;",
+    };
+    return escapeMap[match];
+  });
+};
 
 app.get("/rankk", async (req, res) => {
   const {
@@ -249,7 +252,6 @@ app.get("/rankk", async (req, res) => {
     rank,
   } = req.query;
 
-  // Cek apakah semua parameter ada dan valid
   if (
     !background ||
     !profile ||
@@ -274,7 +276,6 @@ app.get("/rankk", async (req, res) => {
     const profileBuffer = Buffer.from(profileImage.data);
     const rankBuffer = Buffer.from(rankImage.data);
 
-    // Canvas dimensions and configurations
     const canvasWidth = 850;
     const canvasHeight = 300;
 
@@ -325,7 +326,7 @@ app.get("/rankk", async (req, res) => {
       <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
         <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
         <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
-        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Roboto">${escapeSVG(currentExp)}/${escapeSVG(maxExp)}</text>
+        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Arial">${escapeSVG(currentExp)}/${escapeSVG(maxExp)}</text>
       </svg>
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
@@ -334,32 +335,18 @@ app.get("/rankk", async (req, res) => {
       return sharp(Buffer.from(svgContent)).png().toBuffer();
     };
 
-    // Google Fonts API URL
-    const googleFontsAPI = "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap";
-
+    // Jangan menggunakan Google Fonts secara langsung. Gunakan font default seperti Arial atau Roboto yang sudah ada.
     const nameAndIDText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
-        <style>
-          @import url('${googleFontsAPI}');
-          text {
-            font-family: 'Roboto', sans-serif;
-          }
-        </style>
-        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${escapeSVG(name)}</text>
-        <text x="170" y="160" font-size="20" fill="white">${escapeSVG(limit)}</text>
-        <text x="530" y="160" font-size="20" fill="white">Level: ${escapeSVG(level)}</text>
+        <text x="170" y="120" font-size="30" fill="white" font-weight="bold" font-family="Arial">${escapeSVG(name)}</text>
+        <text x="170" y="160" font-size="20" fill="white" font-family="Arial">${escapeSVG(limit)}</text>
+        <text x="530" y="160" font-size="20" fill="white" font-family="Arial">Level: ${escapeSVG(level)}</text>
       </svg>
     `);
 
     const levelAndBalanceText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
-        <style>
-          @import url('${googleFontsAPI}');
-          text {
-            font-family: 'Roboto', sans-serif;
-          }
-        </style>
-        <text x="680" y="20" font-size="20" fill="yellow">Saldo: ${escapeSVG(balance)}</text>
+        <text x="680" y="20" font-size="20" fill="yellow" font-family="Arial">Saldo: ${escapeSVG(balance)}</text>
       </svg>
     `);
 
@@ -376,13 +363,7 @@ app.get("/rankk", async (req, res) => {
         {
           input: await renderTextSVG(`
             <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
-              <style>
-                @import url('${googleFontsAPI}');
-                text {
-                  font-family: 'Roboto', sans-serif;
-                }
-              </style>
-              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-weight="bold">${escapeSVG(rank)}</text>
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="Arial" font-weight="bold">${escapeSVG(rank)}</text>
             </svg>
           `),
           top: config.rank.iconSize + 2,
@@ -423,6 +404,9 @@ app.get("/rankk", async (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
+
+
+
 
 
 
