@@ -275,6 +275,7 @@ app.get('/profile', async (req, res) => {
 });
 
 
+
 //=====[ API ANIME ]=====//
 app.get('/api/cosplay', async (req, res) => {
   try {
