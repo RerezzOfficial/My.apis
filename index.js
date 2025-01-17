@@ -225,16 +225,8 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
-function escapeSVG(input) {
-  return input
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
 
-app.get("/rank", async (req, res) => {
+app.get("/rankk", async (req, res) => {
   const {
     background,
     profile,
@@ -248,6 +240,7 @@ app.get("/rank", async (req, res) => {
     rank,
   } = req.query;
 
+  // Cek apakah semua parameter ada dan valid
   if (
     !background ||
     !profile ||
@@ -260,11 +253,10 @@ app.get("/rank", async (req, res) => {
     !rankPhoto ||
     !rank
   ) {
-    return res.status(400).json({ error: "Parameter tidak lengkap." });
+    return res.status(400).json({ error: "Parameter tidak lengkap atau salah format." });
   }
 
   try {
-    // Load images
     const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
     const profileImage = await axios.get(profile, { responseType: "arraybuffer" });
     const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
@@ -422,6 +414,8 @@ app.get("/rank", async (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
+
+
 
 app.get("/rank", async (req, res) => {
   const {
