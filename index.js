@@ -268,6 +268,7 @@ app.get("/rankk", async (req, res) => {
   }
 
   try {
+    // Mengambil gambar menggunakan axios
     const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
     const profileImage = await axios.get(profile, { responseType: "arraybuffer" });
     const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
@@ -326,7 +327,7 @@ app.get("/rankk", async (req, res) => {
       <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
         <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
         <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
-        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Arial">${escapeSVG(currentExp)}/${escapeSVG(maxExp)}</text>
+        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Arial">${currentExp}/${maxExp}</text>
       </svg>
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
@@ -335,18 +336,19 @@ app.get("/rankk", async (req, res) => {
       return sharp(Buffer.from(svgContent)).png().toBuffer();
     };
 
-    // Jangan menggunakan Google Fonts secara langsung. Gunakan font default seperti Arial atau Roboto yang sudah ada.
+    const fontPath = path.join(__dirname, "fonts.ttf"); // Pastikan font tersedia di folder yang sesuai
+
     const nameAndIDText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
-        <text x="170" y="120" font-size="30" fill="white" font-weight="bold" font-family="Arial">${escapeSVG(name)}</text>
-        <text x="170" y="160" font-size="20" fill="white" font-family="Arial">${escapeSVG(limit)}</text>
-        <text x="530" y="160" font-size="20" fill="white" font-family="Arial">Level: ${escapeSVG(level)}</text>
+        <text x="170" y="120" font-size="30" fill="white" font-weight="bold" font-family="file:${fontPath}">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white" font-family="file:${fontPath}">${limit}</text>
+        <text x="530" y="160" font-size="20" fill="white" font-family="file:${fontPath}">Level: ${level}</text>
       </svg>
     `);
 
     const levelAndBalanceText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
-        <text x="680" y="20" font-size="20" fill="yellow" font-family="Arial">Saldo: ${escapeSVG(balance)}</text>
+        <text x="680" y="20" font-size="20" fill="yellow" font-family="file:${fontPath}">Saldo: ${balance}</text>
       </svg>
     `);
 
@@ -363,7 +365,7 @@ app.get("/rankk", async (req, res) => {
         {
           input: await renderTextSVG(`
             <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
-              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="Arial" font-weight="bold">${escapeSVG(rank)}</text>
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="file:${fontPath}" font-weight="bold">${rank}</text>
             </svg>
           `),
           top: config.rank.iconSize + 2,
@@ -378,10 +380,8 @@ app.get("/rankk", async (req, res) => {
         {
           input: Buffer.from(`
             <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
-              <!-- Frame -->
               <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
                     rx="10" ry="10" fill="none" stroke="aqua" stroke-width="5" />
-              <!-- Transparent area -->
               <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
                     rx="5" ry="5" fill="rgba(0, 0, 0, 0.6)" />
             </svg>
@@ -404,9 +404,6 @@ app.get("/rankk", async (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
-
-
-
 
 
 
