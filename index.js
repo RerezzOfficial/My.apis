@@ -226,21 +226,18 @@ app.get('/asahotak', (req, res) => {
 });
 
 app.get('/profile', async (req, res) => {
-  const { sender, name, level, exp, rankName, rankId } = req.query;
+  const { sender, name, level, exp, requireExp, rankName, rankId } = req.query;
 
   // Validasi parameter
-  if (!sender || !name || !level || !exp || !rankName || !rankId) {
+  if (!sender || !name || !level || !exp || !requireExp || !rankName || !rankId) {
     return res.status(400).json({ error: 'Parameter tidak lengkap.' });
   }
 
   try {
-    // Membuat URL untuk API yang sudah ada dengan parameter yang diinginkan
-    const apiUrl = `https://api-im-rerezz.glitch.me/profile?sender=${sender}&name=${name}&level=${level}&exp=${exp}&rankName=${rankName}&rankId=${rankId}`;
+    const apiUrl = `https://api-im-rerezz.glitch.me/profile?sender=${sender}&name=${name}&level=${level}&exp=${exp}&requireExp=${requireExp}&rankName=${rankName}&rankId=${rankId}`;
 
-    // Mengambil gambar profil dari API yang sudah ada
     const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
 
-    // Mengirim gambar sebagai response
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(response.data);
   } catch (error) {
