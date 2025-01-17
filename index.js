@@ -50,6 +50,15 @@ const validateYoutubeUrl = (req, res, next) => {
   next();
 };
 
+function escapeSVG(input) {
+  return input
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
         const payload = {
