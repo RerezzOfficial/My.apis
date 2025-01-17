@@ -225,37 +225,6 @@ app.get('/game/asahotak', (req, res) => {
   res.sendFile(filePath);
 });
 
-app.get('/api/wasted', async (req, res) => {
-    // Mengambil parameter 'url' dari query string
-    const text = req.query.url;
-
-    // Mengecek apakah parameter 'url' ada
-    if (!text) {
-        return res.json({ 
-            status: false, 
-            creator: 'Your Creator Name', 
-            message: '[!] Masukkan parameter url' 
-        });
-    }
-
-    try {
-        // Menghasilkan gambar "Wasted" menggunakan Canvacord
-        const hasil = await Canvacord.Canvas.wasted(text);
-
-        // Menyertakan header Content-Type untuk gambar PNG
-        res.set('Content-Type', 'image/png');
-        
-        // Mengirim gambar dalam format PNG
-        res.send(hasil);
-    } catch (error) {
-        // Menangani error jika terjadi
-        return res.json({
-            status: false,
-            message: '[!] Terjadi kesalahan saat membuat gambar.'
-        });
-    }
-});
-
 app.get("/rankk", async (req, res) => {
   const {
     background,
@@ -286,6 +255,7 @@ app.get("/rankk", async (req, res) => {
   }
 
   try {
+    // Load images
     const backgroundImage = await axios.get(background, { responseType: "arraybuffer" });
     const profileImage = await axios.get(profile, { responseType: "arraybuffer" });
     const rankImage = await axios.get(rankPhoto, { responseType: "arraybuffer" });
@@ -294,6 +264,7 @@ app.get("/rankk", async (req, res) => {
     const profileBuffer = Buffer.from(profileImage.data);
     const rankBuffer = Buffer.from(rankImage.data);
 
+    // Canvas dimensions and configurations
     const canvasWidth = 850;
     const canvasHeight = 300;
 
@@ -304,7 +275,7 @@ app.get("/rankk", async (req, res) => {
       levelAndBalance: { top: 0, left: 0 },
       rank: {
         iconSize: 80,
-        textSize: 15,
+        textSize: 20,
         top: 50,
         left: 700,
         textOffset: 30,
@@ -344,7 +315,7 @@ app.get("/rankk", async (req, res) => {
       <svg xmlns="http://www.w3.org/2000/svg" width="${config.progressBar.width}" height="${config.progressBar.height}">
         <rect width="${config.progressBar.width}" height="${config.progressBar.height}" fill="white" rx="10" ry="10"></rect>
         <rect width="${expProgress}" height="${config.progressBar.height}" fill="aqua" rx="10" ry="10"></rect>
-        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="custom-font">${currentExp}/${maxExp}</text>
+        <text x="${config.progressBar.width / 2 - 30}" y="15" font-size="14" fill="black" font-family="Roboto">${currentExp}/${maxExp}</text>
       </svg>
     `;
     const progressBarBuffer = Buffer.from(progressBarSVG);
@@ -353,29 +324,32 @@ app.get("/rankk", async (req, res) => {
       return sharp(Buffer.from(svgContent)).png().toBuffer();
     };
 
+    // Google Fonts API URL
+    const googleFontsAPI = "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap";
+
     const nameAndIDText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="200">
         <style>
-          @font-face {
-            font-family: 'custom-font';
-            src: url('fonts.ttf');
+          @import url('${googleFontsAPI}');
+          text {
+            font-family: 'Roboto', sans-serif;
           }
         </style>
-        <text x="170" y="120" font-size="30" fill="white" font-family="custom-font" font-weight="bold">${name}</text>
-        <text x="170" y="160" font-size="20" fill="white" font-family="custom-font">${limit}</text>
-        <text x="530" y="160" font-size="20" fill="white" font-family="custom-font">Level: ${level}</text>
+        <text x="170" y="120" font-size="30" fill="white" font-weight="bold">${name}</text>
+        <text x="170" y="160" font-size="20" fill="white">${limit}</text>
+        <text x="530" y="160" font-size="20" fill="white">Level: ${level}</text>
       </svg>
     `);
 
     const levelAndBalanceText = await renderTextSVG(`
       <svg xmlns="http://www.w3.org/2000/svg" width="800" height="100">
         <style>
-          @font-face {
-            font-family: 'custom-font';
-            src: url('fonts.ttf');
+          @import url('${googleFontsAPI}');
+          text {
+            font-family: 'Roboto', sans-serif;
           }
         </style>
-        <text x="680" y="20" font-size="20" fill="yellow" font-family="custom-font">Saldo: ${balance}</text>
+        <text x="680" y="20" font-size="20" fill="yellow">Saldo: ${balance}</text>
       </svg>
     `);
 
@@ -393,12 +367,12 @@ app.get("/rankk", async (req, res) => {
           input: await renderTextSVG(`
             <svg xmlns="http://www.w3.org/2000/svg" width="${config.rank.iconSize}" height="${config.rank.textOffset}">
               <style>
-                @font-face {
-                  font-family: 'custom-font';
-                  src: url('fonts.ttf');
+                @import url('${googleFontsAPI}');
+                text {
+                  font-family: 'Roboto', sans-serif;
                 }
               </style>
-              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-family="custom-font" font-weight="bold">${rank}</text>
+              <text x="10" y="22" font-size="${config.rank.textSize}" fill="${config.rank.textColor}" font-weight="bold">${rank}</text>
             </svg>
           `),
           top: config.rank.iconSize + 2,
@@ -413,8 +387,10 @@ app.get("/rankk", async (req, res) => {
         {
           input: Buffer.from(`
             <svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
+              <!-- Frame -->
               <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
                     rx="10" ry="10" fill="none" stroke="aqua" stroke-width="5" />
+              <!-- Transparent area -->
               <rect x="${config.margin}" y="${config.margin}" width="${canvasWidth - 2 * config.margin}" height="${canvasHeight - 2 * config.margin}" 
                     rx="5" ry="5" fill="rgba(0, 0, 0, 0.6)" />
             </svg>
@@ -437,8 +413,6 @@ app.get("/rankk", async (req, res) => {
     res.status(500).json({ error: "Gagal memproses gambar", details: error.message });
   }
 });
-
-
 
 app.get("/rank", async (req, res) => {
   const {
