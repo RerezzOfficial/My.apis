@@ -219,13 +219,13 @@ app.get('/api/pantun', (req, res) => {
   res.sendFile(path.join(__dirname, 'media', 'pantun.json'));
 });
 //=====[ API GAME ]=====//
-app.get('/profile', (req, res) => {
+app.get('/asahotak', (req, res) => {
   const filePath = path.join(__dirname, 'media', 'asahotak.json');
   console.log('File Path:', filePath); 
   res.sendFile(filePath);
 });
 
-app.get('/new-profile', async (req, res) => {
+app.get('/profile', async (req, res) => {
   const { sender, name, level, exp, rankName, rankId } = req.query;
 
   // Validasi parameter
