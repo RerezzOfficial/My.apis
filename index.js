@@ -201,6 +201,11 @@ app.get('/doc/funngame', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'fun.html'));
 });
 
+app.get('/doc/canvas', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'canvas.html'));
+});
+
+
 app.get('/doc/sourcode', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'code.html'));
 });
