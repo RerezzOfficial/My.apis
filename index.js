@@ -218,14 +218,10 @@ app.get('/api/quotes/galau', (req, res) => {
 app.get('/api/pantun', (req, res) => {
   res.sendFile(path.join(__dirname, 'media', 'pantun.json'));
 });
-//=====[ API GAME ]=====//
-app.get('/asahotak', (req, res) => {
-  const filePath = path.join(__dirname, 'media', 'asahotak.json');
-  console.log('File Path:', filePath); 
-  res.sendFile(filePath);
-});
 
-app.get('/profile', async (req, res) => {
+
+//=====[ API CANVAS ]=====//
+app.get('/api/profile', async (req, res) => {
   const {
     background,
     ppuser,
@@ -237,8 +233,6 @@ app.get('/profile', async (req, res) => {
     rankName,
     rankId,
   } = req.query;
-
-  // Validasi parameter yang diperlukan
   if (
     !background ||
     !ppuser ||
@@ -254,15 +248,9 @@ app.get('/profile', async (req, res) => {
       error: 'Parameter tidak lengkap. Pastikan semua parameter sudah dikirim.',
     });
   }
-
   try {
-    // URL API dengan template literal
     const apiUrl = `https://api-im-rerezz.glitch.me/profile?background=${encodeURIComponent(background)}&ppuser=${encodeURIComponent(ppuser)}&name=${encodeURIComponent(name)}&level=${level}&exp=${exp}&requireExp=${requireExp}&rankName=${encodeURIComponent(rankName)}&rankId=${rankId}`;
-
-    // Request ke API dan mengambil gambar
     const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-
-    // Mengirimkan gambar sebagai response
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(response.data);
   } catch (error) {
@@ -272,6 +260,37 @@ app.get('/profile', async (req, res) => {
       details: error.message,
     });
   }
+});
+
+
+app.get('/api/ppdoc', async (req, res) => {
+  const { background, foto, exp, requireExp, level, name } = req.query;
+  if (!background || !foto || !exp || !requireExp || !level || !name) {
+    return res.status(400).json({ error: "Semua parameter harus diisi." });
+  }
+  try {
+    const apiUrl = `https://api-im-rerezz.glitch.me/ppdoc?background=${encodeURIComponent(background)}&foto=${encodeURIComponent(foto)}&exp=${exp}&requireExp=${requireExp}&level=${level}&name=${encodeURIComponent(name)}`;
+        const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    res.end(response.data);
+  } catch (error) {
+    res.status(500).json({
+      error: 'Gagal mengambil data gambar.',
+      details: error.message,
+    });
+  }
+});
+
+
+
+
+
+
+//=====[ API GAME ]=====//
+app.get('/asahotak', (req, res) => {
+  const filePath = path.join(__dirname, 'media', 'asahotak.json');
+  console.log('File Path:', filePath); 
+  res.sendFile(filePath);
 });
 
 
