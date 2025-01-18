@@ -284,16 +284,12 @@ app.get('/api/ppdoc', async (req, res) => {
 
 app.get('/api/levelup', async (req, res) => {
   const { background, foto, fromLevel, toLevel, name } = req.query;
-
   if (!background || !foto || !fromLevel || !toLevel || !name) {
     return res.status(400).json({ error: "Semua parameter harus diisi." });
   }
-
   try {
     const apiUrl = `https://api-im-rerezz.glitch.me/levelup?background=${encodeURIComponent(background)}&foto=${encodeURIComponent(foto)}&fromLevel=${fromLevel}&toLevel=${toLevel}&name=${encodeURIComponent(name)}`;
-    
     const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-    
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(response.data);
   } catch (error) {
@@ -305,7 +301,24 @@ app.get('/api/levelup', async (req, res) => {
   }
 });
 
-
+app.get('/api/welcome', async (req, res) => {
+  const { background, foto, nama, subject } = req.query;
+  if (!background || !foto || !nama || !subject) {
+    return res.status(400).json({ error: "Semua parameter harus diisi." });
+  }
+  try {
+    const apiUrl = `https://api-im-rerezz.glitch.me/welcome?background=${encodeURIComponent(background)}&foto=${encodeURIComponent(foto)}&nama=${encodeURIComponent(nama)}&subject=${encodeURIComponent(subject)}`;
+        const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
+        res.writeHead(200, { 'Content-Type': 'image/png' });
+    res.end(response.data);
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({
+      error: 'Gagal mengambil data gambar.',
+      details: error.message,
+    });
+  }
+});
 
 
 
