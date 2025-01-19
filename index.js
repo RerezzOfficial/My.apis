@@ -11,10 +11,6 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
-
-
-
-
 app.enable("trust proxy");
 app.set("json spaces", 2);
  
@@ -52,6 +48,12 @@ const validateYoutubeUrl = (req, res, next) => {
 
   next();
 };
+
+function getYouTubeVideoId(url) {
+	const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|v\/|embed\/|user\/[^\/\n\s]+\/)?(?:watch\?v=|v%3D|embed%2F|video%2F)?|youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/|youtube\.com\/playlist\?list=)([a-zA-Z0-9_-]{11})/;
+	const match = url.match(regex);
+	return match ? match[1] : null;
+}
 
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
