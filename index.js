@@ -74,16 +74,49 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
 function generateImageWithText(text) {
   return new Promise((resolve, reject) => {
     try {
+      // Daftarkan font kustom
       registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
-      const canvas = createCanvas(300, 300);
+
+      // Tentukan ukuran canvas dan buat canvas
+      const canvasWidth = 400;
+      const canvasHeight = 400;
+      const canvas = createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
+
+      // Set background warna putih
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.font = '100px "MyFont"';
+
+      // Menggunakan font kustom
+      ctx.font = '110px "MyFont"';  // Gunakan font kustom
       ctx.fillStyle = 'black';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      ctx.textBaseline = 'top';
+
+      // Bagi teks menjadi baris-baris
+      const maxWidth = canvas.width - 20; // Margin kiri dan kanan
+      let lines = [];
+      let line = '';
+      
+      // Bagi teks menjadi beberapa baris sesuai dengan lebar canvas
+      text.split(' ').forEach(word => {
+        const testLine = line + word + ' ';
+        const testWidth = ctx.measureText(testLine).width;
+
+        if (testWidth > maxWidth) {
+          lines.push(line); // Masukkan baris sebelumnya jika lebar melebihi batas
+          line = word + ' '; // Mulai baris baru dengan kata ini
+        } else {
+          line = testLine; // Tambahkan kata ke baris yang ada
+        }
+      });
+
+      lines.push(line);
+      let yPosition = 20; 
+      lines.forEach(line => {
+        ctx.fillText(line, canvas.width / 2, yPosition);
+        yPosition += 40; 
+      });
       const buffer = canvas.toBuffer('image/png');
       resolve(buffer);
     } catch (error) {
@@ -91,6 +124,7 @@ function generateImageWithText(text) {
     }
   });
 }
+
 
 async function getPinterestImages(text) {
   const url = 'https://www.pinterest.com/resource/BaseSearchResource/get/';
