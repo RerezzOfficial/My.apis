@@ -539,7 +539,12 @@ async function fetchImage(url) {
     return loadImage(response.data);
   }
   
-  app.get("/api/profile", async (req, res) => {
+  async function fetchImage(url) {
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    return loadImage(response.data);
+  }
+  
+  app.get("/profile", async (req, res) => {
     try {
       const {
         background,
@@ -556,6 +561,7 @@ async function fetchImage(url) {
         return res.status(400).json({ error: "Parameter tidak lengkap atau salah format." });
       }
   
+      // Registering the custom font
       registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
   
       const backgroundURL = decodeURIComponent(background);
@@ -610,6 +616,7 @@ async function fetchImage(url) {
       ctx.drawImage(avatar, 40, height / 2 - avatarSize / 2, avatarSize, avatarSize);
       ctx.restore();
   
+      // Border Avatar
       ctx.beginPath();
       ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
       ctx.closePath();
@@ -617,7 +624,8 @@ async function fetchImage(url) {
       ctx.lineWidth = 4;
       ctx.stroke();
   
-      ctx.font = "bold 36px 'MyFont'";
+      // Setting the font to MyFont for all text
+      ctx.font = "bold 36px 'MyFont'"; // All texts are now using 'MyFont'
       ctx.fillStyle = "#FFFFFF";
       ctx.textAlign = "left";
       ctx.fillText(name, 180, height / 2 - 40);
