@@ -6,6 +6,7 @@ const axios = require("axios");
 const { search, yts } = require('yt-search');
 const puppeteer = require("puppeteer");
 const bodyParser = require('body-parser');
+const cheerio = require('cheerio');
 const sharp = require('sharp');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
