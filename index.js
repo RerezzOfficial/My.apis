@@ -16,6 +16,11 @@ const PORT = process.env.PORT || 5000;
 app.enable("trust proxy");
 app.set("json spaces", 2);
 app.use(bodyParser.json()); 
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
  
 const {
   convertCRC16,
@@ -469,38 +474,97 @@ app.get('/api/cpanel', async (req, res) => {
 });
 
 
-app.post('/create-server', async (req, res) => {
-    const { domain, apikey, username, ram, disk, cpu } = req.body;
+app.post("/create-server", async (req, res) => {
+  const { username, email, ram, disk, cpu } = req.body;
+  const password = `${username}${disk}`;
 
-    try {
-        const response = await axios.get(`https://apis.xyrezz.online-server.biz.id/api/cpanel`, {
-            params: {
-                domain: domain,
-                apikey: apikey,
-                username: username,
-                ram: ram,
-                disk: disk,
-                cpu: cpu
-            }
-        });
-
-        const data = response.data;
-
-        if (data.error) {
-            return res.status(400).json({ error: data.error });
-        }
-
-        res.json({
-            success: true,
-            userInfo: data.user,
-            serverInfo: data.server,
-            credentials: data.credentials
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+  try {
+    // Buat pengguna baru
+    const userResponse = await fetch(`${config.domain}/api/application/users`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apikey}`,
+      },
+      body: JSON.stringify({
+        email: `${username}@gmail.com`,
+        username,
+        first_name: username,
+        last_name: username,
+        language: "en",
+        password,
+      }),
+    });
+    const userData = await userResponse.json();
+    if (userData.errors) {
+      return res.status(400).send(`Error: ${userData.errors[0].detail}`);
     }
+    const userId = userData.attributes.id;
+
+    // Ambil data egg
+    const eggResponse = await fetch(`${config.domain}/api/application/nests/5/eggs/15`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${config.apikey}`,
+      },
+    });
+    const eggData = await eggResponse.json();
+    const startupCmd = eggData.attributes.startup;
+
+    // Buat server
+    const serverResponse = await fetch(`${config.domain}/api/application/servers`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apikey}`,
+      },
+      body: JSON.stringify({
+        name: username,
+        description: "Server created via website",
+        user: userId,
+        egg: 15, // Egg ID (adjust if needed)
+        docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
+        startup: startupCmd,
+        environment: {
+          INST: "npm",
+          USER_UPLOAD: "0",
+          AUTO_UPDATE: "0",
+          CMD_RUN: "npm start",
+          JS_FILE: "index.js",
+        },
+        limits: {
+          memory: ram,
+          disk,
+          cpu,
+        },
+        deploy: {
+          locations: [1], // Example location
+        },
+      }),
+    });
+    const serverData = await serverResponse.json();
+    if (serverData.errors) {
+      return res.status(400).send(`Error: ${serverData.errors[0].detail}`);
+    }
+
+    // Kirim respon ke halaman server berhasil
+    res.render("server-created", {
+      username,
+      email: `${username}@gmail.com`,
+      serverName: serverData.attributes.name,
+      serverId: serverData.attributes.id,
+      memory: ram,
+      disk,
+      cpu,
+      password,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while creating the server.");
+  }
 });
 
 
