@@ -924,7 +924,7 @@ app.get("/api/levelup", async (req, res) => {
     }
   });
 
-app.get('/api/rank, async (req, res) => {
+app.get('/api/rank', async (req, res) => {
   try {
     registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
 
