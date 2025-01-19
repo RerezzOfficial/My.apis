@@ -1283,6 +1283,68 @@ app.get('/api/okeconnect/ovo', async (req, res) => {
 });
 
 //=====[ API VID RANDOM ]=====//
+const ytdljir = async (link) => {
+  const videoId = getYouTubeVideoId(link);
+  const format = 128;  // Default format set to 128 kbps audio
+  
+  if (!videoId) {
+    return {
+      status: false,
+      message: "Invalid YouTube URL"
+    };
+  }
+
+  try {
+    let data = await yts("https://youtube.com/watch?v=" + videoId);
+    let response = await savetube("https://youtube.com/watch?v=" + videoId, format, 1);
+    
+    if (!response.status) {
+      response = await cnv.getfile("https://youtube.com/watch?v=" + videoId, format, 1);
+    }
+
+    if (!response.status) {
+      response = await inv.getfile("https://youtube.com/watch?v=" + videoId, 128, 140);
+    }
+
+    return {
+      metadata: data.all[0],
+      download: response
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: false,
+      message: error.response ? `HTTP Error: ${error.response.status}` : error.message
+    };
+  }
+};
+
+// API Endpoint to download YouTube music
+app.get('/api/ytmp3', async (req, res) => {
+  const { link } = req.query;
+  
+  if (!link) {
+    return res.status(400).json({
+      status: false,
+      message: "YouTube URL is required"
+    });
+  }
+
+  try {
+    const result = await ytdljir(link);
+    if (!result.status) {
+      return res.status(400).json(result);
+    }
+    
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message
+    });
+  }
+});
+
 app.get('/api/bocil', async (req, res) => {
   try {
     const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/bocil.json');
