@@ -71,6 +71,26 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
     }
 }
 
+function generateImageWithText(text) {
+  return new Promise((resolve, reject) => {
+    try {
+      registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
+      const canvas = createCanvas(400, 400);
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = '35px "MyFont"';
+      ctx.fillStyle = 'black';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+      const buffer = canvas.toBuffer('image/png');
+      resolve(buffer);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 async function getPinterestImages(text) {
   const url = 'https://www.pinterest.com/resource/BaseSearchResource/get/';
@@ -227,52 +247,16 @@ app.get('/api/pantun', (req, res) => {
   res.sendFile(path.join(__dirname, 'media', 'pantun.json'));
 });
 
-function generateImageWithText(text) {
-  return new Promise((resolve, reject) => {
-    try {
-      // Daftarkan font kustom
-      registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
 
-      // Membuat canvas dan mendapatkan konteksnya
-      const canvas = createCanvas(500, 500);
-      const ctx = canvas.getContext('2d');
 
-      // Mengatur latar belakang canvas menjadi putih
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Menggunakan font kustom yang telah didaftarkan
-      ctx.font = '30px "MyFont"';  // Gunakan font kustom
-      ctx.fillStyle = 'black';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-
-      // Mengonversi canvas ke buffer gambar PNG
-      const buffer = canvas.toBuffer('image/png');
-
-      // Mengembalikan buffer gambar
-      resolve(buffer);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-// Endpoint API untuk menghasilkan gambar dengan teks
 app.get('/api/brat', async (req, res) => {
   const { text } = req.query;
-
-  // Validasi input, pastikan parameter 'text' ada
   if (!text) {
     return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
   }
 
   try {
-    // Panggil fungsi untuk menghasilkan gambar
     const imageBuffer = await generateImageWithText(text);
-
-    // Mengirimkan gambar dalam format PNG
     res.setHeader('Content-Type', 'image/png');
     res.end(imageBuffer);
   } catch (error) {
