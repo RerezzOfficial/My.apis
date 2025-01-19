@@ -75,6 +75,7 @@ function generateImageWithText(text) {
   return new Promise((resolve, reject) => {
     try {
       registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
+
       const canvasWidth = 700;
       const canvasHeight = 700;
       const canvas = createCanvas(canvasWidth, canvasHeight);
@@ -82,22 +83,21 @@ function generateImageWithText(text) {
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Menghitung ukuran font berdasarkan panjang teks
-      let fontSize = canvasWidth / text.length * 12; // Ukuran font sesuai panjang teks
-      fontSize = Math.min(fontSize, 150); // Maksimalkan ukuran font hingga 150px
-      fontSize = Math.max(fontSize, 50); // Minimal ukuran font 50px
-
+      let fontSize = 150;
       ctx.font = `${fontSize}px "MyFont"`;
       ctx.fillStyle = 'black';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
 
-      const maxWidth = canvas.width - 40;
+      const maxWidth = canvas.width - 40; // Margin
       let lines = [];
       let line = '';
+
+      // Bagi teks menjadi beberapa baris sesuai dengan lebar canvas
       text.split(' ').forEach(word => {
         const testLine = line + word + ' ';
         const testWidth = ctx.measureText(testLine).width;
+
         if (testWidth > maxWidth) {
           lines.push(line);
           line = word + ' ';
@@ -105,7 +105,31 @@ function generateImageWithText(text) {
           line = testLine;
         }
       });
+
       lines.push(line);
+
+      let totalHeight = lines.length * fontSize;
+      while (totalHeight > canvasHeight - 40 && fontSize > 20) {
+        fontSize--; // Kurangi ukuran font jika teks tidak muat
+        ctx.font = `${fontSize}px "MyFont"`;
+        lines = [];
+        line = '';
+
+        text.split(' ').forEach(word => {
+          const testLine = line + word + ' ';
+          const testWidth = ctx.measureText(testLine).width;
+
+          if (testWidth > maxWidth) {
+            lines.push(line);
+            line = word + ' ';
+          } else {
+            line = testLine;
+          }
+        });
+
+        lines.push(line);
+        totalHeight = lines.length * fontSize;
+      }
 
       let yPosition = 50;
       const lineHeight = fontSize * 1.2;
