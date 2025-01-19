@@ -225,6 +225,44 @@ app.get('/api/pantun', (req, res) => {
   res.sendFile(path.join(__dirname, 'media', 'pantun.json'));
 });
 
+app.get('/api/brat', (req, res) => {
+  const { text } = req.query;
+
+  if (!text) {
+    return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
+  }
+
+  // Buat gambar latar belakang kosong berukuran 500x200 px
+  sharp({
+    create: {
+      width: 500,
+      height: 200,
+      channels: 4,
+      background: { r: 255, g: 255, b: 255, alpha: 1 }  // Background putih
+    }
+  })
+    .composite([
+      {
+        input: Buffer.from(`
+          <svg width="500" height="200">
+            <text x="50" y="100" font-size="30" fill="black">${text}</text>
+          </svg>
+        `),
+        gravity: 'center'
+      }
+    ])
+    .toBuffer()
+    .then((buffer) => {
+      // Kirim gambar dalam format PNG
+      res.setHeader('Content-Type', 'image/png');
+      res.end(buffer);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: 'Terjadi kesalahan saat menghasilkan gambar.' });
+    });
+});
+
 
 app.get('/api/cpanel', async (req, res) => {
     const { domain, apikey, username, ram, disk, cpu } = req.query;
