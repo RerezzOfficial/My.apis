@@ -228,32 +228,35 @@ app.get('/api/pantun', (req, res) => {
 app.get('/api/brat', (req, res) => {
   const { text } = req.query;
 
+  // Validasi input, pastikan parameter 'text' ada
   if (!text) {
     return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
   }
 
-  // Buat gambar latar belakang kosong berukuran 500x200 px
+  console.log('Text received:', text);  // Log untuk memeriksa teks yang diterima
+
+  // Membuat gambar menggunakan sharp
   sharp({
     create: {
-      width: 500,
-      height: 200,
-      channels: 4,
-      background: { r: 255, g: 255, b: 255, alpha: 1 }  // Background putih
+      width: 600,    // Lebar gambar
+      height: 200,   // Tinggi gambar
+      channels: 4,   // 4 saluran (RGBA)
+      background: { r: 255, g: 255, b: 255, alpha: 1 }  // Latar belakang putih
     }
   })
     .composite([
       {
         input: Buffer.from(`
-          <svg width="500" height="200">
+          <svg width="600" height="200">
             <text x="50" y="100" font-size="30" fill="black">${text}</text>
           </svg>
         `),
-        gravity: 'center'
+        gravity: 'center'  // Letakkan teks di tengah gambar
       }
     ])
     .toBuffer()
     .then((buffer) => {
-      // Kirim gambar dalam format PNG
+      // Mengirimkan gambar dalam format PNG
       res.setHeader('Content-Type', 'image/png');
       res.end(buffer);
     })
@@ -262,7 +265,6 @@ app.get('/api/brat', (req, res) => {
       res.status(500).json({ error: 'Terjadi kesalahan saat menghasilkan gambar.' });
     });
 });
-
 
 app.get('/api/cpanel', async (req, res) => {
     const { domain, apikey, username, ram, disk, cpu } = req.query;
