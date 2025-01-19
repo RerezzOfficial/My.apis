@@ -972,26 +972,26 @@ app.get('/api/rank', async (req, res) => {
     ctx.font = '18px "MyFont"';
     ctx.fillText(`ID: ${iduser}`, profileX + profileSize + 20, profileY + profileSize / 2 + 55);
 
-    // Exp Bar dengan Border Radius
+    // Exp Bar dengan Border Radius (Height 25px)
     const expBarWidth = width - 60;
-    const expBarHeight = 20;
+    const expBarHeight = 25; // Ubah tinggi menjadi 25px
     const expFillWidth = (exp / 1000) * expBarWidth; // Anggap exp maksimal 1000
     ctx.fillStyle = '#444';
     ctx.beginPath();
     ctx.moveTo(30, height * 0.7 + 10); // Poin awal
     ctx.lineTo(30 + expBarWidth, height * 0.7 + 10);
-    ctx.arcTo(30 + expBarWidth, height * 0.7, 30, height * 0.7, 10); // Memberi border radius pada sudut
-    ctx.lineTo(30, height * 0.7);
-    ctx.arcTo(30, height * 0.7 + 10, 30 + expBarWidth, height * 0.7 + 10, 10);
+    ctx.arcTo(30 + expBarWidth, height * 0.7, 30 + expBarWidth, height * 0.7 + expBarHeight, 10); // Melengkungkan sudut kanan atas dan bawah
+    ctx.lineTo(30, height * 0.7 + expBarHeight);
+    ctx.arcTo(30, height * 0.7 + expBarHeight, 30, height * 0.7, 10); // Melengkungkan sudut kiri bawah dan atas
     ctx.fill();
 
     ctx.fillStyle = 'aqua';
     ctx.beginPath();
     ctx.moveTo(30, height * 0.7 + 10); // Poin awal
     ctx.lineTo(30 + expFillWidth, height * 0.7 + 10);
-    ctx.arcTo(30 + expFillWidth, height * 0.7, 30, height * 0.7, 10); // Memberi border radius pada sudut
-    ctx.lineTo(30, height * 0.7);
-    ctx.arcTo(30, height * 0.7 + 10, 30 + expFillWidth, height * 0.7 + 10, 10);
+    ctx.arcTo(30 + expFillWidth, height * 0.7, 30 + expFillWidth, height * 0.7 + expBarHeight, 10); // Melengkungkan sudut kanan atas dan bawah
+    ctx.lineTo(30, height * 0.7 + expBarHeight);
+    ctx.arcTo(30, height * 0.7 + expBarHeight, 30 + expFillWidth, height * 0.7 + expBarHeight, 10); // Melengkungkan sudut kiri bawah dan atas
     ctx.fill();
 
     // Rank Badge
@@ -1020,8 +1020,6 @@ app.get('/api/rank', async (req, res) => {
     res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.' });
   }
 });
-
-
 //=====[ API GAME ]=====//
 app.get('/asahotak', (req, res) => {
   const filePath = path.join(__dirname, 'media', 'asahotak.json');
