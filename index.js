@@ -933,7 +933,6 @@ app.get('/api/rank', async (req, res) => {
     const { background, foto, nama, level, coin, exp, iduser, fotorank, rank } = req.query;
 
     if (!background || !foto || !nama || !level || !coin || !exp || !iduser || !fotorank || !rank) {
-      console.error("Parameter yang dibutuhkan tidak lengkap.");
       return res.status(400).json({ error: "Semua parameter harus diisi." });
     }
 
@@ -944,12 +943,10 @@ app.get('/api/rank', async (req, res) => {
     const ctx = canvas.getContext('2d');
 
     // Latar belakang
-    console.log("Mendownload gambar latar belakang...");
     const backgroundImg = await fetchImage(background);
     ctx.drawImage(backgroundImg, 0, 0, width, height);
 
     // Profil Utama (Foto Pengguna)
-    console.log("Mendownload gambar profil...");
     const profileSize = 80;
     const profileX = 20;
     const profileY = (height / 2) - (profileSize / 2);
@@ -963,12 +960,12 @@ app.get('/api/rank', async (req, res) => {
     ctx.restore();
 
     // Nama Pengguna
-    ctx.font = 'bold 20px "MyFont"';
+    ctx.font = 'bold 24px "MyFont"';
     ctx.fillStyle = 'white';
     ctx.fillText(nama, profileX + profileSize + 20, profileY + profileSize / 2);
 
     // Level
-    ctx.font = '18px "MyFont"';
+    ctx.font = '20px "MyFont"';
     ctx.fillText(`LEVEL: ${level}`, 30, height * 0.75);
 
     // Exp Bar
@@ -981,7 +978,6 @@ app.get('/api/rank', async (req, res) => {
     ctx.fillRect(30, height * 0.7, expFillWidth, expBarHeight);
 
     // Rank Badge
-    console.log("Mendownload gambar rank...");
     const rankSize = 80;
     const rankX = width - rankSize - 20;
     const rankY = (height / 2) - (rankSize / 2);
