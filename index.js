@@ -496,10 +496,14 @@ app.post("/create-server", async (req, res) => {
         password,
       }),
     });
-    const userData = await userResponse.json();
-    if (userData.errors) {
-      return res.status(400).send(`Error: ${userData.errors[0].detail}`);
+
+    // Cek apakah respons dari API sukses
+    if (!userResponse.ok) {
+      const userData = await userResponse.json();
+      return res.status(userResponse.status).send(`Error: ${userData.errors[0].detail}`);
     }
+
+    const userData = await userResponse.json();
     const userId = userData.attributes.id;
 
     // Ambil data egg
@@ -510,6 +514,13 @@ app.post("/create-server", async (req, res) => {
         Authorization: `Bearer ${config.apikey}`,
       },
     });
+
+    // Cek apakah respons dari API sukses
+    if (!eggResponse.ok) {
+      const eggData = await eggResponse.json();
+      return res.status(eggResponse.status).send(`Error: ${eggData.errors[0].detail}`);
+    }
+
     const eggData = await eggResponse.json();
     const startupCmd = eggData.attributes.startup;
 
@@ -525,7 +536,7 @@ app.post("/create-server", async (req, res) => {
         name: username,
         description: "Server created via website",
         user: userId,
-        egg: 15, // Egg ID (adjust if needed)
+        egg: 15, // Egg ID (sesuaikan jika diperlukan)
         docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
         startup: startupCmd,
         environment: {
@@ -541,16 +552,20 @@ app.post("/create-server", async (req, res) => {
           cpu,
         },
         deploy: {
-          locations: [1], // Example location
+          locations: [1], // Lokasi contoh (sesuaikan dengan kebutuhan Anda)
         },
       }),
     });
-    const serverData = await serverResponse.json();
-    if (serverData.errors) {
-      return res.status(400).send(`Error: ${serverData.errors[0].detail}`);
+
+    // Cek apakah respons dari API sukses
+    if (!serverResponse.ok) {
+      const serverData = await serverResponse.json();
+      return res.status(serverResponse.status).send(`Error: ${serverData.errors[0].detail}`);
     }
 
-    // Kirim respon ke halaman server berhasil
+    const serverData = await serverResponse.json();
+
+    // Kirim respons ke halaman server berhasil
     res.render("server-created", {
       username,
       email: `${username}@gmail.com`,
@@ -561,12 +576,12 @@ app.post("/create-server", async (req, res) => {
       cpu,
       password,
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("Error while creating server:", error);
     res.status(500).send("An error occurred while creating the server.");
   }
 });
-
 
 //=====[ API CANVAS ]=====//
 async function fetchImage(url) {
