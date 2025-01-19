@@ -26,6 +26,7 @@
     "puppeteer": "latest",
     "sharp": "latest",
     "canvas": "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "cheerio": "latest"
   }
 }
