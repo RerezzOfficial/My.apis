@@ -5,6 +5,7 @@ const multer = require('multer');
 const axios = require("axios");
 const { search, yts } = require('yt-search');
 const puppeteer = require("puppeteer");
+const bodyParser = require('body-parser');
 const sharp = require('sharp');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
@@ -1286,10 +1287,10 @@ function getYouTubeVideoId(url) {
   return match ? match[1] : null;
 }
 
-// Define the main function for downloading YouTube music
+// Define the function for downloading YouTube audio
 async function ytdljir(link) {
   const videoId = getYouTubeVideoId(link);
-  const format = 128;  // Set format to 128 by default
+  const format = 128; // Default format set to 128
 
   if (!videoId) {
     return {
@@ -1299,23 +1300,14 @@ async function ytdljir(link) {
   }
 
   try {
-    // Fetch YouTube video metadata using yt-search
     const { video } = await yts({ videoId: videoId });
-    const data = video[0]; // Take the first video from the result
+    const data = video[0]; // Get the first result
 
-    // Here you would call your other services like savetube, cnv, or inv for downloading
-    let response = await savetube("https://youtube.com/watch?v=" + videoId, format, 1);
+    // Placeholder response for the download process
+    let response = await fakeDownloadService("https://youtube.com/watch?v=" + videoId, format);
     
-    if (!response.status) {
-      response = await cnv.getfile("https://youtube.com/watch?v=" + videoId, format, 1);
-    }
-
-    if (!response.status) {
-      response = await inv.getfile("https://youtube.com/watch?v=" + videoId, 128, 140);
-    }
-
     return {
-      metadata: data,  // Include the metadata from yt-search
+      metadata: data,  // Video metadata
       download: response
     };
   } catch (error) {
@@ -1325,6 +1317,11 @@ async function ytdljir(link) {
       message: error.response ? `HTTP Error: ${error.response.status}` : error.message
     };
   }
+}
+
+// Fake download service (replace this with actual download logic)
+async function fakeDownloadService(url, format) {
+  return { status: true, url: `https://downloadlink.com/${url}` }; // Mock download link
 }
 
 // API endpoint to download YouTube music
