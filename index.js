@@ -52,23 +52,42 @@ const validateYoutubeUrl = (req, res, next) => {
 };
 
 
-async function fetchTextOnly(content, user, prompt, webSearchMode) {
-    try {
-        const payload = {
-            content: content,
-            user: user,
-            prompt: prompt,
-            webSearchMode: webSearchMode,
-        };
+async function downloadInstagram(url) {
+  try {
+    const { data } = await axios.post(
+      'https://yt1s.io/api/ajaxSearch',
+      new URLSearchParams({ p: 'home', q: url, w: '', lang: 'en' }),
+      {
+        headers: {
+          'User-Agent': 'Postify/1.0.0',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        },
+      }
+    );
 
-        const response = await axios.post('https://lumin-ai.xyz/', payload);
-        console.log(response.data);
-        return response.data; 
-    } catch (error) {
-        console.error(error);
-        throw error;
+    if (data.status !== 'ok') {
+      throw new Error('Gagal mengambil data dari API.');
     }
+
+    const $ = cheerio.load(data.data);
+    const downloads = $('a.abutton.is-success.is-fullwidth.btn-premium')
+      .map((_, el) => ({
+        title: $(el).attr('title'),
+        url: $(el).attr('href'),
+      }))
+      .get();
+
+    if (downloads.length === 0) {
+      throw new Error('Tidak ada tautan unduhan yang tersedia.');
+    }
+
+    return { success: true, downloads };
+  } catch (error) {
+    console.error('Error:', error.message);
+    return { success: false, error: error.message || 'Terjadi kesalahan.' };
+  }
 }
+
 
 function generateImageWithText(text) {
   return new Promise((resolve, reject) => {
@@ -1250,6 +1269,77 @@ app.get('/api/lumina', async (req, res) => {
     }
 });
 
+//=====[ API DOWNLOAD ]=====/
+//=====[ API VID RANDOM ]=====//
+
+
+app.get('/api/bocil', async (req, res) => {
+  try {
+    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/bocil.json');
+    const bocilData = response.data;
+    const videos = bocilData.results;
+    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+    axios({
+      method: 'get',
+      url: randomVideo.url,
+      responseType: 'stream',
+    })
+    .then(videoResponse => {
+      res.setHeader('Content-Type', 'video/mp4');
+      videoResponse.data.pipe(res); 
+    })
+    .catch(error => {
+      console.error('Error fetching video:', error);
+      res.status(500).json({ error: 'Terjadi kesalahan saat mengambil video' });
+    });
+  } catch (error) {
+    console.error('Terjadi kesalahan:', error);
+    res.status(500).json({ error: 'Gagal memproses file bocil.json' });
+  }
+});
+
+app.get("/api/tiktok", async (req, res) => {
+  const { url } = req.query;
+  if (!url) return res.status(400).json(messages.url);
+
+  try {
+  const { tiktokdl } = require("tiktokdl")
+    const data = await tiktokdl(url);
+    if (!data) return res.status(404).json(messages.notRes);
+    res.json({ status: true, creator: "Rezz Devv", result: data });
+  } catch (e) {
+    res.status(500).json(messages.error);
+  }
+});
+
+
+app.get('/api/download/instagram', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).json({
+      status: false,
+      creator: "IM REREZ",
+      error: "Parameter 'url' diperlukan.",
+    });
+  }
+
+  try {
+    const result = await downloadInstagram(url);
+    if (result.status) {
+      res.status(200).json(result);
+    } else {
+      res.status(500).json(result);
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      creator: "IM REREZZ",
+      error: error.message || 'Terjadi kesalahan saat memproses permintaan.',
+    });
+  }
+});
+
 
 //=====[ OKECONNECT API ]=====//
 app.get('/api/okeconnect/dana', (req, res) => {
@@ -1281,132 +1371,6 @@ app.get('/api/okeconnect/ovo', async (req, res) => {
   }
 });
 
-//=====[ API VID RANDOM ]=====//
-function getYouTubeVideoId(url) {
-  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|v\/|embed\/|user\/[^\/\n\s]+\/)?(?:watch\?v=|v%3D|embed%2F|video%2F)?|youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/|youtube\.com\/playlist\?list=)([a-zA-Z0-9_-]{11})/;
-  const match = url.match(regex);
-  return match ? match[1] : null;
-}
-
-// The function to handle the YouTube download request
-async function ytdljir(link) {
-  const videoId = getYouTubeVideoId(link);
-  const format = 128;  // Set format to 128 by default
-
-  if (!videoId) {
-    return {
-      status: false,
-      message: "Invalid YouTube URL"
-    };
-  }
-
-  try {
-    const { video } = await yts({ videoId: videoId });
-    const data = video[0]; // Get the first result
-
-    // Here you should add the logic to download the file (e.g., using a download service)
-    let response = await fakeDownloadService("https://youtube.com/watch?v=" + videoId, format);
-    
-    return {
-      metadata: data,  // Include metadata like title, duration, etc.
-      download: response
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      status: false,
-      message: error.response ? `HTTP Error: ${error.response.status}` : error.message
-    };
-  }
-}
-
-// Fake download service for illustration (replace with actual logic)
-async function fakeDownloadService(url, format) {
-  return { status: true, url: `https://downloadlink.com/${url}` }; // Mock download URL
-}
-
-// API endpoint for YouTube music download
-app.post('/api/ytdlmp3', async (req, res) => {
-  const { url } = req.body;
-  
-  if (!url) {
-    return res.status(400).json({ status: false, message: "URL is required" });
-  }
-
-  try {
-    const result = await ytdljir(url);
-    
-    if (result.status === false) {
-      return res.status(400).json(result);
-    }
-
-    return res.status(200).json({
-      status: true,
-      message: "Download successful",
-      metadata: result.metadata,
-      download: result.download
-    });
-  } catch (error) {
-    return res.status(500).json({
-      status: false,
-      message: error.message || "An error occurred"
-    });
-  }
-});
-
-
-app.get('/api/bocil', async (req, res) => {
-  try {
-    const response = await axios.get('https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/bocil.json');
-    const bocilData = response.data;
-    const videos = bocilData.results;
-    const randomVideo = videos[Math.floor(Math.random() * videos.length)];
-    axios({
-      method: 'get',
-      url: randomVideo.url,
-      responseType: 'stream',
-    })
-    .then(videoResponse => {
-      res.setHeader('Content-Type', 'video/mp4');
-      videoResponse.data.pipe(res); 
-    })
-    .catch(error => {
-      console.error('Error fetching video:', error);
-      res.status(500).json({ error: 'Terjadi kesalahan saat mengambil video' });
-    });
-  } catch (error) {
-    console.error('Terjadi kesalahan:', error);
-    res.status(500).json({ error: 'Gagal memproses file bocil.json' });
-  }
-});
-
-app.get('/api/download/mp4', validateYoutubeUrl, async (req, res) => {
-  const { url } = req.query;
-  const result = await downloadMp4(url);
-  return res.status(result.status ? 200 : 500).json(result);
-});
-
-app.get('/api/download/mp3', validateYoutubeUrl, async (req, res) => {
-  const { url } = req.query;
-  const result = await downloadMp3(url);
-  return res.status(result.status ? 200 : 500).json(result);
-});
-
-
-
-app.get("/api/tiktok", async (req, res) => {
-  const { url } = req.query;
-  if (!url) return res.status(400).json(messages.url);
-
-  try {
-  const { tiktokdl } = require("tiktokdl")
-    const data = await tiktokdl(url);
-    if (!data) return res.status(404).json(messages.notRes);
-    res.json({ status: true, creator: "Rezz Devv", result: data });
-  } catch (e) {
-    res.status(500).json(messages.error);
-  }
-});
 
 
 app.get('/api/orkut/createpayment', async (req, res) => {
