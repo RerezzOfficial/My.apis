@@ -1224,7 +1224,7 @@ app.get('/api/pinterest2', async (req, res) => {
 });
 
 //=====[ FOTO RANDOM ]=====///
-app.get('/api/china', async (req, res) => {
+app.get('/api/foto/china', async (req, res) => {
   try {
     const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/china.json';
     const response = await axios.get(fileUrl);
