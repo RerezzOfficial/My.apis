@@ -76,20 +76,20 @@ function generateImageWithText(text) {
     try {
       registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
 
-      const canvasWidth = 700;
-      const canvasHeight = 700;
+      const canvasWidth = 800;
+      const canvasHeight = 800;
       const canvas = createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      let fontSize = 150; // Ukuran font awal
+      let fontSize = 130; // Ukuran font awal
       ctx.font = `${fontSize}px "MyFont"`;
       ctx.fillStyle = 'black';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
 
-      const maxWidth = canvas.width - 40; // Margin kiri dan kanan
+      const maxWidth = canvas.width - 20; // Margin kiri dan kanan
       let lines = [];
       let line = '';
 
