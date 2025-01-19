@@ -497,7 +497,6 @@ app.post("/create-server", async (req, res) => {
             }),
         });
 
-        // Cek apakah respons dari API sukses
         if (!userResponse.ok) {
             const userData = await userResponse.json();
             return res.status(userResponse.status).json({ error: userData.errors[0].detail });
@@ -549,6 +548,7 @@ app.post("/create-server", async (req, res) => {
                     memory: ram,
                     disk,
                     cpu,
+                    swap: disk, // Set swap equal to disk or any other value you deem appropriate
                 },
                 deploy: {
                     locations: [1], // Lokasi server
@@ -563,7 +563,6 @@ app.post("/create-server", async (req, res) => {
 
         const serverData = await serverResponse.json();
 
-        // Mengirimkan data server yang berhasil dibuat
         res.json({
             user: {
                 username,
