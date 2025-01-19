@@ -815,7 +815,7 @@ app.get("/api/levelup", async (req, res) => {
   });
 
 
-  app.get('/api/welcome2', async (req, res) => {
+ app.get('/api/welcome2', async (req, res) => {
     try {
       registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
   
@@ -907,12 +907,12 @@ app.get("/api/levelup", async (req, res) => {
       ctx.font = 'bold 28px "MyFont"';  // Memperbesar ukuran font
       ctx.fillStyle = 'aqua';
       ctx.textAlign = 'center';
-      ctx.fillText(name, width / 2, profileY + profileSize + 50);  // Menurunkan posisi teks sedikit
+      ctx.fillText(name, width / 2, profileY + profileSize + 60);  // Menurunkan posisi teks sedikit
   
       // Subject menggunakan font kustom
       ctx.font = '24px "MyFont"';  // Memperbesar ukuran font
       ctx.fillStyle = 'aqua';
-      ctx.fillText(subject, width / 2, profileY + profileSize + 90);  // Menurunkan posisi teks sedikit
+      ctx.fillText(subject, width / 2, profileY + profileSize + 110);  // Menurunkan posisi teks sedikit
   
       // Kirim hasil sebagai gambar PNG
       res.setHeader('Content-Type', 'image/png');
@@ -923,6 +923,7 @@ app.get("/api/levelup", async (req, res) => {
       res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.' });
     }
   });
+
 
 
 
