@@ -110,13 +110,12 @@ function generateImageWithText(text) {
 
       // Cek apakah semua teks muat pada canvas
       let totalHeight = lines.length * fontSize;
-      while (totalHeight > canvasHeight - 40 && fontSize > 20) {
+      while (totalHeight > canvasHeight - 30 && fontSize > 10) {
         fontSize--; // Kurangi ukuran font jika teks tidak muat
         ctx.font = `${fontSize}px "MyFont"`;
         lines = [];
         line = '';
 
-        // Tentukan baris teks ulang dengan ukuran font yang baru
         text.split(' ').forEach(word => {
           const testLine = line + word + ' ';
           const testWidth = ctx.measureText(testLine).width;
