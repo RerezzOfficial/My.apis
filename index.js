@@ -924,8 +924,10 @@ app.get("/api/levelup", async (req, res) => {
     }
   });
 
+
 app.get('/api/rank', async (req, res) => {
   try {
+    // Daftarkan font kustom
     registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
 
     const { background, foto, nama, level, coin, exp, iduser, fotorank, rank } = req.query;
@@ -941,14 +943,14 @@ app.get('/api/rank', async (req, res) => {
     const ctx = canvas.getContext('2d');
 
     // Latar belakang
-    const backgroundImg = await loadImage(background);
+    const backgroundImg = await fetchImage(background);
     ctx.drawImage(backgroundImg, 0, 0, width, height);
 
     // Profil Utama (Foto Pengguna)
     const profileSize = 80;
     const profileX = 20;
     const profileY = (height / 2) - (profileSize / 2);
-    const profileImg = await loadImage(foto);
+    const profileImg = await fetchImage(foto);
     ctx.save();
     ctx.beginPath();
     ctx.arc(profileX + profileSize / 2, profileY + profileSize / 2, profileSize / 2, 0, Math.PI * 2);
@@ -979,7 +981,7 @@ app.get('/api/rank', async (req, res) => {
     const rankSize = 80;
     const rankX = width - rankSize - 20;
     const rankY = (height / 2) - (rankSize / 2);
-    const rankImg = await loadImage(fotorank);
+    const rankImg = await fetchImage(fotorank);
     ctx.drawImage(rankImg, rankX, rankY, rankSize, rankSize);
 
     // Rank Text
@@ -1001,7 +1003,6 @@ app.get('/api/rank', async (req, res) => {
     res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.' });
   }
 });
-
 
 
 //=====[ API GAME ]=====//
