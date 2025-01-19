@@ -83,13 +83,13 @@ function generateImageWithText(text) {
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      let fontSize = 150;
+      let fontSize = 150; // Ukuran font awal
       ctx.font = `${fontSize}px "MyFont"`;
       ctx.fillStyle = 'black';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
 
-      const maxWidth = canvas.width - 40; // Margin
+      const maxWidth = canvas.width - 40; // Margin kiri dan kanan
       let lines = [];
       let line = '';
 
@@ -99,15 +99,16 @@ function generateImageWithText(text) {
         const testWidth = ctx.measureText(testLine).width;
 
         if (testWidth > maxWidth) {
-          lines.push(line);
-          line = word + ' ';
+          lines.push(line); // Masukkan baris sebelumnya jika lebar melebihi batas
+          line = word + ' '; // Mulai baris baru dengan kata ini
         } else {
-          line = testLine;
+          line = testLine; // Tambahkan kata ke baris yang ada
         }
       });
 
-      lines.push(line);
+      lines.push(line); // Masukkan baris terakhir
 
+      // Cek apakah semua teks muat pada canvas
       let totalHeight = lines.length * fontSize;
       while (totalHeight > canvasHeight - 40 && fontSize > 20) {
         fontSize--; // Kurangi ukuran font jika teks tidak muat
@@ -115,6 +116,7 @@ function generateImageWithText(text) {
         lines = [];
         line = '';
 
+        // Tentukan baris teks ulang dengan ukuran font yang baru
         text.split(' ').forEach(word => {
           const testLine = line + word + ' ';
           const testWidth = ctx.measureText(testLine).width;
@@ -131,8 +133,9 @@ function generateImageWithText(text) {
         totalHeight = lines.length * fontSize;
       }
 
-      let yPosition = 50;
-      const lineHeight = fontSize * 1.2;
+      // Menggambar teks pada canvas
+      let yPosition = 20;  // Posisi vertikal lebih dekat ke atas
+      const lineHeight = fontSize * 1.2;  // Jarak antar baris
       lines.forEach(line => {
         ctx.fillText(line, 20, yPosition);
         yPosition += lineHeight;
@@ -145,6 +148,7 @@ function generateImageWithText(text) {
     }
   });
 }
+
 
 
 
