@@ -74,54 +74,37 @@ async function fetchTextOnly(content, user, prompt, webSearchMode) {
 function generateImageWithText(text) {
   return new Promise((resolve, reject) => {
     try {
-      // Daftarkan font kustom
-      registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
-
-      // Tentukan ukuran canvas dan buat canvas
-      const canvasWidth = 700;  // Lebih lebar untuk mengakomodasi teks panjang
-      const canvasHeight = 700; // Ukuran canvas yang cukup besar
+      registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
+      const canvasWidth = 700;
+      const canvasHeight = 700;
       const canvas = createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
-
-      // Set background warna putih
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Menggunakan font kustom
-      ctx.font = '100px "MyFont"';  // Ukuran font lebih besar
+      ctx.font = '100px "MyFont"';
       ctx.fillStyle = 'black';
-      ctx.textAlign = 'center';
+      ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-
-      // Bagi teks menjadi baris-baris
-      const maxWidth = canvas.width - 40; // Margin kiri dan kanan
+      const maxWidth = canvas.width - 40;
       let lines = [];
       let line = '';
-      
-      // Bagi teks menjadi beberapa baris sesuai dengan lebar canvas
       text.split(' ').forEach(word => {
         const testLine = line + word + ' ';
         const testWidth = ctx.measureText(testLine).width;
-
         if (testWidth > maxWidth) {
-          lines.push(line); // Masukkan baris sebelumnya jika lebar melebihi batas
-          line = word + ' '; // Mulai baris baru dengan kata ini
+          lines.push(line);
+          line = word + ' ';
         } else {
-          line = testLine; // Tambahkan kata ke baris yang ada
+          line = testLine;
         }
       });
-
-      lines.push(line); // Masukkan baris terakhir
-
-      // Menggambar setiap baris ke canvas
-      let yPosition = 50; // Mulai dari posisi vertikal atas
-      const lineHeight = 120; // Jarak antar baris
+      lines.push(line);
+      let yPosition = 50;
+      const lineHeight = 120;
       lines.forEach(line => {
-        ctx.fillText(line, canvas.width / 2, yPosition);
-        yPosition += lineHeight; // Geser ke bawah untuk baris berikutnya
+        ctx.fillText(line, 20, yPosition);
+        yPosition += lineHeight;
       });
-
-      // Mengonversi canvas ke buffer gambar PNG
       const buffer = canvas.toBuffer('image/png');
       resolve(buffer);
     } catch (error) {
@@ -129,6 +112,7 @@ function generateImageWithText(text) {
     }
   });
 }
+
 
 
 
