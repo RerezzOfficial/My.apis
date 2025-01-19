@@ -307,6 +307,10 @@ app.get('/doc/sourcode', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'code.html'));
 });
 
+app.get('/doc/cpanel', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'cpanel.html'));
+});
+
 
 
 app.get('/api/quotes/motivasi', (req, res) => {
@@ -461,6 +465,41 @@ app.get('/api/cpanel', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Terjadi kesalahan saat membuat server. Harap coba lagi." });
+    }
+});
+
+
+app.post('/create-server', async (req, res) => {
+    const { domain, apikey, username, ram, disk, cpu } = req.body;
+
+    try {
+        const response = await axios.get(`https://apis.xyrezz.online-server.biz.id/api/cpanel`, {
+            params: {
+                domain: domain,
+                apikey: apikey,
+                username: username,
+                ram: ram,
+                disk: disk,
+                cpu: cpu
+            }
+        });
+
+        const data = response.data;
+
+        if (data.error) {
+            return res.status(400).json({ error: data.error });
+        }
+
+        res.json({
+            success: true,
+            userInfo: data.user,
+            serverInfo: data.server,
+            credentials: data.credentials
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Terjadi kesalahan pada server' });
     }
 });
 
