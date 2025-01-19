@@ -965,29 +965,46 @@ app.get('/api/rank', async (req, res) => {
     ctx.fillText(nama, profileX + profileSize + 20, profileY + profileSize / 2);
 
     // Level
-    ctx.font = '20px "MyFont"';
-    ctx.fillText(`LEVEL: ${level}`, 30, height * 0.75);
+    ctx.font = 'bold 18px "MyFont"';
+    ctx.fillText(`LEVEL: ${level}`, profileX + profileSize + 20, profileY + profileSize / 2 + 30);
 
-    // Exp Bar
+    // ID Pengguna
+    ctx.font = '18px "MyFont"';
+    ctx.fillText(`ID: ${iduser}`, profileX + profileSize + 20, profileY + profileSize / 2 + 55);
+
+    // Exp Bar dengan Border Radius
     const expBarWidth = width - 60;
     const expBarHeight = 20;
     const expFillWidth = (exp / 1000) * expBarWidth; // Anggap exp maksimal 1000
     ctx.fillStyle = '#444';
-    ctx.fillRect(30, height * 0.7, expBarWidth, expBarHeight);
+    ctx.beginPath();
+    ctx.moveTo(30, height * 0.7 + 10); // Poin awal
+    ctx.lineTo(30 + expBarWidth, height * 0.7 + 10);
+    ctx.arcTo(30 + expBarWidth, height * 0.7, 30, height * 0.7, 10); // Memberi border radius pada sudut
+    ctx.lineTo(30, height * 0.7);
+    ctx.arcTo(30, height * 0.7 + 10, 30 + expBarWidth, height * 0.7 + 10, 10);
+    ctx.fill();
+
     ctx.fillStyle = 'aqua';
-    ctx.fillRect(30, height * 0.7, expFillWidth, expBarHeight);
+    ctx.beginPath();
+    ctx.moveTo(30, height * 0.7 + 10); // Poin awal
+    ctx.lineTo(30 + expFillWidth, height * 0.7 + 10);
+    ctx.arcTo(30 + expFillWidth, height * 0.7, 30, height * 0.7, 10); // Memberi border radius pada sudut
+    ctx.lineTo(30, height * 0.7);
+    ctx.arcTo(30, height * 0.7 + 10, 30 + expFillWidth, height * 0.7 + 10, 10);
+    ctx.fill();
 
     // Rank Badge
     const rankSize = 80;
-    const rankX = width - rankSize - 20;
+    const rankX = width - rankSize - 120;  // Geser sedikit ke kiri
     const rankY = (height / 2) - (rankSize / 2);
     const rankImg = await fetchImage(fotorank);
     ctx.drawImage(rankImg, rankX, rankY, rankSize, rankSize);
 
-    // Rank Text
+    // Nama Rank di bawah foto rank
     ctx.font = 'bold 18px "MyFont"';
     ctx.fillStyle = 'white';
-    ctx.fillText(rank, rankX + rankSize / 2, rankY + rankSize + 20);
+    ctx.fillText(rank, rankX + rankSize / 2 - ctx.measureText(rank).width / 2, rankY + rankSize + 20); // Nama rank di bawah foto rank
 
     // Coin and Exp Icons
     ctx.font = '16px "MyFont"';
