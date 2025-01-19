@@ -84,8 +84,8 @@ function generateImageWithText(text) {
 
       // Menghitung ukuran font berdasarkan panjang teks
       let fontSize = canvasWidth / text.length * 12; // Ukuran font sesuai panjang teks
-      fontSize = Math.min(fontSize, 200); // Maksimalkan ukuran font hingga 150px
-      fontSize = Math.max(fontSize, 100); // Minimal ukuran font 50px
+      fontSize = Math.min(fontSize, 150); // Maksimalkan ukuran font hingga 150px
+      fontSize = Math.max(fontSize, 80); // Minimal ukuran font 50px
 
       ctx.font = `${fontSize}px "MyFont"`;
       ctx.fillStyle = 'black';
