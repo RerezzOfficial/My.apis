@@ -81,10 +81,14 @@ function generateImageWithText(text) {
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.font = '120px "MyFont"';
+
+      // Menentukan ukuran font dinamis berdasarkan panjang teks
+      let fontSize = Math.min(100, Math.max(30, canvasWidth / text.length * 2));  // Adjust size based on text length
+      ctx.font = `${fontSize}px "MyFont"`;
       ctx.fillStyle = 'black';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
+
       const maxWidth = canvas.width - 40;
       let lines = [];
       let line = '';
@@ -99,12 +103,14 @@ function generateImageWithText(text) {
         }
       });
       lines.push(line);
+
       let yPosition = 50;
-      const lineHeight = 120;
+      const lineHeight = fontSize * 1.2;
       lines.forEach(line => {
         ctx.fillText(line, 20, yPosition);
         yPosition += lineHeight;
       });
+
       const buffer = canvas.toBuffer('image/png');
       resolve(buffer);
     } catch (error) {
@@ -112,7 +118,6 @@ function generateImageWithText(text) {
     }
   });
 }
-
 
 
 
