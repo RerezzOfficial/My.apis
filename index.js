@@ -49,11 +49,6 @@ const validateYoutubeUrl = (req, res, next) => {
   next();
 };
 
-function getYouTubeVideoId(url) {
-	const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|v\/|embed\/|user\/[^\/\n\s]+\/)?(?:watch\?v=|v%3D|embed%2F|video%2F)?|youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/|youtube\.com\/playlist\?list=)([a-zA-Z0-9_-]{11})/;
-	const match = url.match(regex);
-	return match ? match[1] : null;
-}
 
 async function fetchTextOnly(content, user, prompt, webSearchMode) {
     try {
@@ -1285,10 +1280,17 @@ app.get('/api/okeconnect/ovo', async (req, res) => {
 });
 
 //=====[ API VID RANDOM ]=====//
-const ytdljir = async (link) => {
+function getYouTubeVideoId(url) {
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|v\/|embed\/|user\/[^\/\n\s]+\/)?(?:watch\?v=|v%3D|embed%2F|video%2F)?|youtu\.be\/|youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/|youtube\.com\/playlist\?list=)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+// Define the main function for downloading YouTube music
+async function ytdljir(link, formats = 128) {
   const videoId = getYouTubeVideoId(link);
-  const format = 128;  // Default format set to 128 kbps audio
-  
+  const format = formats;  // Use the passed format
+
   if (!videoId) {
     return {
       status: false,
@@ -1297,7 +1299,11 @@ const ytdljir = async (link) => {
   }
 
   try {
-    let data = await yts("https://youtube.com/watch?v=" + videoId);
+    // Fetch YouTube video metadata using yt-search
+    const { video } = await yts({ videoId: videoId });
+    const data = video[0]; // Take the first video from the result
+
+    // Here you would call your other services like savetube, cnv, or inv for downloading
     let response = await savetube("https://youtube.com/watch?v=" + videoId, format, 1);
     
     if (!response.status) {
@@ -1309,7 +1315,7 @@ const ytdljir = async (link) => {
     }
 
     return {
-      metadata: data.all[0],
+      metadata: data,  // Include the metadata from yt-search
       download: response
     };
   } catch (error) {
@@ -1319,30 +1325,33 @@ const ytdljir = async (link) => {
       message: error.response ? `HTTP Error: ${error.response.status}` : error.message
     };
   }
-};
+}
 
-// API Endpoint to download YouTube music
-app.get('/api/ytmp3', async (req, res) => {
-  const { link } = req.query;
+// API endpoint to download YouTube music
+app.post('/api/ytmp3', async (req, res) => {
+  const { url, formats } = req.body;
   
-  if (!link) {
-    return res.status(400).json({
-      status: false,
-      message: "YouTube URL is required"
-    });
+  if (!url) {
+    return res.status(400).json({ status: false, message: "URL is required" });
   }
 
   try {
-    const result = await ytdljir(link);
-    if (!result.status) {
+    const result = await ytdljir(url, formats || 128);
+    
+    if (result.status === false) {
       return res.status(400).json(result);
     }
-    
-    return res.status(200).json(result);
+
+    return res.status(200).json({
+      status: true,
+      message: "Download successful",
+      metadata: result.metadata,
+      download: result.download
+    });
   } catch (error) {
     return res.status(500).json({
       status: false,
-      message: error.message
+      message: error.message || "An error occurred"
     });
   }
 });
