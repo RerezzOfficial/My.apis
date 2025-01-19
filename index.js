@@ -12,6 +12,8 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
+registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
+
 
 app.enable("trust proxy");
 app.set("json spaces", 2);
@@ -234,15 +236,15 @@ app.get('/api/brat', (req, res) => {
   }
 
   // Membuat canvas baru
-  const canvas = createCanvas(600, 200);
+  const canvas = createCanvas(500, 500);
   const ctx = canvas.getContext('2d');
 
   // Mengatur latar belakang canvas menjadi putih
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Mengatur teks
-  ctx.font = '30px Arial';
+  // Menggunakan font kustom yang telah didaftarkan
+  ctx.font = '30px "MyFont"';  // Gunakan font kustom
   ctx.fillStyle = 'black';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
