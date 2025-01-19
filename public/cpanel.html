@@ -1,169 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Server</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 300px;
-    }
-
-    h1 {
-      text-align: center;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    form input {
-      margin-bottom: 10px;
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    form button {
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    form button:hover {
-      background-color: #218838;
-    }
-
-    .result {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .result p {
-      margin: 5px 0;
-    }
-
-    .result button {
-      margin-top: 10px;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .result button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Server</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Create Server</h1>
-    <form id="server-form">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required>
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="ram">RAM (MB):</label>
-      <input type="number" id="ram" name="ram" required>
-
-      <label for="disk">Disk (MB):</label>
-      <input type="number" id="disk" name="disk" required>
-
-      <label for="cpu">CPU (%):</label>
-      <input type="number" id="cpu" name="cpu" required>
-
-      <button type="submit">Create Server</button>
-    </form>
-
-    <div class="result" id="result" style="display: none;">
-      <h2>Server Created</h2>
-      <p id="result-username"></p>
-      <p id="result-email"></p>
-      <p id="result-serverName"></p>
-      <p id="result-serverId"></p>
-      <p id="result-memory"></p>
-      <p id="result-disk"></p>
-      <p id="result-cpu"></p>
-      <p id="result-password"></p>
-      <button onclick="window.history.back()">Back</button>
+    <div class="container">
+        <h1>Create Your Server</h1>
+        <form id="serverForm" action="/create-server" method="POST">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required />
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+            <div>
+                <label for="ram">RAM (MB):</label>
+                <input type="number" id="ram" name="ram" required />
+            </div>
+            <div>
+                <label for="disk">Disk (MB):</label>
+                <input type="number" id="disk" name="disk" required />
+            </div>
+            <div>
+                <label for="cpu">CPU (%):</label>
+                <input type="number" id="cpu" name="cpu" required />
+            </div>
+            <button type="submit">Create Server</button>
+        </form>
+        <div id="statusMessage"></div>
     </div>
-  </div>
 
-  <script>
-    document.getElementById('server-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const ram = document.getElementById('ram').value;
-      const disk = document.getElementById('disk').value;
-      const cpu = document.getElementById('cpu').value;
-      const password = `${username}${disk}`;
+    <script>
+        // AJAX form submission
+        const form = document.getElementById('serverForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent form from reloading the page
 
-      const data = {
-        username,
-        email,
-        ram,
-        disk,
-        cpu,
-        password
-      };
+            // Collect form data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
 
-      try {
-        const response = await fetch('http://localhost:3000/create-server', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+            try {
+                // Send data to the server
+                const response = await fetch('/create-server', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                // Handle the response from the server
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('statusMessage').innerHTML = `<p>Server Created Successfully!</p>`;
+                } else {
+                    document.getElementById('statusMessage').innerHTML = `<p>Error: ${result.error || 'An error occurred'}</p>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('statusMessage').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
         });
-
-        const result = await response.json();
-        
-        if (response.ok) {
-          document.getElementById('result-username').innerText = `Username: ${result.username}`;
-          document.getElementById('result-email').innerText = `Email: ${result.email}`;
-          document.getElementById('result-serverName').innerText = `Server Name: ${result.serverName}`;
-          document.getElementById('result-serverId').innerText = `Server ID: ${result.serverId}`;
-          document.getElementById('result-memory').innerText = `Memory: ${result.memory} MB`;
-          document.getElementById('result-disk').innerText = `Disk: ${result.disk} MB`;
-          document.getElementById('result-cpu').innerText = `CPU: ${result.cpu}%`;
-          document.getElementById('result-password').innerText = `Password: ${result.password}`;
-
-          document.getElementById('server-form').style.display = 'none';
-          document.getElementById('result').style.display = 'block';
-        } else {
-          alert('Error creating server: ' + result.message);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
