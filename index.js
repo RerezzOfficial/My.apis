@@ -475,112 +475,117 @@ app.get('/api/cpanel', async (req, res) => {
 
 
 app.post("/create-server", async (req, res) => {
-  const { username, email, ram, disk, cpu } = req.body;
-  const password = `${username}${disk}`;
+    const { domain, apikey, username, ram, disk, cpu } = req.body;
+    const password = `${username}${disk}`;
 
-  try {
-    // Buat pengguna baru
-    const userResponse = await fetch(`${config.domain}/api/application/users`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${config.apikey}`,
-      },
-      body: JSON.stringify({
-        email: `${username}@gmail.com`,
-        username,
-        first_name: username,
-        last_name: username,
-        language: "en",
-        password,
-      }),
-    });
+    try {
+        // Buat pengguna baru
+        const userResponse = await fetch(`${domain}/api/application/users`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apikey}`,
+            },
+            body: JSON.stringify({
+                email: `${username}@gmail.com`,
+                username,
+                first_name: username,
+                last_name: username,
+                language: "en",
+                password,
+            }),
+        });
 
-    // Cek apakah respons dari API sukses
-    if (!userResponse.ok) {
-      const userData = await userResponse.json();
-      return res.status(userResponse.status).send(`Error: ${userData.errors[0].detail}`);
+        // Cek apakah respons dari API sukses
+        if (!userResponse.ok) {
+            const userData = await userResponse.json();
+            return res.status(userResponse.status).json({ error: userData.errors[0].detail });
+        }
+
+        const userData = await userResponse.json();
+        const userId = userData.attributes.id;
+
+        // Ambil data egg untuk startup server
+        const eggResponse = await fetch(`${domain}/api/application/nests/5/eggs/15`, {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `Bearer ${apikey}`,
+            },
+        });
+
+        if (!eggResponse.ok) {
+            const eggData = await eggResponse.json();
+            return res.status(eggResponse.status).json({ error: eggData.errors[0].detail });
+        }
+
+        const eggData = await eggResponse.json();
+        const startupCmd = eggData.attributes.startup;
+
+        // Buat server
+        const serverResponse = await fetch(`${domain}/api/application/servers`, {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apikey}`,
+            },
+            body: JSON.stringify({
+                name: username,
+                description: "Server created via website",
+                user: userId,
+                egg: 15, // Egg ID
+                docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
+                startup: startupCmd,
+                environment: {
+                    INST: "npm",
+                    USER_UPLOAD: "0",
+                    AUTO_UPDATE: "0",
+                    CMD_RUN: "npm start",
+                    JS_FILE: "index.js",
+                },
+                limits: {
+                    memory: ram,
+                    disk,
+                    cpu,
+                },
+                deploy: {
+                    locations: [1], // Lokasi server
+                },
+            }),
+        });
+
+        if (!serverResponse.ok) {
+            const serverData = await serverResponse.json();
+            return res.status(serverResponse.status).json({ error: serverData.errors[0].detail });
+        }
+
+        const serverData = await serverResponse.json();
+
+        // Mengirimkan data server yang berhasil dibuat
+        res.json({
+            user: {
+                username,
+                email: `${username}@gmail.com`,
+            },
+            server: {
+                id: serverData.attributes.id,
+                name: serverData.attributes.name,
+                memory: ram,
+                disk,
+                cpu,
+            },
+            credentials: {
+                email: `${username}@gmail.com`,
+                password,
+                login_url: `${domain}/login`,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "An error occurred while creating the server." });
     }
-
-    const userData = await userResponse.json();
-    const userId = userData.attributes.id;
-
-    // Ambil data egg
-    const eggResponse = await fetch(`${config.domain}/api/application/nests/5/eggs/15`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${config.apikey}`,
-      },
-    });
-
-    // Cek apakah respons dari API sukses
-    if (!eggResponse.ok) {
-      const eggData = await eggResponse.json();
-      return res.status(eggResponse.status).send(`Error: ${eggData.errors[0].detail}`);
-    }
-
-    const eggData = await eggResponse.json();
-    const startupCmd = eggData.attributes.startup;
-
-    // Buat server
-    const serverResponse = await fetch(`${config.domain}/api/application/servers`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${config.apikey}`,
-      },
-      body: JSON.stringify({
-        name: username,
-        description: "Server created via website",
-        user: userId,
-        egg: 15, // Egg ID (sesuaikan jika diperlukan)
-        docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
-        startup: startupCmd,
-        environment: {
-          INST: "npm",
-          USER_UPLOAD: "0",
-          AUTO_UPDATE: "0",
-          CMD_RUN: "npm start",
-          JS_FILE: "index.js",
-        },
-        limits: {
-          memory: ram,
-          disk,
-          cpu,
-        },
-        deploy: {
-          locations: [1], // Lokasi contoh (sesuaikan dengan kebutuhan Anda)
-        },
-      }),
-    });
-
-    // Cek apakah respons dari API sukses
-    if (!serverResponse.ok) {
-      const serverData = await serverResponse.json();
-      return res.status(serverResponse.status).send(`Error: ${serverData.errors[0].detail}`);
-    }
-
-    const serverData = await serverResponse.json();
-
-    // Kirim respons ke halaman server berhasil
-    res.render("server-created", {
-      username,
-      email: `${username}@gmail.com`,
-      serverName: serverData.attributes.name,
-      serverId: serverData.attributes.id,
-      memory: ram,
-      disk,
-      cpu,
-      password,
-    });
-
-  } catch (error) {
-    console.error("Error while creating server:", error);
-    res.status(500).send("An error occurred while creating the server.");
-  }
 });
 
 //=====[ API CANVAS ]=====//
