@@ -539,11 +539,6 @@ async function fetchImage(url) {
     return loadImage(response.data);
   }
   
-  async function fetchImage(url) {
-    const response = await axios.get(url, { responseType: 'arraybuffer' });
-    return loadImage(response.data);
-  }
-  
   app.get("/profile", async (req, res) => {
     try {
       const {
