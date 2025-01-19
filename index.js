@@ -225,7 +225,7 @@ app.get('/api/pantun', (req, res) => {
 });
 
 
-app.post('/api/cpanel', async (req, res) => {
+app.post('/api/cpanell', async (req, res) => {
     const { domain, apikey, username, ram, disk, cpu } = req.body;
 
     // Validasi input
@@ -246,9 +246,9 @@ app.post('/api/cpanel', async (req, res) => {
     }
 
     // Convert ke tipe data yang benar
-    const egg = "15";
-    const loc = "1";
-    const password = `${username}${disk}`;
+    const egg = "15";  // ID untuk egg yang akan digunakan
+    const loc = "1";   // Lokasi server
+    const password = `${username}${disk}`; // Password user, digabungkan dengan disk untuk lebih unik
 
     try {
         // Buat user
@@ -366,7 +366,6 @@ app.post('/api/cpanel', async (req, res) => {
         res.status(500).json({ error: "Terjadi kesalahan saat membuat server. Harap coba lagi." });
     }
 });
-
 
 
 //=====[ API CANVAS ]=====//
