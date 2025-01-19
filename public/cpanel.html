@@ -1,216 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Server</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        form input,
-        form select {
-            margin-bottom: 10px;
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        form button {
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        form button:hover {
-            background-color: #218838;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding-top: 60px;
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .server-info {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-        }
-
-        .copy-btn {
-            cursor: pointer;
-            color: #007bff;
-            margin-left: 10px;
-        }
-
-        .copy-btn:hover {
-            color: #0056b3;
-        }
-    </style>
+    <title>API Server Creator</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Create Server</h1>
-        <form id="server-form">
-            <label for="domain">Domain:</label>
-            <input type="text" id="domain" required><br>
+    <h1>Buat Server dengan API</h1>
+    <form id="api-form">
+        <label for="domain">Domain:</label><br>
+        <input type="text" id="domain" name="domain" required><br><br>
 
-            <label for="apikey">API Key:</label>
-            <input type="text" id="apikey" required><br>
+        <label for="apikey">API Key:</label><br>
+        <input type="text" id="apikey" name="apikey" required><br><br>
 
-            <label for="username">Username:</label>
-            <input type="text" id="username" required><br>
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
 
-            <label for="ram">RAM (MB):</label>
-            <select id="ram" required>
-                <option value="1024">1 GB</option>
-                <option value="2048">2 GB</option>
-                <option value="3072">3 GB</option>
-                <option value="4096">4 GB</option>
-                <option value="5120">5 GB</option>
-                <option value="6144">6 GB</option>
-                <option value="7168">7 GB</option>
-                <option value="8192">8 GB</option>
-            </select><br>
+        <label for="ram">RAM (MB):</label><br>
+        <input type="number" id="ram" name="ram" required><br><br>
 
-            <label for="disk">Disk (MB):</label>
-            <input type="number" id="disk" required><br>
+        <label for="disk">Disk (GB):</label><br>
+        <input type="number" id="disk" name="disk" required><br><br>
 
-            <label for="cpu">CPU (%)</label>
-            <input type="number" id="cpu" required><br>
+        <label for="cpu">CPU Cores:</label><br>
+        <input type="number" id="cpu" name="cpu" required><br><br>
 
-            <button type="submit">Create Server</button>
-        </form>
-    </div>
+        <button type="submit">Buat Server</button>
+    </form>
 
-    <!-- The Modal -->
-    <div id="serverModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>✅ Server berhasil dibuat!</h3>
-            <p><strong>User Info:</strong></p>
-            <p>Username: <span id="modal-username"></span></p>
-            <p>Email: <span id="modal-email"></span></p>
-
-            <p><strong>Server Info:</strong></p>
-            <p>Server ID: <span id="modal-server-id"></span></p>
-            <p>Server Name: <span id="modal-server-name"></span></p>
-            <p>Memory: <span id="modal-memory"></span> MB</p>
-            <p>Disk: <span id="modal-disk"></span> MB</p>
-            <p>CPU: <span id="modal-cpu"></span>%</p>
-
-            <p><strong>Credentials:</strong></p>
-            <p>Email: <span id="modal-credentials-email"></span></p>
-            <p>Password: <span id="modal-credentials-password"></span></p>
-            <p>Login URL: <a id="modal-login-url" href="#" target="_blank">Link</a></p>
-        </div>
-    </div>
+    <div id="response"></div>
 
     <script>
-        document.getElementById('server-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-        
-            const domain = document.getElementById('domain').value;
-            const apikey = document.getElementById('apikey').value;
-            const username = document.getElementById('username').value;
-            const ram = document.getElementById('ram').value;
-            const disk = document.getElementById('disk').value;
-            const cpu = document.getElementById('cpu').value;
-        
-            try {
-                // Mengirimkan permintaan ke API menggunakan Fetch
-                const response = await fetch(`/api/cpanel?domain=${domain}&apikey=${apikey}&username=${username}&ram=${ram}&disk=${disk}&cpu=${cpu}`);
-                const data = await response.json();
-        
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    // Menampilkan data dalam modal
-                    document.getElementById('modal-username').textContent = data.user.username;
-                    document.getElementById('modal-email').textContent = data.user.email;
-                    document.getElementById('modal-server-id').textContent = data.server.id;
-                    document.getElementById('modal-server-name').textContent = data.server.name;
-                    document.getElementById('modal-memory').textContent = data.server.memory;
-                    document.getElementById('modal-disk').textContent = data.server.disk;
-                    document.getElementById('modal-cpu').textContent = data.server.cpu;
-                    document.getElementById('modal-credentials-email').textContent = data.credentials.email;
-                    document.getElementById('modal-credentials-password').textContent = data.credentials.password;
-                    document.getElementById('modal-login-url').setAttribute('href', data.credentials.login_url);
-                    document.getElementById('modal-login-url').textContent = data.credentials.login_url;
-        
-                    // Menampilkan modal
-                    document.getElementById('serverModal').style.display = 'block';
-                }
-            } catch (error) {
-                alert(`Terjadi kesalahan: ${error.message}`);
+        document.getElementById('api-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const params = new URLSearchParams(formData).toString();
+
+            const response = await fetch(`/api/cpanel?${params}`);
+            const data = await response.json();
+
+            const responseDiv = document.getElementById('response');
+            if (response.ok) {
+                responseDiv.innerHTML = `
+                    <h3>Server Berhasil Dibuat!</h3>
+                    <p>Username: ${data.user.username}</p>
+                    <p>Server ID: ${data.server.id}</p>
+                    <p>Login URL: <a href="${data.credentials.login_url}" target="_blank">${data.credentials.login_url}</a></p>
+                `;
+            } else {
+                responseDiv.innerHTML = `<p>Error: ${data.error}</p>`;
             }
         });
-        
-        // Close modal
-        document.querySelector('.close').onclick = () => {
-            document.getElementById('serverModal').style.display = 'none';
-        };
     </script>
 </body>
 </html>
