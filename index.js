@@ -233,8 +233,6 @@ app.get('/api/brat', (req, res) => {
     return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
   }
 
-  console.log('Text received:', text);  // Log untuk memeriksa teks yang diterima
-
   // Membuat gambar menggunakan sharp
   sharp({
     create: {
@@ -248,7 +246,8 @@ app.get('/api/brat', (req, res) => {
       {
         input: Buffer.from(`
           <svg width="600" height="200">
-            <text x="50" y="100" font-size="30" fill="black">${text}</text>
+            <rect x="0" y="0" width="600" height="200" fill="white"/>
+            <text x="50" y="100" font-size="30" fill="black" font-family="Arial">${text}</text>
           </svg>
         `),
         gravity: 'center'  // Letakkan teks di tengah gambar
