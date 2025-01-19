@@ -924,7 +924,83 @@ app.get("/api/levelup", async (req, res) => {
     }
   });
 
+app.get('/api/rank, async (req, res) => {
+  try {
+    registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
 
+    const { background, foto, nama, level, coin, exp, iduser, fotorank, rank } = req.query;
+
+    if (!background || !foto || !nama || !level || !coin || !exp || !iduser || !fotorank || !rank) {
+      return res.status(400).json({ error: "Semua parameter harus diisi." });
+    }
+
+    // Ukuran kanvas
+    const width = 700;
+    const height = 400;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Latar belakang
+    const backgroundImg = await loadImage(background);
+    ctx.drawImage(backgroundImg, 0, 0, width, height);
+
+    // Profil Utama (Foto Pengguna)
+    const profileSize = 80;
+    const profileX = 20;
+    const profileY = (height / 2) - (profileSize / 2);
+    const profileImg = await loadImage(foto);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(profileX + profileSize / 2, profileY + profileSize / 2, profileSize / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(profileImg, profileX, profileY, profileSize, profileSize);
+    ctx.restore();
+
+    // Nama Pengguna
+    ctx.font = 'bold 20px "MyFont"';
+    ctx.fillStyle = 'white';
+    ctx.fillText(nama, profileX + profileSize + 20, profileY + profileSize / 2);
+
+    // Level
+    ctx.font = '18px "MyFont"';
+    ctx.fillText(`LEVEL: ${level}`, 30, height * 0.75);
+
+    // Exp Bar
+    const expBarWidth = width - 60;
+    const expBarHeight = 20;
+    const expFillWidth = (exp / 1000) * expBarWidth; // Anggap exp maksimal 1000
+    ctx.fillStyle = '#444';
+    ctx.fillRect(30, height * 0.7, expBarWidth, expBarHeight);
+    ctx.fillStyle = 'aqua';
+    ctx.fillRect(30, height * 0.7, expFillWidth, expBarHeight);
+
+    // Rank Badge
+    const rankSize = 80;
+    const rankX = width - rankSize - 20;
+    const rankY = (height / 2) - (rankSize / 2);
+    const rankImg = await loadImage(fotorank);
+    ctx.drawImage(rankImg, rankX, rankY, rankSize, rankSize);
+
+    // Rank Text
+    ctx.font = 'bold 18px "MyFont"';
+    ctx.fillStyle = 'white';
+    ctx.fillText(rank, rankX + rankSize / 2, rankY + rankSize + 20);
+
+    // Coin and Exp Icons
+    ctx.font = '16px "MyFont"';
+    ctx.fillText(`Coins: ${coin}`, 30, height * 0.8);
+    ctx.fillText(`EXP: ${exp}`, 30, height * 0.85);
+
+    // Kirim hasil sebagai gambar PNG
+    res.setHeader('Content-Type', 'image/png');
+    res.send(canvas.toBuffer());
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.' });
+  }
+});
 
 
 
