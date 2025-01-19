@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
-registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
+
 
 
 app.enable("trust proxy");
@@ -235,7 +235,9 @@ app.get('/api/brat', (req, res) => {
     return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
   }
 
-  // Membuat canvas baru
+  // Mendaftarkan font kustom
+  registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
+
   const canvas = createCanvas(500, 500);
   const ctx = canvas.getContext('2d');
 
