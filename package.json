@@ -25,6 +25,7 @@
     "multer": "latest",
     "puppeteer": "latest",
     "sharp": "latest",
-    "canvas": "latest"
+    "canvas": "latest",
+    "body-parser": "latest"
   }
 }
