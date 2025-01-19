@@ -83,35 +83,33 @@ function generateImageWithText(text) {
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      let fontSize = 130; // Ukuran font awal
+      let fontSize = 130; 
       ctx.font = `${fontSize}px "MyFont"`;
       ctx.fillStyle = 'black';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
 
-      const maxWidth = canvas.width - 20; // Margin kiri dan kanan
+      const maxWidth = canvas.width - 20; 
       let lines = [];
       let line = '';
 
-      // Bagi teks menjadi beberapa baris sesuai dengan lebar canvas
       text.split(' ').forEach(word => {
         const testLine = line + word + ' ';
         const testWidth = ctx.measureText(testLine).width;
 
         if (testWidth > maxWidth) {
-          lines.push(line); // Masukkan baris sebelumnya jika lebar melebihi batas
-          line = word + ' '; // Mulai baris baru dengan kata ini
+          lines.push(line); 
+          line = word + ' '; 
         } else {
-          line = testLine; // Tambahkan kata ke baris yang ada
+          line = testLine;
         }
       });
 
-      lines.push(line); // Masukkan baris terakhir
+      lines.push(line);
 
-      // Cek apakah semua teks muat pada canvas
       let totalHeight = lines.length * fontSize;
       while (totalHeight > canvasHeight - 30 && fontSize > 10) {
-        fontSize--; // Kurangi ukuran font jika teks tidak muat
+        fontSize--; 
         ctx.font = `${fontSize}px "MyFont"`;
         lines = [];
         line = '';
@@ -132,9 +130,8 @@ function generateImageWithText(text) {
         totalHeight = lines.length * fontSize;
       }
 
-      // Menggambar teks pada canvas
-      let yPosition = 20;  // Posisi vertikal lebih dekat ke atas
-      const lineHeight = fontSize * 1.2;  // Jarak antar baris
+      let yPosition = 20; 
+      const lineHeight = fontSize * 1.2; 
       lines.forEach(line => {
         ctx.fillText(line, 20, yPosition);
         yPosition += lineHeight;
@@ -148,85 +145,6 @@ function generateImageWithText(text) {
   });
 }
 
-
-async function notifGroup(options) {
-  const { backgroundURL, avatarURL, title, description } = options;
-
-  const width = 700;
-  const height = 350;
-  const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext('2d');
-
-  ctx.clearRect(0, 0, width, height);
-
-  const background = await loadImage(backgroundURL);
-  ctx.drawImage(background, 0, 0, width, height);
-
-  const overlayX = 10;
-  const overlayY = 10;
-  const overlayWidth = width - 20;
-  const overlayHeight = height - 20;
-  const overlayRadius = 50;
-
-  ctx.save();
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-  ctx.beginPath();
-  ctx.moveTo(overlayX + overlayRadius, overlayY);
-  ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
-  ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
-  ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
-  ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.strokeStyle = '#FFCC33';
-  ctx.lineWidth = 10;
-  ctx.stroke();
-  ctx.restore();
-
-  const avatar = await loadImage(avatarURL);
-  const avatarSize = 150;
-  const avatarX = width / 2 - avatarSize / 2;
-  const avatarY = height / 2 - 140;
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(avatar, avatarX, avatarY, avatarSize, avatarSize);
-  ctx.restore();
-
-  ctx.beginPath();
-  ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.strokeStyle = '#FFCC33';
-  ctx.lineWidth = 6;
-  ctx.stroke();
-
-  registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
-
-  ctx.font = 'bold 40px "MyFont"';
-  ctx.fillStyle = '#FFFFFF';
-  ctx.textAlign = 'center';
-  ctx.fillText(title, width / 2, avatarY + avatarSize + 50);
-
-  ctx.font = '22px "MyFont"';  
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillText(description, width / 2, avatarY + avatarSize + 90);
-
-  ctx.globalCompositeOperation = 'destination-in';
-  ctx.beginPath();
-  ctx.moveTo(overlayX + overlayRadius, overlayY);
-  ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
-  ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
-  ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
-  ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
-  ctx.closePath();
-  ctx.fill();
-
-  return canvas.toBuffer();
-}
 
 
 async function getPinterestImages(text) {
@@ -405,7 +323,6 @@ app.get('/api/brat', async (req, res) => {
 app.get('/api/cpanel', async (req, res) => {
     const { domain, apikey, username, ram, disk, cpu } = req.query;
 
-    // Validasi input
     if (!domain || !apikey || !username || !ram || !disk || !cpu) {
         return res.status(400).json({ error: "Semua parameter (domain, apikey, username, ram, disk, cpu) wajib diisi." });
     }
@@ -416,7 +333,6 @@ app.get('/api/cpanel', async (req, res) => {
     const loc = "1";
 
     try {
-        // Buat user
         const userResponse = await fetch(`${domain}/api/application/users`, {
             method: "POST",
             headers: {
@@ -441,7 +357,6 @@ app.get('/api/cpanel', async (req, res) => {
 
         const userId = userData.attributes.id;
 
-        // Ambil data Egg
         const eggResponse = await fetch(`${domain}/api/application/nests/5/eggs/${egg}`, {
             method: "GET",
             headers: {
@@ -457,7 +372,6 @@ app.get('/api/cpanel', async (req, res) => {
 
         const startupCmd = eggData.attributes.startup;
 
-        // Buat server
         const serverResponse = await fetch(`${domain}/api/application/servers`, {
             method: "POST",
             headers: {
@@ -504,7 +418,6 @@ app.get('/api/cpanel', async (req, res) => {
             return res.status(400).json({ error: `Server Creation Error: ${serverData.errors ? serverData.errors[0].detail : 'Unknown error'}` });
         }
 
-        // Respons sukses
         const server = serverData.attributes;
         res.json({
             message: "Server berhasil dibuat!",
@@ -556,7 +469,6 @@ app.get("/api/profile", async (req, res) => {
             return res.status(400).json({ error: "Parameter tidak lengkap atau salah format." });
         }
 
-        // Registering the custom font
         registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
 
         const backgroundURL = decodeURIComponent(background);
@@ -611,7 +523,6 @@ app.get("/api/profile", async (req, res) => {
         ctx.drawImage(avatar, 40, height / 2 - avatarSize / 2, avatarSize, avatarSize);
         ctx.restore();
 
-        // Border Avatar
         ctx.beginPath();
         ctx.arc(100, height / 2, avatarSize / 2, 0, Math.PI * 2);
         ctx.closePath();
@@ -619,13 +530,12 @@ app.get("/api/profile", async (req, res) => {
         ctx.lineWidth = 4;
         ctx.stroke();
 
-        // Setting the font to MyFont for all text
         ctx.font = "bold 36px 'MyFont'";
         ctx.fillStyle = "#FFFFFF";
         ctx.textAlign = "left";
         ctx.fillText(name, 180, height / 2 - 40);
 
-        ctx.font = "bold 28px 'MyFont'"; // Make sure MyFont is used for level
+        ctx.font = "bold 28px 'MyFont'"; 
         ctx.fillStyle = "#FFFFFF";
         ctx.textAlign = "right";
         ctx.fillText(`LEVEL ${level}`, width - 60, 60);
@@ -690,68 +600,220 @@ app.get("/api/profile", async (req, res) => {
     }
 });
 
+
+app.get("/api/levelup", async (req, res) => {
+    try {
+      const { background, foto, fromLevel, toLevel, name } = req.query;
+  
+      if (!background || !foto || !fromLevel || !toLevel || !name) {
+        return res.status(400).json({ error: "Semua parameter harus diisi." });
+      }
+  
+      registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
+  
+      const width = 600;
+      const height = 150;
+      const canvas = createCanvas(width, height);
+      const ctx = canvas.getContext('2d');
+  
+      ctx.clearRect(0, 0, width, height);
+  
+      const backgroundImg = await fetchImage(background);
+      ctx.drawImage(backgroundImg, 0, 0, width, height);
+  
+      const overlayX = 10;
+      const overlayY = 10;
+      const overlayWidth = width - 20;
+      const overlayHeight = height - 20;
+      const overlayRadius = 40;
+  
+      ctx.save();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.beginPath();
+      ctx.moveTo(overlayX + overlayRadius, overlayY);
+      ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
+      ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
+      ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
+      ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
+      ctx.closePath();
+      ctx.fill();
+  
+      ctx.strokeStyle = '#00FFFF';
+      ctx.lineWidth = 8;
+      ctx.stroke();
+      ctx.restore();
+  
+      const avatarSize = 100;
+      const avatarX = overlayX + overlayRadius + 10;
+      const avatarImg = await fetchImage(foto);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avatarX + avatarSize / 2, height / 2, avatarSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatarImg, avatarX, height / 2 - avatarSize / 2, avatarSize, avatarSize);
+      ctx.restore();
+  
+      ctx.beginPath();
+      ctx.arc(avatarX + avatarSize / 2, height / 2, avatarSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.strokeStyle = '#00FFFF';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+  
+      ctx.font = 'bold 28px "MyFont"';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'left';
+      ctx.fillText(name, avatarX + avatarSize + 20, height / 2 + 10);
+  
+      const circleSize = 55;
+      const circleX1 = width - circleSize * 4 + 10;
+      const circleX2 = width - circleSize * 2 - 8;
+      const arrowX = circleX1 + circleSize + 10;
+  
+      ctx.beginPath();
+      ctx.arc(circleX1 + circleSize / 2, height / 2, circleSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255, 204, 51, 0.3)';
+      ctx.fill();
+  
+      ctx.beginPath();
+      ctx.arc(circleX1 + circleSize / 2, height / 2, circleSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.strokeStyle = '#00FFFF';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+  
+      ctx.font = 'bold 24px "MyFont"';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'center';
+      ctx.fillText(fromLevel, circleX1 + circleSize / 2, height / 2 + 8);
+  
+      ctx.beginPath();
+      ctx.moveTo(arrowX, height / 2 - 8);
+      ctx.lineTo(arrowX + 20, height / 2);
+      ctx.lineTo(arrowX, height / 2 + 8);
+      ctx.closePath();
+      ctx.fillStyle = '#00FFFF';
+      ctx.fill();
+  
+      ctx.beginPath();
+      ctx.arc(circleX2 + circleSize / 2, height / 2, circleSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255, 204, 51, 0.3)';
+      ctx.fill();
+  
+      ctx.beginPath();
+      ctx.arc(circleX2 + circleSize / 2, height / 2, circleSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.strokeStyle = '#00FFFF';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+  
+      ctx.font = 'bold 24px "MyFont"';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'center';
+      ctx.fillText(toLevel, circleX2 + circleSize / 2, height / 2 + 8);
+  
+      res.setHeader("Content-Type", "image/png");
+      res.send(canvas.toBuffer());
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Terjadi kesalahan saat memproses permintaan." });
+    }
+  });
   
 
-app.get('/api/ppdoc', async (req, res) => {
-  const { background, foto, exp, requireExp, level, name } = req.query;
-  if (!background || !foto || !exp || !requireExp || !level || !name) {
-    return res.status(400).json({ error: "Semua parameter harus diisi." });
-  }
-  try {
-    const apiUrl = `https://api-im-rerezz.glitch.me/ppdoc?background=${encodeURIComponent(background)}&foto=${encodeURIComponent(foto)}&exp=${exp}&requireExp=${requireExp}&level=${level}&name=${encodeURIComponent(name)}`;
-        const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-    res.writeHead(200, { 'Content-Type': 'image/png' });
-    res.end(response.data);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Gagal mengambil data gambar.',
-      details: error.message,
-    });
-  }
-});
-
-
-app.get('/api/levelup', async (req, res) => {
-  const { background, foto, fromLevel, toLevel, name } = req.query;
-  if (!background || !foto || !fromLevel || !toLevel || !name) {
-    return res.status(400).json({ error: "Semua parameter harus diisi." });
-  }
-  try {
-    const apiUrl = `https://api-im-rerezz.glitch.me/levelup?background=${encodeURIComponent(background)}&foto=${encodeURIComponent(foto)}&fromLevel=${fromLevel}&toLevel=${toLevel}&name=${encodeURIComponent(name)}`;
-    const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-    res.writeHead(200, { 'Content-Type': 'image/png' });
-    res.end(response.data);
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({
-      error: 'Gagal mengambil data gambar.',
-      details: error.message,
-    });
-  }
-});
-
-app.get('/api/welcome', async (req, res) => {
-  const { background, avatar, name, subject } = req.query;
-
-  if (!background || !avatar || !name || !subject) {
-    return res.status(400).json({ error: 'Parameter "background", "avatar", "name", dan "subject" harus disertakan.' });
-  }
-
-  try {
-    const imageBuffer = await notifGroup({
-      backgroundURL: background,
-      avatarURL: avatar,
-      title: name,
-      description: subject
-    });
-
-    res.setHeader('Content-Type', 'image/png');
-    res.end(imageBuffer);
-  } catch (error) {
-    res.status(500).json({ error: 'Terjadi kesalahan saat membuat gambar.' });
-  }
-});
-
+  app.get("/api/welcome", async (req, res) => {
+    try {
+      const { background, foto, nama, subject } = req.query;
+  
+      if (!background || !foto || !nama || !subject) {
+        return res.status(400).json({ error: "Semua parameter harus diisi." });
+      }
+  
+      registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
+  
+      const width = 700;
+      const height = 350;
+      const canvas = createCanvas(width, height);
+      const ctx = canvas.getContext('2d');
+  
+      ctx.clearRect(0, 0, width, height);
+  
+      const backgroundImg = await fetchImage(background);
+      ctx.drawImage(backgroundImg, 0, 0, width, height);
+  
+      const overlayX = 10;
+      const overlayY = 10;
+      const overlayWidth = width - 20;
+      const overlayHeight = height - 20;
+      const overlayRadius = 50;
+  
+      ctx.save();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.beginPath();
+      ctx.moveTo(overlayX + overlayRadius, overlayY);
+      ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
+      ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
+      ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
+      ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
+      ctx.closePath();
+      ctx.fill();
+  
+      ctx.strokeStyle = '#00FFFF';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+      ctx.restore();
+  
+      const avatar = await fetchImage(foto);
+      const avatarSize = 150;
+      const avatarX = width / 2 - avatarSize / 2;
+      const avatarY = height / 2 - 140;
+  
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatar, avatarX, avatarY, avatarSize, avatarSize);
+      ctx.restore();
+  
+      ctx.beginPath();
+      ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.strokeStyle = '#00FFFF';
+      ctx.lineWidth = 6;
+      ctx.stroke();
+  
+      ctx.font = 'bold 40px "MyFont"';
+      ctx.fillStyle = '#00FFFF';
+      ctx.textAlign = 'center';
+      ctx.fillText(nama, width / 2, avatarY + avatarSize + 50);
+  
+      ctx.font = '22px "MyFont"';
+      ctx.fillStyle = '#00FFFF';
+      ctx.fillText(subject, width / 2, avatarY + avatarSize + 90);
+  
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.beginPath();
+      ctx.moveTo(overlayX + overlayRadius, overlayY);
+      ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
+      ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
+      ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
+      ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
+      ctx.closePath();
+      ctx.fill();
+  
+      res.setHeader("Content-Type", "image/png");
+      res.send(canvas.toBuffer());
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Terjadi kesalahan saat memproses permintaan." });
+    }
+  });
+  
 
 
 
