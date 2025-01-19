@@ -819,10 +819,9 @@ app.get("/api/levelup", async (req, res) => {
     try {
       registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
   
-      const { background, profileImage, secondaryImage, name, subject } = req.query;
-  
-      // Validasi input
-      if (!background || !profileImage || !secondaryImage || !name || !subject) {
+      const { background, fotogv, fotouer, name, subject } = req.query;
+
+      if (!background || !fotogv || !fotouer || !name || !subject) {
         return res.status(400).json({ error: "Semua parameter harus diisi." });
       }
   
@@ -865,7 +864,7 @@ app.get("/api/levelup", async (req, res) => {
       const profileX = width / 2 - profileSize / 2;
       const profileY = headerY + 20;
   
-      const profileImg = await loadImage(profileImage);
+      const profileImg = await loadImage(fotogv);
       ctx.save();
       ctx.beginPath();
       ctx.arc(profileX + profileSize / 2, profileY + profileSize / 2, profileSize / 2, 0, Math.PI * 2);
@@ -887,7 +886,7 @@ app.get("/api/levelup", async (req, res) => {
       const secondaryX = profileX + profileSize - secondarySize / 2 - 10;
       const secondaryY = profileY + profileSize - secondarySize / 2 - 10;
   
-      const secondaryImg = await loadImage(secondaryImage);
+      const secondaryImg = await loadImage(fotouer);
       ctx.save();
       ctx.beginPath();
       ctx.arc(secondaryX + secondarySize / 2, secondaryY + secondarySize / 2, secondarySize / 2, 0, Math.PI * 2);
@@ -905,15 +904,15 @@ app.get("/api/levelup", async (req, res) => {
       ctx.stroke();
   
       // Nama menggunakan font kustom
-      ctx.font = 'bold 24px "MyFont"';
+      ctx.font = 'bold 28px "MyFont"';  // Memperbesar ukuran font
       ctx.fillStyle = 'aqua';
       ctx.textAlign = 'center';
-      ctx.fillText(name, width / 2, profileY + profileSize + 40);
+      ctx.fillText(name, width / 2, profileY + profileSize + 50);  // Menurunkan posisi teks sedikit
   
       // Subject menggunakan font kustom
-      ctx.font = '20px "MyFont"';
+      ctx.font = '24px "MyFont"';  // Memperbesar ukuran font
       ctx.fillStyle = 'aqua';
-      ctx.fillText(subject, width / 2, profileY + profileSize + 70);
+      ctx.fillText(subject, width / 2, profileY + profileSize + 90);  // Menurunkan posisi teks sedikit
   
       // Kirim hasil sebagai gambar PNG
       res.setHeader('Content-Type', 'image/png');
@@ -924,6 +923,7 @@ app.get("/api/levelup", async (req, res) => {
       res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.' });
     }
   });
+
 
 
 
