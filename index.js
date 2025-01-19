@@ -539,7 +539,7 @@ async function fetchImage(url) {
     return loadImage(response.data);
 }
 
-app.get("/profile", async (req, res) => {
+app.get("/api/profile", async (req, res) => {
     try {
         const {
             background,
