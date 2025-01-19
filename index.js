@@ -226,7 +226,7 @@ app.get('/api/pantun', (req, res) => {
 });
 
 
-app.post('/api/cpanell', async (req, res) => {
+app.get('/api/cpanel', async (req, res) => {
     const { domain, apikey, username, ram, disk, cpu } = req.body;
 
     // Validasi input
