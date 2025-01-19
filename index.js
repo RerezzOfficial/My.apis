@@ -538,6 +538,28 @@ app.get("/api/llama", async (req, res) => {
     }
 });
 
+app.get('/api/lumina', async (req, res) => {
+    const { text } = req.query;
+
+    if (!text) {
+        return res.status(400).json({ error: 'Text query parameter is required' });
+    }
+
+    try {
+        const response = await axios.post('https://luminai.my.id/', {
+            content: text,
+            cName: "S-AI",
+            cID: "S-AIbAQ0HcC"
+        });
+
+        // Kirimkan respons dari LuminAI ke klien
+        res.json(response.data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Something went wrong', details: error.message });
+    }
+});
+
 
 //=====[ OKECONNECT API ]=====//
 app.get('/api/okeconnect/dana', (req, res) => {
