@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS seperti sebelumnya */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input, form select {
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        form button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #218838;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .server-info {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+        }
+
+        .copy-btn {
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Server</h1>
+        <form id="server-form">
+            <label for="domain">Domain:</label>
+            <input type="text" id="domain" required><br>
+
+            <label for="apikey">API Key:</label>
+            <input type="text" id="apikey" required><br>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" required><br>
+
+            <label for="ram-disk">RAM (GB) & Disk (MB):</label>
+            <select id="ram-disk" required>
+                <option value="1">1 GB</option>
+                <option value="2">2 GB</option>
+                <option value="3">3 GB</option>
+                <option value="4">4 GB</option>
+                <option value="5">5 GB</option>
+                <option value="6">6 GB</option>
+                <option value="7">7 GB</option>
+                <option value="8">8 GB</option>
+                <option value="9">9 GB</option>
+                <option value="10">10 GB</option>
+            </select><br>
+
+            <button type="submit">Create Server</button>
+        </form>
+    </div>
+
+    <!-- Modal -->
+    <div id="serverModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>✅ Server berhasil dibuat!</h3>
+            <p><strong>User Info:</strong></p>
+            <p>Username: <span id="modal-username"></span></p>
+            <p>Email: <span id="modal-email"></span></p>
+
+            <p><strong>Server Info:</strong></p>
+            <p>Server ID: <span id="modal-server-id"></span></p>
+            <p>Server Name: <span id="modal-server-name"></span></p>
+            <p>Memory: <span id="modal-memory"></span> MB</p>
+            <p>Disk: <span id="modal-disk"></span> MB</p>
+            <p>CPU: <span id="modal-cpu"></span>%</p>
+
+            <p><strong>Credentials:</strong></p>
+            <p>Email: <span id="modal-credentials-email"></span></p>
+            <p>Password: <span id="modal-credentials-password"></span></p>
+            <p>Login URL: <a id="modal-login-url" href="#" target="_blank">Link</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('server-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const domain = document.getElementById('domain').value;
+            const apikey = document.getElementById('apikey').value;
+            const username = document.getElementById('username').value;
+            const ramDiskValue = document.getElementById('ram-disk').value;
+            const ram = ramDiskValue;
+            const disk = ramDiskValue * 1000;
+            const cpu = ram * 50;
+
+            try {
+                const response = await fetch('/create-server', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, apikey, username, ram, disk, cpu })
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('modal-username').textContent = data.userInfo.username;
+                    document.getElementById('modal-email').textContent = data.userInfo.email;
+                    document.getElementById('modal-server-id').textContent = data.serverInfo.id;
+                    document.getElementById('modal-server-name').textContent = data.serverInfo.name;
+                    document.getElementById('modal-memory').textContent = data.serverInfo.memory;
+                    document.getElementById('modal-disk').textContent = data.serverInfo.disk;
+                    document.getElementById('modal-cpu').textContent = data.serverInfo.cpu;
+                    document.getElementById('modal-credentials-email').textContent = data.credentials.email;
+                    document.getElementById('modal-credentials-password').textContent = data.credentials.password;
+                    document.getElementById('modal-login-url').href = data.credentials.login_url;
+                    document.getElementById('serverModal').style.display = 'block';
+                }
+            } catch (err) {
+                alert('Terjadi kesalahan saat membuat server.');
+                console.error(err);
+            }
+        });
+
+        document.querySelector('.close').onclick = function() {
+            document.getElementById('serverModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
