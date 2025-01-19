@@ -233,36 +233,27 @@ app.get('/api/brat', (req, res) => {
     return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
   }
 
-  // Membuat gambar menggunakan sharp
-  sharp({
-    create: {
-      width: 600,    // Lebar gambar
-      height: 200,   // Tinggi gambar
-      channels: 4,   // 4 saluran (RGBA)
-      background: { r: 255, g: 255, b: 255, alpha: 1 }  // Latar belakang putih
-    }
-  })
-    .composite([
-      {
-        input: Buffer.from(`
-          <svg width="600" height="200">
-            <rect x="0" y="0" width="600" height="200" fill="white"/>
-            <text x="50" y="100" font-size="30" fill="black" font-family="Arial">${text}</text>
-          </svg>
-        `),
-        gravity: 'center'  // Letakkan teks di tengah gambar
-      }
-    ])
-    .toBuffer()
-    .then((buffer) => {
-      // Mengirimkan gambar dalam format PNG
-      res.setHeader('Content-Type', 'image/png');
-      res.end(buffer);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).json({ error: 'Terjadi kesalahan saat menghasilkan gambar.' });
-    });
+  // Membuat canvas baru
+  const canvas = createCanvas(600, 200);
+  const ctx = canvas.getContext('2d');
+
+  // Mengatur latar belakang canvas menjadi putih
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Mengatur teks
+  ctx.font = '30px Arial';
+  ctx.fillStyle = 'black';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  // Mengonversi canvas ke buffer gambar PNG
+  const buffer = canvas.toBuffer('image/png');
+
+  // Mengirimkan gambar dalam format PNG
+  res.setHeader('Content-Type', 'image/png');
+  res.end(buffer);
 });
 
 app.get('/api/cpanel', async (req, res) => {
