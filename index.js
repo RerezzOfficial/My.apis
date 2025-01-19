@@ -14,6 +14,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 app.enable("trust proxy");
 app.set("json spaces", 2);
+app.use(bodyParser.json()); 
  
 const {
   convertCRC16,
@@ -1287,10 +1288,10 @@ function getYouTubeVideoId(url) {
   return match ? match[1] : null;
 }
 
-// Define the function for downloading YouTube audio
+// The function to handle the YouTube download request
 async function ytdljir(link) {
   const videoId = getYouTubeVideoId(link);
-  const format = 128; // Default format set to 128
+  const format = 128;  // Set format to 128 by default
 
   if (!videoId) {
     return {
@@ -1303,11 +1304,11 @@ async function ytdljir(link) {
     const { video } = await yts({ videoId: videoId });
     const data = video[0]; // Get the first result
 
-    // Placeholder response for the download process
+    // Here you should add the logic to download the file (e.g., using a download service)
     let response = await fakeDownloadService("https://youtube.com/watch?v=" + videoId, format);
     
     return {
-      metadata: data,  // Video metadata
+      metadata: data,  // Include metadata like title, duration, etc.
       download: response
     };
   } catch (error) {
@@ -1319,12 +1320,12 @@ async function ytdljir(link) {
   }
 }
 
-// Fake download service (replace this with actual download logic)
+// Fake download service for illustration (replace with actual logic)
 async function fakeDownloadService(url, format) {
-  return { status: true, url: `https://downloadlink.com/${url}` }; // Mock download link
+  return { status: true, url: `https://downloadlink.com/${url}` }; // Mock download URL
 }
 
-// API endpoint to download YouTube music
+// API endpoint for YouTube music download
 app.post('/api/ytdlmp3', async (req, res) => {
   const { url } = req.body;
   
@@ -1352,6 +1353,7 @@ app.post('/api/ytdlmp3', async (req, res) => {
     });
   }
 });
+
 
 app.get('/api/bocil', async (req, res) => {
   try {
