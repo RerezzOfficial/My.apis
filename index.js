@@ -78,8 +78,8 @@ function generateImageWithText(text) {
       registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
 
       // Tentukan ukuran canvas dan buat canvas
-      const canvasWidth = 800;  // Lebih lebar untuk mengakomodasi teks panjang
-      const canvasHeight = 800; // Ukuran canvas yang cukup besar
+      const canvasWidth = 700;  // Lebih lebar untuk mengakomodasi teks panjang
+      const canvasHeight = 700; // Ukuran canvas yang cukup besar
       const canvas = createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
 
