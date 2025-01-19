@@ -9,6 +9,7 @@ const sharp = require('sharp');
 const { createCanvas, loadImage, registerFont } = require('canvas');
 const path = require('path');
 const app = express();
+app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 
