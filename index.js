@@ -474,118 +474,7 @@ app.get('/api/cpanel', async (req, res) => {
 });
 
 
-app.post("/create-server", async (req, res) => {
-    const { domain, apikey, username, ram, disk, cpu } = req.body;
-    const password = `${username}${disk}`;
 
-    try {
-        // Buat pengguna baru
-        const userResponse = await fetch(`${domain}/api/application/users`, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apikey}`,
-            },
-            body: JSON.stringify({
-                email: `${username}@gmail.com`,
-                username,
-                first_name: username,
-                last_name: username,
-                language: "en",
-                password,
-            }),
-        });
-
-        if (!userResponse.ok) {
-            const userData = await userResponse.json();
-            return res.status(userResponse.status).json({ error: userData.errors[0].detail });
-        }
-
-        const userData = await userResponse.json();
-        const userId = userData.attributes.id;
-
-        // Ambil data egg untuk startup server
-        const eggResponse = await fetch(`${domain}/api/application/nests/5/eggs/15`, {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${apikey}`,
-            },
-        });
-
-        if (!eggResponse.ok) {
-            const eggData = await eggResponse.json();
-            return res.status(eggResponse.status).json({ error: eggData.errors[0].detail });
-        }
-
-        const eggData = await eggResponse.json();
-        const startupCmd = eggData.attributes.startup;
-
-        // Buat server
-        const serverResponse = await fetch(`${domain}/api/application/servers`, {
-            method: "POST",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apikey}`,
-            },
-            body: JSON.stringify({
-                name: username,
-                description: "Server created via website",
-                user: userId,
-                egg: 15, // Egg ID
-                docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
-                startup: startupCmd,
-                environment: {
-                    INST: "npm",
-                    USER_UPLOAD: "0",
-                    AUTO_UPDATE: "0",
-                    CMD_RUN: "npm start",
-                    JS_FILE: "index.js",
-                },
-                limits: {
-                    memory: ram,
-                    disk,
-                    cpu,
-                    swap: disk, // Set swap equal to disk or any other value you deem appropriate
-                },
-                deploy: {
-                    locations: [1], // Lokasi server
-                },
-            }),
-        });
-
-        if (!serverResponse.ok) {
-            const serverData = await serverResponse.json();
-            return res.status(serverResponse.status).json({ error: serverData.errors[0].detail });
-        }
-
-        const serverData = await serverResponse.json();
-
-        res.json({
-            user: {
-                username,
-                email: `${username}@gmail.com`,
-            },
-            server: {
-                id: serverData.attributes.id,
-                name: serverData.attributes.name,
-                memory: ram,
-                disk,
-                cpu,
-            },
-            credentials: {
-                email: `${username}@gmail.com`,
-                password,
-                login_url: `${domain}/login`,
-            },
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "An error occurred while creating the server." });
-    }
-});
 
 //=====[ API CANVAS ]=====//
 async function fetchImage(url) {
@@ -1334,7 +1223,29 @@ app.get('/api/pinterest2', async (req, res) => {
   }
 });
 
-
+//=====[ FOTO RANDOM ]=====///
+app.get('/api/china', async (req, res) => {
+  try {
+    const fileUrl = 'https://raw.githubusercontent.com/RerezzOfficial/My.apis/main/media/china.json';
+    const response = await axios.get(fileUrl);
+    const cosplayData = response.data;
+    if (!cosplayData.results || cosplayData.results.length === 0) {
+      return res.status(400).json({ error: 'Tidak ada gambar dalam cosplay.json.' });
+    }
+    const randomIndex = Math.floor(Math.random() * cosplayData.results.length);
+    const randomCosplay = cosplayData.results[randomIndex];
+    const imageUrl = randomCosplay.url;
+    const imageResponse = await axios({
+      method: 'get',
+      url: imageUrl,
+      responseType: 'stream'
+    });
+    imageResponse.data.pipe(res);  
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Gagal memproses file cosplay.json' });
+  }
+});
 //=====[ API AI ]=====//
 app.get("/api/chatgpt-v2", async (req, res) => {
     const { q } = req.query;
