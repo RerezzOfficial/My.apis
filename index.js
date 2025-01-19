@@ -235,29 +235,38 @@ app.get('/api/brat', (req, res) => {
     return res.status(400).json({ error: 'Parameter "text" wajib disertakan.' });
   }
 
-  // Mendaftarkan font kustom
-  registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
+  try {
+    // Mendaftarkan font kustom
+    const fontPath = path.join(__dirname, 'fonts', 'MyFont.ttf');
+    registerFont(fontPath, { family: 'MyFont' });
 
-  const canvas = createCanvas(500, 500);
-  const ctx = canvas.getContext('2d');
+    // Membuat kanvas dengan ukuran 500x500
+    const canvas = createCanvas(500, 500);
+    const ctx = canvas.getContext('2d');
 
-  // Mengatur latar belakang canvas menjadi putih
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Mengatur latar belakang canvas menjadi putih
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Menggunakan font kustom yang telah didaftarkan
-  ctx.font = '30px "MyFont"';  // Gunakan font kustom
-  ctx.fillStyle = 'black';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    // Menggunakan font kustom yang telah didaftarkan
+    ctx.font = '30px "MyFont"';  // Gunakan font kustom
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-  // Mengonversi canvas ke buffer gambar PNG
-  const buffer = canvas.toBuffer('image/png');
+    // Mengonversi canvas ke buffer gambar PNG
+    const buffer = canvas.toBuffer('image/png');
 
-  // Mengirimkan gambar dalam format PNG
-  res.setHeader('Content-Type', 'image/png');
-  res.end(buffer);
+    // Mengirimkan gambar dalam format PNG
+    res.setHeader('Content-Type', 'image/png');
+    res.end(buffer);
+
+  } catch (error) {
+    // Menangani error jika terjadi masalah dengan font atau canvas
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Terjadi kesalahan saat membuat gambar.' });
+  }
 });
 
 app.get('/api/cpanel', async (req, res) => {
