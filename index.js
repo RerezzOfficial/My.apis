@@ -149,6 +149,86 @@ function generateImageWithText(text) {
 }
 
 
+async function notifGroup(options) {
+  const { backgroundURL, avatarURL, title, description } = options;
+
+  const width = 700;
+  const height = 350;
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext('2d');
+
+  ctx.clearRect(0, 0, width, height);
+
+  const background = await loadImage(backgroundURL);
+  ctx.drawImage(background, 0, 0, width, height);
+
+  const overlayX = 10;
+  const overlayY = 10;
+  const overlayWidth = width - 20;
+  const overlayHeight = height - 20;
+  const overlayRadius = 50;
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.beginPath();
+  ctx.moveTo(overlayX + overlayRadius, overlayY);
+  ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
+  ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
+  ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
+  ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = '#FFCC33';
+  ctx.lineWidth = 10;
+  ctx.stroke();
+  ctx.restore();
+
+  const avatar = await loadImage(avatarURL);
+  const avatarSize = 150;
+  const avatarX = width / 2 - avatarSize / 2;
+  const avatarY = height / 2 - 140;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(avatar, avatarX, avatarY, avatarSize, avatarSize);
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(avatarX + avatarSize / 2, avatarY + avatarSize / 2, avatarSize / 2, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.strokeStyle = '#FFCC33';
+  ctx.lineWidth = 6;
+  ctx.stroke();
+
+  // Daftarkan font yang digunakan
+  registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
+
+  // Menggunakan font yang sudah didaftarkan
+  ctx.font = 'bold 40px "MyFont"';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'center';
+  ctx.fillText(title, width / 2, avatarY + avatarSize + 50);
+
+  ctx.font = '22px "MyFont"';  // Menggunakan font yang sama dengan ukuran lebih kecil
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText(description, width / 2, avatarY + avatarSize + 90);
+
+  ctx.globalCompositeOperation = 'destination-in';
+  ctx.beginPath();
+  ctx.moveTo(overlayX + overlayRadius, overlayY);
+  ctx.arcTo(overlayX + overlayWidth, overlayY, overlayX + overlayWidth, overlayY + overlayHeight, overlayRadius);
+  ctx.arcTo(overlayX + overlayWidth, overlayY + overlayHeight, overlayX, overlayY + overlayHeight, overlayRadius);
+  ctx.arcTo(overlayX, overlayY + overlayHeight, overlayX, overlayY, overlayRadius);
+  ctx.arcTo(overlayX, overlayY, overlayX + overlayWidth, overlayY, overlayRadius);
+  ctx.closePath();
+  ctx.fill();
+
+  return canvas.toBuffer();
+}
 
 
 async function getPinterestImages(text) {
@@ -537,21 +617,24 @@ app.get('/api/levelup', async (req, res) => {
 });
 
 app.get('/api/welcome', async (req, res) => {
-  const { background, foto, nama, subject } = req.query;
-  if (!background || !foto || !nama || !subject) {
-    return res.status(400).json({ error: "Semua parameter harus diisi." });
+  const { background, avatar, name, subject } = req.query;
+
+  if (!background || !avatar || !name || !subject) {
+    return res.status(400).json({ error: 'Parameter "background", "avatar", "name", dan "subject" harus disertakan.' });
   }
+
   try {
-    const apiUrl = `https://api-im-rerezz.glitch.me/welcome?background=${encodeURIComponent(background)}&foto=${encodeURIComponent(foto)}&nama=${encodeURIComponent(nama)}&subject=${encodeURIComponent(subject)}`;
-        const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-        res.writeHead(200, { 'Content-Type': 'image/png' });
-    res.end(response.data);
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({
-      error: 'Gagal mengambil data gambar.',
-      details: error.message,
+    const imageBuffer = await notifGroup({
+      backgroundURL: background,
+      avatarURL: avatar,
+      title: name,
+      description: subject
     });
+
+    res.setHeader('Content-Type', 'image/png');
+    res.end(imageBuffer);
+  } catch (error) {
+    res.status(500).json({ error: 'Terjadi kesalahan saat membuat gambar.' });
   }
 });
 
