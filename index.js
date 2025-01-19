@@ -78,8 +78,8 @@ function generateImageWithText(text) {
       registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
 
       // Tentukan ukuran canvas dan buat canvas
-      const canvasWidth = 400;
-      const canvasHeight = 400;
+      const canvasWidth = 800;  // Lebih lebar untuk mengakomodasi teks panjang
+      const canvasHeight = 800; // Ukuran canvas yang cukup besar
       const canvas = createCanvas(canvasWidth, canvasHeight);
       const ctx = canvas.getContext('2d');
 
@@ -88,13 +88,13 @@ function generateImageWithText(text) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Menggunakan font kustom
-      ctx.font = '110px "MyFont"';  // Gunakan font kustom
+      ctx.font = '100px "MyFont"';  // Ukuran font lebih besar
       ctx.fillStyle = 'black';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
 
       // Bagi teks menjadi baris-baris
-      const maxWidth = canvas.width - 20; // Margin kiri dan kanan
+      const maxWidth = canvas.width - 40; // Margin kiri dan kanan
       let lines = [];
       let line = '';
       
@@ -111,12 +111,17 @@ function generateImageWithText(text) {
         }
       });
 
-      lines.push(line);
-      let yPosition = 20; 
+      lines.push(line); // Masukkan baris terakhir
+
+      // Menggambar setiap baris ke canvas
+      let yPosition = 50; // Mulai dari posisi vertikal atas
+      const lineHeight = 120; // Jarak antar baris
       lines.forEach(line => {
         ctx.fillText(line, canvas.width / 2, yPosition);
-        yPosition += 40; 
+        yPosition += lineHeight; // Geser ke bawah untuk baris berikutnya
       });
+
+      // Mengonversi canvas ke buffer gambar PNG
       const buffer = canvas.toBuffer('image/png');
       resolve(buffer);
     } catch (error) {
@@ -124,6 +129,7 @@ function generateImageWithText(text) {
     }
   });
 }
+
 
 
 async function getPinterestImages(text) {
