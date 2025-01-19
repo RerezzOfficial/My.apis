@@ -813,8 +813,117 @@ app.get("/api/levelup", async (req, res) => {
       res.status(500).json({ error: "Terjadi kesalahan saat memproses permintaan." });
     }
   });
-  
 
+
+  app.get('/api/welcome2', async (req, res) => {
+    try {
+      registerFont(path.join(__dirname, 'fonts', 'fonts.ttf'), { family: 'MyFont' });
+  
+      const { background, profileImage, secondaryImage, name, subject } = req.query;
+  
+      // Validasi input
+      if (!background || !profileImage || !secondaryImage || !name || !subject) {
+        return res.status(400).json({ error: "Semua parameter harus diisi." });
+      }
+  
+      // Ukuran kanvas
+      const width = 700;
+      const height = 400;
+      const canvas = createCanvas(width, height);
+      const ctx = canvas.getContext('2d');
+  
+      // Latar belakang
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, width, height);
+  
+      const headerWidth = width * 0.85;
+      const headerHeight = height * 0.7;
+      const headerX = (width - headerWidth) / 2;
+      const headerY = (height - headerHeight) / 2;
+  
+      // Gambar header dengan background image
+      const backgroundImg = await loadImage(background);
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(headerX + 20, headerY);
+      ctx.arcTo(headerX + headerWidth, headerY, headerX + headerWidth, headerY + headerHeight, 20);
+      ctx.arcTo(headerX + headerWidth, headerY + headerHeight, headerX, headerY + headerHeight, 20);
+      ctx.arcTo(headerX, headerY + headerHeight, headerX, headerY, 20);
+      ctx.arcTo(headerX, headerY, headerX + headerWidth, headerY, 20);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(backgroundImg, headerX, headerY, headerWidth, headerHeight);
+      ctx.restore();
+  
+      // Border header
+      ctx.strokeStyle = 'aqua';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+  
+      // Profil utama
+      const profileSize = 120;
+      const profileX = width / 2 - profileSize / 2;
+      const profileY = headerY + 20;
+  
+      const profileImg = await loadImage(profileImage);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(profileX + profileSize / 2, profileY + profileSize / 2, profileSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(profileImg, profileX, profileY, profileSize, profileSize);
+      ctx.restore();
+  
+      // Border profil utama
+      ctx.beginPath();
+      ctx.arc(profileX + profileSize / 2, profileY + profileSize / 2, profileSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.strokeStyle = 'aqua';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+  
+      // Profil sekunder
+      const secondarySize = 70;
+      const secondaryX = profileX + profileSize - secondarySize / 2 - 10;
+      const secondaryY = profileY + profileSize - secondarySize / 2 - 10;
+  
+      const secondaryImg = await loadImage(secondaryImage);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(secondaryX + secondarySize / 2, secondaryY + secondarySize / 2, secondarySize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(secondaryImg, secondaryX, secondaryY, secondarySize, secondarySize);
+      ctx.restore();
+  
+      // Border profil sekunder
+      ctx.beginPath();
+      ctx.arc(secondaryX + secondarySize / 2, secondaryY + secondarySize / 2, secondarySize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.strokeStyle = 'aqua';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+  
+      // Nama menggunakan font kustom
+      ctx.font = 'bold 24px "MyFont"';
+      ctx.fillStyle = 'aqua';
+      ctx.textAlign = 'center';
+      ctx.fillText(name, width / 2, profileY + profileSize + 40);
+  
+      // Subject menggunakan font kustom
+      ctx.font = '20px "MyFont"';
+      ctx.fillStyle = 'aqua';
+      ctx.fillText(subject, width / 2, profileY + profileSize + 70);
+  
+      // Kirim hasil sebagai gambar PNG
+      res.setHeader('Content-Type', 'image/png');
+      res.send(canvas.toBuffer());
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Terjadi kesalahan saat memproses permintaan.' });
+    }
+  });
 
 
 
