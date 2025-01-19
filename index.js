@@ -227,29 +227,17 @@ app.get('/api/pantun', (req, res) => {
 
 
 app.get('/api/cpanel', async (req, res) => {
-    const { domain, apikey, username, ram, disk, cpu } = req.body;
+    const { domain, apikey, username, ram, disk, cpu } = req.query;
 
     // Validasi input
     if (!domain || !apikey || !username || !ram || !disk || !cpu) {
         return res.status(400).json({ error: "Semua parameter (domain, apikey, username, ram, disk, cpu) wajib diisi." });
     }
 
-    // Validasi format email
     const email = `${username}@gmail.com`;
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailRegex.test(email)) {
-        return res.status(400).json({ error: "Format email tidak valid." });
-    }
-
-    // Validasi nilai numerik untuk ram, disk, cpu
-    if (isNaN(ram) || isNaN(disk) || isNaN(cpu)) {
-        return res.status(400).json({ error: "Ram, disk, dan CPU harus berupa angka." });
-    }
-
-    // Convert ke tipe data yang benar
-    const egg = "15";  // ID untuk egg yang akan digunakan
-    const loc = "1";   // Lokasi server
-    const password = `${username}${disk}`; // Password user, digabungkan dengan disk untuk lebih unik
+    const password = `${username}${disk}`;
+    const egg = "15";
+    const loc = "1";
 
     try {
         // Buat user
