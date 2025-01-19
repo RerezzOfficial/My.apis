@@ -225,6 +225,150 @@ app.get('/api/pantun', (req, res) => {
 });
 
 
+app.post('/api/cpanel', async (req, res) => {
+    const { domain, apikey, username, ram, disk, cpu } = req.body;
+
+    // Validasi input
+    if (!domain || !apikey || !username || !ram || !disk || !cpu) {
+        return res.status(400).json({ error: "Semua parameter (domain, apikey, username, ram, disk, cpu) wajib diisi." });
+    }
+
+    // Validasi format email
+    const email = `${username}@gmail.com`;
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "Format email tidak valid." });
+    }
+
+    // Validasi nilai numerik untuk ram, disk, cpu
+    if (isNaN(ram) || isNaN(disk) || isNaN(cpu)) {
+        return res.status(400).json({ error: "Ram, disk, dan CPU harus berupa angka." });
+    }
+
+    // Convert ke tipe data yang benar
+    const egg = "15";
+    const loc = "1";
+    const password = `${username}${disk}`;
+
+    try {
+        // Buat user
+        const userResponse = await fetch(`${domain}/api/application/users`, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apikey}`,
+            },
+            body: JSON.stringify({
+                email: email,
+                username: username,
+                first_name: username,
+                last_name: username,
+                language: "en",
+                password: password,
+            }),
+        });
+
+        const userData = await userResponse.json();
+        if (!userResponse.ok || userData.errors) {
+            return res.status(400).json({ error: `User Creation Error: ${userData.errors ? userData.errors[0].detail : 'Unknown error'}` });
+        }
+
+        const userId = userData.attributes.id;
+
+        // Ambil data Egg
+        const eggResponse = await fetch(`${domain}/api/application/nests/5/eggs/${egg}`, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${apikey}`,
+            },
+        });
+
+        const eggData = await eggResponse.json();
+        if (!eggResponse.ok || eggData.errors) {
+            return res.status(400).json({ error: `Egg Data Error: ${eggData.errors ? eggData.errors[0].detail : 'Unknown error'}` });
+        }
+
+        const startupCmd = eggData.attributes.startup;
+
+        // Buat server
+        const serverResponse = await fetch(`${domain}/api/application/servers`, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apikey}`,
+            },
+            body: JSON.stringify({
+                name: username,
+                description: "Server dibuat oleh API RerezzDev.",
+                user: userId,
+                egg: parseInt(egg),
+                docker_image: "ghcr.io/parkervcp/yolks:nodejs_18",
+                startup: startupCmd,
+                environment: {
+                    INST: "npm",
+                    USER_UPLOAD: "0",
+                    AUTO_UPDATE: "0",
+                    CMD_RUN: "npm start",
+                    JS_FILE: "index.js",
+                },
+                limits: {
+                    memory: ram,
+                    swap: 0,
+                    disk: disk,
+                    io: 500,
+                    cpu: cpu,
+                },
+                feature_limits: {
+                    databases: 5,
+                    backups: 5,
+                    allocations: 5,
+                },
+                deploy: {
+                    locations: [parseInt(loc)],
+                    dedicated_ip: false,
+                    port_range: [],
+                },
+            }),
+        });
+
+        const serverData = await serverResponse.json();
+        if (!serverResponse.ok || serverData.errors) {
+            return res.status(400).json({ error: `Server Creation Error: ${serverData.errors ? serverData.errors[0].detail : 'Unknown error'}` });
+        }
+
+        // Respons sukses
+        const server = serverData.attributes;
+        res.json({
+            message: "Server berhasil dibuat!",
+            user: {
+                id: userId,
+                username: username,
+                email: email,
+            },
+            server: {
+                id: server.id,
+                name: server.name,
+                memory: ram,
+                disk: disk,
+                cpu: cpu,
+            },
+            credentials: {
+                email: email,
+                password: password,
+                login_url: domain,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Terjadi kesalahan saat membuat server. Harap coba lagi." });
+    }
+});
+
+
+
 //=====[ API CANVAS ]=====//
 app.get('/api/profile', async (req, res) => {
   const {
