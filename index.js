@@ -1021,7 +1021,7 @@ app.get('/api/rank', async (req, res) => {
   }
 });
 //=====[ API GAME ]=====//
-app.get('/asahotak', (req, res) => {
+app.get('/api/asahotak', (req, res) => {
   const filePath = path.join(__dirname, 'media', 'asahotak.json');
   console.log('File Path:', filePath); 
   res.sendFile(filePath);
