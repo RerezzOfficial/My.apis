@@ -1287,9 +1287,9 @@ function getYouTubeVideoId(url) {
 }
 
 // Define the main function for downloading YouTube music
-async function ytdljir(link, formats = 128) {
+async function ytdljir(link) {
   const videoId = getYouTubeVideoId(link);
-  const format = formats;  // Use the passed format
+  const format = 128;  // Set format to 128 by default
 
   if (!videoId) {
     return {
@@ -1328,15 +1328,15 @@ async function ytdljir(link, formats = 128) {
 }
 
 // API endpoint to download YouTube music
-app.post('/api/ytmp3', async (req, res) => {
-  const { url, formats } = req.body;
+app.post('/api/ytdlmp3', async (req, res) => {
+  const { url } = req.body;
   
   if (!url) {
     return res.status(400).json({ status: false, message: "URL is required" });
   }
 
   try {
-    const result = await ytdljir(url, formats || 128);
+    const result = await ytdljir(url);
     
     if (result.status === false) {
       return res.status(400).json(result);
