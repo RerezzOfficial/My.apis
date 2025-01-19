@@ -75,7 +75,7 @@ function generateImageWithText(text) {
   return new Promise((resolve, reject) => {
     try {
       registerFont(path.join(__dirname, 'fonts', 'MyFont.ttf'), { family: 'MyFont' });
-      const canvas = createCanvas(400, 400);
+      const canvas = createCanvas(300, 300);
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
