@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Gaya CSS Anda disini */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -33,7 +33,8 @@
             flex-direction: column;
         }
 
-        form input {
+        form input,
+        form select {
             margin-bottom: 10px;
             padding: 8px;
             font-size: 14px;
@@ -121,13 +122,23 @@
             <label for="username">Username:</label>
             <input type="text" id="username" required><br>
 
-            <label for="ram-disk">RAM (GB) & Disk (MB):</label>
-            <select id="ram-disk" required>
-                <option value="1">1 GB</option>
-                <option value="2">2 GB</option>
-                <option value="3">3 GB</option>
-                <option value="4">4 GB</option>
+            <label for="ram">RAM (MB):</label>
+            <select id="ram" required>
+                <option value="1024">1 GB</option>
+                <option value="2048">2 GB</option>
+                <option value="3072">3 GB</option>
+                <option value="4096">4 GB</option>
+                <option value="5120">5 GB</option>
+                <option value="6144">6 GB</option>
+                <option value="7168">7 GB</option>
+                <option value="8192">8 GB</option>
             </select><br>
+
+            <label for="disk">Disk (MB):</label>
+            <input type="number" id="disk" required><br>
+
+            <label for="cpu">CPU (%)</label>
+            <input type="number" id="cpu" required><br>
 
             <button type="submit">Create Server</button>
         </form>
@@ -139,7 +150,7 @@
             <span class="close">&times;</span>
             <h3>✅ Server berhasil dibuat!</h3>
             <p><strong>User Info:</strong></p>
-            <p>Username: <span id="modal-username"></span> <i class="fas fa-copy copy-btn" onclick="copyToClipboard('#modal-username')"></i></p>
+            <p>Username: <span id="modal-username"></span></p>
             <p>Email: <span id="modal-email"></span></p>
 
             <p><strong>Server Info:</strong></p>
@@ -151,7 +162,7 @@
 
             <p><strong>Credentials:</strong></p>
             <p>Email: <span id="modal-credentials-email"></span></p>
-            <p>Password: <span id="modal-credentials-password"></span> <i class="fas fa-copy copy-btn" onclick="copyToClipboard('#modal-credentials-password')"></i></p>
+            <p>Password: <span id="modal-credentials-password"></span></p>
             <p>Login URL: <a id="modal-login-url" href="#" target="_blank">Link</a></p>
         </div>
     </div>
@@ -163,62 +174,43 @@
             const domain = document.getElementById('domain').value;
             const apikey = document.getElementById('apikey').value;
             const username = document.getElementById('username').value;
-            const ramDiskValue = document.getElementById('ram-disk').value;
-            const ram = ramDiskValue;  // RAM in GB
-            const disk = ramDiskValue * 1000;  // Disk in MB (1GB = 1000MB)
-            const cpu = ram * 50;  // 1 GB RAM = 50% CPU
+            const ram = document.getElementById('ram').value;
+            const disk = document.getElementById('disk').value;
+            const cpu = document.getElementById('cpu').value;
         
             try {
                 // Mengirimkan permintaan ke API menggunakan Fetch
-                const response = await fetch('/create-server', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ domain, apikey, username, ram, disk, cpu }),
-                });
+                const response = await fetch(`/api/cpanel?domain=${domain}&apikey=${apikey}&username=${username}&ram=${ram}&disk=${disk}&cpu=${cpu}`);
                 const data = await response.json();
         
                 if (data.error) {
                     alert(data.error);
                 } else {
-                    // Menampilkan modal dengan data server yang telah dibuat
-                    showModal(data);
+                    // Menampilkan data dalam modal
+                    document.getElementById('modal-username').textContent = data.user.username;
+                    document.getElementById('modal-email').textContent = data.user.email;
+                    document.getElementById('modal-server-id').textContent = data.server.id;
+                    document.getElementById('modal-server-name').textContent = data.server.name;
+                    document.getElementById('modal-memory').textContent = data.server.memory;
+                    document.getElementById('modal-disk').textContent = data.server.disk;
+                    document.getElementById('modal-cpu').textContent = data.server.cpu;
+                    document.getElementById('modal-credentials-email').textContent = data.credentials.email;
+                    document.getElementById('modal-credentials-password').textContent = data.credentials.password;
+                    document.getElementById('modal-login-url').setAttribute('href', data.credentials.login_url);
+                    document.getElementById('modal-login-url').textContent = data.credentials.login_url;
+        
+                    // Menampilkan modal
+                    document.getElementById('serverModal').style.display = 'block';
                 }
             } catch (error) {
                 alert(`Terjadi kesalahan: ${error.message}`);
             }
         });
-
-        // Menampilkan modal dengan data server yang berhasil dibuat
-        function showModal(data) {
-            document.getElementById('modal-username').textContent = data.user.username;
-            document.getElementById('modal-email').textContent = data.user.email;
-            document.getElementById('modal-server-id').textContent = data.server.id;
-            document.getElementById('modal-server-name').textContent = data.server.name;
-            document.getElementById('modal-memory').textContent = data.server.memory;
-            document.getElementById('modal-disk').textContent = data.server.disk;
-            document.getElementById('modal-cpu').textContent = data.server.cpu;
-            document.getElementById('modal-credentials-email').textContent = data.credentials.email;
-            document.getElementById('modal-credentials-password').textContent = data.credentials.password;
-            document.getElementById('modal-login-url').href = data.credentials.login_url;
-
-            // Tampilkan modal
-            document.getElementById('serverModal').style.display = 'block';
-        }
-
-        // Fungsi untuk menutup modal
-        document.querySelector('.close').onclick = function() {
+        
+        // Close modal
+        document.querySelector('.close').onclick = () => {
             document.getElementById('serverModal').style.display = 'none';
-        }
-
-        // Fungsi untuk menyalin teks ke clipboard
-        function copyToClipboard(elementId) {
-            const text = document.querySelector(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Teks berhasil disalin!');
-            });
-        }
+        };
     </script>
 </body>
 </html>
