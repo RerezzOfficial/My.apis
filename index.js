@@ -79,7 +79,7 @@ function generateImageWithText(text) {
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.font = '35px "MyFont"';
+      ctx.font = '55px "MyFont"';
       ctx.fillStyle = 'black';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
