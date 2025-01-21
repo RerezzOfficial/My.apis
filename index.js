@@ -165,6 +165,12 @@ const getDownloadLinks = url => {
     }
   });
 };
+function getInstagramPostId(url) {
+  const regex =
+    /(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:p|tv|stories|reel)\/([^/?#&]+).*/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
 async function ig(url, proxy = null) {
     const postId = getInstagramPostId(url);
     if (!postId) {
