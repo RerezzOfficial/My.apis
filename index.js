@@ -171,6 +171,31 @@ function getInstagramPostId(url) {
   const match = url.match(regex);
   return match ? match[1] : null;
 }
+function extractPostInfo(mediaData) {
+  try {
+    const getUrlFromData = (data) => {
+      if (data.edge_sidecar_to_children) {
+        return data.edge_sidecar_to_children.edges.map(
+          (edge) => edge.node.video_url || edge.node.display_url,
+        );
+      }
+      return data.video_url ? [data.video_url] : [data.display_url];
+    };
+
+    return {
+      url: getUrlFromData(mediaData),
+      metadata: {
+         caption: mediaData.edge_media_to_caption.edges[0]?.node.text || null,
+         username: mediaData.owner.username,
+         like: mediaData.edge_media_preview_like.count,
+         comment: mediaData.edge_media_to_comment.count,
+         isVideo: mediaData.is_video,
+      }
+    };
+  } catch (error) {
+    throw error;
+  }
+}
 async function ig(url, proxy = null) {
     const postId = getInstagramPostId(url);
     if (!postId) {
