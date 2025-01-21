@@ -1452,7 +1452,7 @@ app.get("/api/tiktok", async (req, res) => {
   }
 });
 
-app.post('/api/dlmp3', async (req, res) => {
+app.post('/download', async (req, res) => {
     const { url } = req.body;
 
     if (!url) {
@@ -1460,8 +1460,9 @@ app.post('/api/dlmp3', async (req, res) => {
     }
 
     try {
-        // Contoh menggunakan API pihak ketiga (yt-download.org)
-        const response = await axios.get(`https://yt-download.org/api/button/mp3/${encodeURIComponent(url)}`);
+        // Menggunakan ytmp3.cc (sebagai alternatif)
+        const apiUrl = `https://api.vevioz.com/api/button/mp3/${encodeURIComponent(url)}`;
+        const response = await axios.get(apiUrl);
 
         // Cari URL MP3 dalam respons HTML
         const mp3UrlMatch = response.data.match(/href="(https:\/\/[^"]+\.mp3)"/);
