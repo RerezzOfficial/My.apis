@@ -165,7 +165,15 @@ const getDownloadLinks = url => {
     }
   });
 };
-
+async function ig(url, proxy = null) {
+    const postId = getInstagramPostId(url);
+    if (!postId) {
+      throw new Error("Invalid Instagram URL");
+    }
+    const data = await getPostGraphqlData(postId, proxy);
+    const mediaData = data.data?.xdt_shortcode_media;
+    return extractPostInfo(mediaData);
+}
 async function igdl(url) {
  let result = ""
      try {
