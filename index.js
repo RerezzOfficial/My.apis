@@ -58,6 +58,130 @@ const validateYoutubeUrl = (req, res, next) => {
   next();
 };
 
+const getDownloadLinks = url => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!url.match(/(?:https?:\/\/(web\.|www\.|m\.)?(facebook|fb)\.(com|watch)\S+)?$/) && !url.match(/(https|http):\/\/www.instagram.com\/(p|reel|tv|stories)/gi)) {
+        return reject({
+          msg: "Invalid URL"
+        });
+      }
+
+      function decodeData(data) {
+        let part1 = data[0];
+        let part2 = data[1];
+        let part3 = data[2];
+        let part4 = data[3];
+        let part5 = data[4];
+        let part6 = "";
+
+        function decodeSegment(segment, base, length) {
+          const charSet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".split("");
+          let baseSet = charSet.slice(0, base);
+          let decodeSet = charSet.slice(0, length);
+
+          let decodedValue = segment.split("").reverse().reduce((accum, char, index) => {
+            if (baseSet.indexOf(char) !== -1) {
+              return accum += baseSet.indexOf(char) * Math.pow(base, index);
+            }
+          }, 0);
+
+          let result = "";
+          while (decodedValue > 0) {
+            result = decodeSet[decodedValue % length] + result;
+            decodedValue = Math.floor(decodedValue / length);
+          }
+
+          return result || "0";
+        }
+
+        for (let i = 0, len = part1.length; i < len; i++) {
+          let segment = "";
+          while (part1[i] !== part3[part5]) {
+            segment += part1[i];
+            i++;
+          }
+
+          for (let j = 0; j < part3.length; j++) {
+            segment = segment.replace(new RegExp(part3[j], "g"), j.toString());
+          }
+          part6 += String.fromCharCode(decodeSegment(segment, part5, 10) - part4);
+        }
+        return decodeURIComponent(encodeURIComponent(part6));
+      }
+
+      function extractParams(data) {
+        return data.split("decodeURIComponent(escape(r))}(")[1].split("))")[0].split(",").map(item => item.replace(/"/g, "").trim());
+      }
+
+      function extractDownloadUrl(data) {
+        return data.split("getElementById(\"download-section\").innerHTML = \"")[1].split("\"; document.getElementById(\"inputData\").remove(); ")[0].replace(/\\?/g, "");
+      }
+
+      function getVideoUrl(data) {
+        return extractDownloadUrl(decodeData(extractParams(data)));
+      }
+
+      const response = await axios.post("https://snapsave.app/action.php?lang=id", "url=" + url, {
+        headers: {
+          accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+          "content-type": "application/x-www-form-urlencoded",
+          origin: "https://snapsave.app",
+          referer: "https://snapsave.app/id",
+          "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+        }
+      });
+
+      const data = response.data;
+      const videoPageContent = getVideoUrl(data);
+      const $ = cheerio.load(videoPageContent);
+      const downloadLinks = {};
+      
+      $("div.download-items__thumb").each((index, item) => {
+        $("div.download-items__btn").each((btnIndex, button) => {
+          let downloadUrl = $(button).find("a").attr("href");
+          if (!/https?:\/\//.test(downloadUrl || "")) {
+            downloadUrl = "https://snapsave.app" + downloadUrl;
+          }
+          downloadLinks.push(downloadUrl);
+        });
+      });
+      if (!downloadLinks.length) {
+        return reject({
+          msg: "No data found"
+        });
+      }
+
+      return resolve({
+          url: downloadLinks,
+          metadata: {
+              url: url
+          }
+      });
+    } catch (error) {
+      return reject({
+        msg: error.message
+      });
+    }
+  });
+};
+
+async function igdl(url) {
+ let result = ""
+     try {
+       result = await ig(url)      
+     } catch(e) {
+       try {
+         result = await getDownloadLinks(url);
+       } catch(e) {
+          result = {
+             msg: "Try again later"
+          }
+       }
+    }
+  return result
+}
+
 async function MediaFireh(url) {
   try {
     const data = await fetch(
@@ -1448,6 +1572,23 @@ app.get("/api/tiktok", async (req, res) => {
     res.json({ status: true, creator: "Rezz Devv", result: data });
   } catch (e) {
     res.status(500).json(messages.error);
+  }
+});
+
+app.get('/api/igdl', async (req, res) => {
+  try {
+    const url = req.query.url;
+    if (!url) {
+      return res.status(400).json({ error: 'Parameter "url" tidak ditemukan' });
+    }
+    const response = await igdl(url);
+    res.status(200).json({
+      status: 200,
+      creator: "RiooXdzz",
+      data: response 
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
