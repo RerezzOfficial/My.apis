@@ -29,6 +29,7 @@
     "body-parser": "latest",
     "cheerio": "latest",
     "mime-types": "latest",
-    "undici": "latest"
+    "undici": "latest",
+    "ytdl-core": "latest"
   }
 }
