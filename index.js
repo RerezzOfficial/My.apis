@@ -5,7 +5,6 @@ const multer = require('multer');
 const axios = require("axios");
 const { search, yts } = require('yt-search');
 const puppeteer = require("puppeteer");
-const ytdl = require("ytdl-core");
 const bodyParser = require('body-parser');
 const cheerio = require('cheerio');
 const sharp = require('sharp');
@@ -39,7 +38,7 @@ const {
  ChatGPTv2
 } = require('./lib/function.js')
 
-const { downloadMp3, downloadMp4 } = require('./lib/scraper.js')
+const { ytdl, downloadMp3, downloadMp4 } = require('./lib/scraper.js')
 const validateYoutubeUrl = (req, res, next) => {
   const { url } = req.query;
 
