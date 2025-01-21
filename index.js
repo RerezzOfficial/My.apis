@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const cheerio = require('cheerio');
 const sharp = require('sharp');
 const { createCanvas, loadImage, registerFont } = require('canvas');
+const mediafire = require('./lib/mediafire')
 const path = require('path');
 const app = express();
 app.use(express.json());
@@ -57,6 +58,52 @@ const validateYoutubeUrl = (req, res, next) => {
   next();
 };
 
+async function MediaFireh(url) {
+  try {
+    const data = await fetch(
+      `https://www-mediafire-com.translate.goog/${url.replace("https://www.mediafire.com/", "")}?_x_tr_sl=en&_x_tr_tl=fr&_x_tr_hl=en&_x_tr_pto=wapp`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.178 Safari/537.36",
+        },
+      },
+    ).then((res) => res.text());
+    const $ = cheerio.load(data);
+    const downloadUrl = ($("#downloadButton").attr("href") || "").trim();
+    const alternativeUrl = (
+      $("#download_link > a.retry").attr("href") || ""
+    ).trim();
+    const $intro = $("div.dl-info > div.intro");
+    const filename = $intro.find("div.filename").text().trim();
+    const filetype = $intro.find("div.filetype > span").eq(0).text().trim();
+    const ext =
+      /\(\.(.*?)\)/
+        .exec($intro.find("div.filetype > span").eq(1).text())?.[1]
+        ?.trim() || "bin";
+    const uploaded = $("div.dl-info > ul.details > li")
+      .eq(1)
+      .find("span")
+      .text()
+      .trim();
+    const filesize = $("div.dl-info > ul.details > li")
+      .eq(0)
+      .find("span")
+      .text()
+      .trim();
+    return {
+      link: downloadUrl || alternativeUrl,
+      alternativeUrl: alternativeUrl,
+      name: filename,
+      filetype: filetype,
+      mime: ext,
+      uploaded: uploaded,
+      size: filesize,
+    };
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function downloadInstagram(url) {
   try {
@@ -1377,7 +1424,22 @@ app.get('/api/download/instagram', async (req, res) => {
   }
 });
 
-
+app.get('/api/mediafire', async (req, res) => {
+  try {
+    const url = req.query.url;
+    if (!url) {
+      return res.status(400).json({ error: 'Parameter "url" tidak ditemukan' });
+    }
+    const response = await mediafire(url);
+    res.status(200).json({
+      status: 200,
+      creator: "RiooXdzz",
+      data: { response }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 //=====[ OKECONNECT API ]=====//
 app.get('/api/okeconnect/dana', (req, res) => {
   res.sendFile(path.join(__dirname, 'media', 'dana.json'));
