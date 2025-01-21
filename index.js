@@ -1396,34 +1396,6 @@ app.get("/api/tiktok", async (req, res) => {
   }
 });
 
-
-app.get('/api/download/instagram', async (req, res) => {
-  const { url } = req.query;
-
-  if (!url) {
-    return res.status(400).json({
-      status: false,
-      creator: "IM REREZ",
-      error: "Parameter 'url' diperlukan.",
-    });
-  }
-
-  try {
-    const result = await downloadInstagram(url);
-    if (result.status) {
-      res.status(200).json(result);
-    } else {
-      res.status(500).json(result);
-    }
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      creator: "IM REREZZ",
-      error: error.message || 'Terjadi kesalahan saat memproses permintaan.',
-    });
-  }
-});
-
 app.get('/api/mediafire', async (req, res) => {
   try {
     const url = req.query.url;
@@ -1433,7 +1405,7 @@ app.get('/api/mediafire', async (req, res) => {
     const response = await mediafire(url);
     res.status(200).json({
       status: 200,
-      creator: "RiooXdzz",
+      creator: "IM REREZZ",
       data: { response }
     });
   } catch (error) {
