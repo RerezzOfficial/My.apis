@@ -58,40 +58,6 @@ const validateYoutubeUrl = (req, res, next) => {
   next();
 };
 
-
-async function googleSearch(query) {
-  const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-      },
-    });
-
-    const $ = cheerio.load(response.data);
-    const resultContainer = $('#rso');
-    let results = [];
-
-    resultContainer.find('.tF2Cxc').each((index, element) => {
-      const title = $(element).find('h3').text();
-      const link = $(element).find('a').attr('href');
-      const snippet = $(element).find('.VwiC3b').text();
-      if (title && link) {
-        results.push({
-          title: title.trim(),
-          link: link.trim(),
-          snippet: snippet.trim() || 'No snippet available',
-        });
-      }
-    });
-
-    return results;
-  } catch (error) {
-    throw new Error('Error scraping Google search: ' + error.message);
-  }
-}
-
 async function MediaFireh(url) {
   try {
     const data = await fetch(
@@ -563,14 +529,43 @@ app.get('/search', async (req, res) => {
     return res.status(400).json({ error: 'Query parameter "q" is required.' });
   }
 
+  const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+
   try {
-    const results = await googleSearch(query);
+    // Mengirimkan permintaan ke Google
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      },
+    });
+
+    const $ = cheerio.load(response.data);
+    const resultContainer = $('#rso');
+
+    // Debugging: Log elemen HTML dari container hasil
+    console.log('Result Container HTML:', resultContainer.html());
+
+    let results = [];
+
+    // Scraping hasil pencarian
+    resultContainer.find('.tF2Cxc').each((index, element) => {
+      const title = $(element).find('h3').text();
+      const link = $(element).find('a').attr('href');
+      const snippet = $(element).find('.VwiC3b').text();
+      if (title && link) {
+        results.push({
+          title: title.trim(),
+          link: link.trim(),
+          snippet: snippet.trim() || 'No snippet available',
+        });
+      }
+    });
+
     res.json({ query, results });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Error scraping Google search: ' + error.message });
   }
 });
-
 
 
 //=====[ API CANVAS ]=====//
