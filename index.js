@@ -525,6 +525,7 @@ app.get('/api/cpanel', async (req, res) => {
 app.get('/search', async (req, res) => {
   const query = req.query.q;
 
+  // Pastikan query tersedia
   if (!query) {
     return res.status(400).json({ error: 'Query parameter "q" is required.' });
   }
@@ -532,26 +533,27 @@ app.get('/search', async (req, res) => {
   const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 
   try {
-    // Mengirimkan permintaan ke Google
+    // Mengambil hasil pencarian dari Google
     const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       },
     });
 
+    // Menggunakan cheerio untuk mem-parsing HTML
     const $ = cheerio.load(response.data);
-    const resultContainer = $('#rso');
+    const results = [];
 
-    // Debugging: Log elemen HTML dari container hasil
-    console.log('Result Container HTML:', resultContainer.html());
+    // Menambahkan log untuk debugging
+    console.log('HTML Loaded:', response.data.substring(0, 500)); // Menampilkan sebagian dari HTML untuk pemeriksaan awal
 
-    let results = [];
-
-    // Scraping hasil pencarian
-    resultContainer.find('.tF2Cxc').each((index, element) => {
+    // Memastikan elemen pencarian Google sudah sesuai
+    $('#rso .tF2Cxc').each((index, element) => {
       const title = $(element).find('h3').text();
       const link = $(element).find('a').attr('href');
       const snippet = $(element).find('.VwiC3b').text();
+
+      // Pastikan data ditemukan sebelum menambahkannya ke array hasil
       if (title && link) {
         results.push({
           title: title.trim(),
@@ -561,8 +563,16 @@ app.get('/search', async (req, res) => {
       }
     });
 
+    // Jika tidak ada hasil
+    if (results.length === 0) {
+      console.log('No results found. Check the selectors or Google HTML structure.');
+    }
+
+    // Mengembalikan hasil pencarian
     res.json({ query, results });
+
   } catch (error) {
+    console.error('Error scraping Google:', error.message);
     res.status(500).json({ error: 'Error scraping Google search: ' + error.message });
   }
 });
