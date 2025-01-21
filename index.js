@@ -5,6 +5,7 @@ const multer = require('multer');
 const axios = require("axios");
 const { search, yts } = require('yt-search');
 const puppeteer = require("puppeteer");
+const ytdl = require("ytdl-core");
 const bodyParser = require('body-parser');
 const cheerio = require('cheerio');
 const sharp = require('sharp');
@@ -1452,43 +1453,52 @@ app.get("/api/tiktok", async (req, res) => {
   }
 });
 
-app.get('/download', async (req, res) => {
+app.get("/download", async (req, res) => {
     const youtubeUrl = req.query.url;
 
     if (!youtubeUrl) {
         return res.status(400).json({
             success: false,
-            message: 'URL YouTube diperlukan! Tambahkan parameter ?url=https://youtube.com/...'
+            message: "URL YouTube diperlukan! Tambahkan parameter ?url=https://youtube.com/..."
         });
     }
 
     try {
-        // Gunakan layanan pihak ketiga untuk mendapatkan MP3
-        const apiUrl = `https://api.vevioz.com/api/button/mp3/${encodeURIComponent(youtubeUrl)}`;
-        const response = await axios.get(apiUrl);
-
-        // Cari URL unduhan MP3 dalam respons HTML
-        const mp3UrlMatch = response.data.match(/href="(https:\/\/[^"]+\.mp3)"/);
-        if (mp3UrlMatch && mp3UrlMatch[1]) {
-            const mp3Url = mp3UrlMatch[1];
-            return res.json({
-                success: true,
-                downloadUrl: mp3Url
-            });
-        } else {
-            return res.status(500).json({
+        // Validasi URL YouTube
+        if (!ytdl.validateURL(youtubeUrl)) {
+            return res.status(400).json({
                 success: false,
-                message: 'Gagal mendapatkan URL unduhan MP3!'
+                message: "URL YouTube tidak valid!"
             });
         }
+
+        // Ambil info video
+        const videoInfo = await ytdl.getInfo(youtubeUrl);
+
+        // Filter format audio
+        const audioFormats = ytdl.filterFormats(videoInfo.formats, "audioonly");
+        if (audioFormats.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Gagal mendapatkan URL unduhan MP3! Video ini mungkin tidak memiliki audio."
+            });
+        }
+
+        // Kirim respons dengan URL unduhan
+        res.status(200).json({
+            success: true,
+            title: videoInfo.videoDetails.title,
+            downloadUrl: audioFormats[0].url
+        });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({
+        console.error("Kesalahan:", error);
+        res.status(500).json({
             success: false,
-            message: 'Terjadi kesalahan saat memproses permintaan!'
+            message: "Terjadi kesalahan saat memproses permintaan."
         });
     }
 });
+
 
 app.get('/api/mediafire', async (req, res) => {
   try {
