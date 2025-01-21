@@ -39,7 +39,7 @@ const {
  ChatGPTv2
 } = require('./lib/function.js')
 
-const { ytdl, downloadMp3, downloadMp4 } = require('./lib/scraper.js')
+const { downloadMp3, downloadMp4 } = require('./lib/scraper.js')
 const validateYoutubeUrl = (req, res, next) => {
   const { url } = req.query;
 
