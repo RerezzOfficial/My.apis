@@ -27,6 +27,8 @@
     "sharp": "latest",
     "canvas": "latest",
     "body-parser": "latest",
-    "cheerio": "latest"
+    "cheerio": "latest",
+    "mime-types": "latest",
+    "undici": "latest"
   }
 }
