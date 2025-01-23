@@ -719,6 +719,7 @@ app.get("/api/fotomenu", async (req, res) => {
         ctx.closePath();
         ctx.stroke();
 
+        // Mengirimkan gambar
         res.setHeader("Content-Type", "image/png");
         res.send(canvas.toBuffer());
     } catch (error) {
@@ -726,6 +727,7 @@ app.get("/api/fotomenu", async (req, res) => {
         res.status(500).json({ error: "Terjadi kesalahan pada server." });
     }
 });
+
 
 app.get("/api/profile", async (req, res) => {
     try {
