@@ -1718,7 +1718,7 @@ app.get('/api/orkut/cekstatus', async (req, res) => {
         return res.json({ error: "Isi Parameter Token menggunakan token kalian." });
     }
     try {
-        const apiUrl = `https://gateway.okeconnect.com/api/mutasi/qris/${merchant}/${keyorkut}`;
+        const apiUrl = `https://www.gateway.okeconnect.com/api/mutasi/qris/${merchant}/${keyorkut}`;
         const response = await axios.get(apiUrl);
         const result = response.data;
 
