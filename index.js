@@ -664,7 +664,7 @@ app.get("/api/fotomenu", async (req, res) => {
 
         // Nama pengguna
         const nameY = avatarY + avatarSize + 30;
-        ctx.font = "bold 20px 'MyFont'";  // Menggunakan font yang baru didaftarkan
+        ctx.font = "bold 35px 'MyFont'";  // Menggunakan font yang baru didaftarkan
         ctx.fillStyle = "#00FFFF";
         ctx.textAlign = "center";
         ctx.fillText(name, size / 2, nameY);
